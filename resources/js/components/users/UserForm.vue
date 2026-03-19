@@ -1,0 +1,91 @@
+<script setup>
+import { computed } from 'vue';
+import { Link, useForm } from '@inertiajs/vue3';
+
+const props = defineProps({
+    mode: {
+        type: String,
+        required: true,
+    },
+    user: {
+        type: Object,
+        default: null,
+    },
+});
+
+const isEdit = computed(() => props.mode === 'edit');
+
+const form = useForm({
+    name: props.user?.name ?? '',
+    email: props.user?.email ?? '',
+    password: '',
+});
+
+function submit() {
+    if (isEdit.value) {
+        form.put(`/users/${props.user.id}`, {
+            onFinish: () => form.reset('password'),
+        });
+
+        return;
+    }
+
+    form.post('/users', {
+        onFinish: () => form.reset('password'),
+    });
+}
+</script>
+
+<template>
+    <form class="space-y-6" @submit.prevent="submit">
+        <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+            <UiCardHeader>
+                <UiCardTitle>{{ isEdit ? '编辑用户' : '创建用户' }}</UiCardTitle>
+                <UiCardDescription>
+                    使用 Laravel 验证作为最终真相，前端仅维护输入交互与提交流程。
+                </UiCardDescription>
+            </UiCardHeader>
+            <UiCardContent class="space-y-5">
+                <div class="space-y-2">
+                    <UiLabel for="user-name">姓名</UiLabel>
+                    <UiInput id="user-name" v-model="form.name" :aria-invalid="Boolean(form.errors.name)" />
+                    <p v-if="form.errors.name" class="text-sm text-red-600">{{ form.errors.name }}</p>
+                </div>
+
+                <div class="space-y-2">
+                    <UiLabel for="user-email">邮箱</UiLabel>
+                    <UiInput
+                        id="user-email"
+                        v-model="form.email"
+                        type="email"
+                        :aria-invalid="Boolean(form.errors.email)"
+                    />
+                    <p v-if="form.errors.email" class="text-sm text-red-600">{{ form.errors.email }}</p>
+                </div>
+
+                <div class="space-y-2">
+                    <UiLabel for="user-password">{{ isEdit ? '新密码' : '密码' }}</UiLabel>
+                    <UiInput
+                        id="user-password"
+                        v-model="form.password"
+                        type="password"
+                        :placeholder="isEdit ? '留空则不修改密码' : ''"
+                        :aria-invalid="Boolean(form.errors.password)"
+                    />
+                    <p class="text-sm text-slate-500">
+                        {{ isEdit ? '若修改邮箱，系统会重置验证状态并重新发送验证邮件。' : '创建后将立即发送邮箱验证邮件。' }}
+                    </p>
+                    <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
+                </div>
+            </UiCardContent>
+            <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-slate-200 sm:flex-row sm:justify-end">
+                <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
+                    <Link href="/users">返回列表</Link>
+                </UiButton>
+                <UiButton type="submit" class="w-full rounded-xl sm:w-auto" :disabled="form.processing">
+                    {{ form.processing ? '保存中...' : isEdit ? '保存修改' : '创建用户' }}
+                </UiButton>
+            </UiCardFooter>
+        </UiCard>
+    </form>
+</template>
