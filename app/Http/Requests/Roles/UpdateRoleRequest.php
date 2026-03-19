@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Roles;
 
+use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +24,7 @@ class UpdateRoleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('roles', 'name')
+                Rule::unique(Role::class, 'name')
                     ->ignore($this->route('role'))
                     ->where('guard_name', 'web'),
             ],
@@ -30,7 +32,7 @@ class UpdateRoleRequest extends FormRequest
             'permissions.*' => [
                 'string',
                 'distinct',
-                Rule::exists('permissions', 'name')->where('guard_name', 'web'),
+                Rule::exists(Permission::class, 'name')->where('guard_name', 'web'),
             ],
         ];
     }

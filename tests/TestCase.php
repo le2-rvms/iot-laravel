@@ -2,12 +2,12 @@
 
 namespace Tests;
 
-use App\Models\User;
+use App\Models\Auth\Role;
+use App\Models\Auth\User;
 use App\Support\PermissionRegistry;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 abstract class TestCase extends BaseTestCase
 {

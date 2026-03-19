@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Auth\User;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;

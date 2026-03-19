@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\User;
+use App\Models\Auth\User;
 
 class PermissionRegistry
 {

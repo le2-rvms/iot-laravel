@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Roles;
 
+use App\Models\Auth\Role;
 use App\Support\PermissionRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class RoleManagementTest extends TestCase
@@ -72,12 +72,13 @@ class RoleManagementTest extends TestCase
     {
         $admin = $this->createSuperAdmin();
         $superAdminRole = Role::findByName(PermissionRegistry::superAdminRole(), 'web');
+        $rolesTable = config('permission.table_names.roles');
 
         $this->actingAs($admin)
             ->delete("/roles/{$superAdminRole->id}")
             ->assertRedirect('/roles');
 
-        $this->assertDatabaseHas('roles', [
+        $this->assertDatabaseHas($rolesTable, [
             'name' => PermissionRegistry::superAdminRole(),
         ]);
     }
@@ -85,6 +86,7 @@ class RoleManagementTest extends TestCase
     public function test_roles_with_bound_users_cannot_be_deleted(): void
     {
         $admin = $this->createSuperAdmin();
+        $rolesTable = config('permission.table_names.roles');
         $role = Role::create([
             'name' => 'Bound Role',
             'guard_name' => 'web',
@@ -96,7 +98,7 @@ class RoleManagementTest extends TestCase
             ->delete("/roles/{$role->id}")
             ->assertRedirect('/roles');
 
-        $this->assertDatabaseHas('roles', [
+        $this->assertDatabaseHas($rolesTable, [
             'name' => 'Bound Role',
         ]);
     }

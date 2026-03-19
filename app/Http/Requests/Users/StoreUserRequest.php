@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Users;
 
+use App\Models\Auth\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -26,7 +27,7 @@ class StoreUserRequest extends FormRequest
             'roles.*' => [
                 'string',
                 'distinct',
-                Rule::exists('roles', 'name')->where('guard_name', 'web'),
+                Rule::exists(Role::class, 'name')->where('guard_name', 'web'),
             ],
         ];
     }

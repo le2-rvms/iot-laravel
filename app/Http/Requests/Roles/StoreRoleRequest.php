@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Roles;
 
+use App\Models\Auth\Permission;
+use App\Models\Auth\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,13 +24,13 @@ class StoreRoleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('roles', 'name')->where('guard_name', 'web'),
+                Rule::unique(Role::class, 'name')->where('guard_name', 'web'),
             ],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => [
                 'string',
                 'distinct',
-                Rule::exists('permissions', 'name')->where('guard_name', 'web'),
+                Rule::exists(Permission::class, 'name')->where('guard_name', 'web'),
             ],
         ];
     }

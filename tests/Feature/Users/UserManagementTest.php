@@ -3,7 +3,8 @@
 namespace Tests\Feature\Users;
 
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Models\User;
+use App\Models\Auth\Role;
+use App\Models\Auth\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -57,7 +58,7 @@ class UserManagementTest extends TestCase
         Notification::fake();
 
         $admin = $this->createSuperAdmin();
-        $role = \Spatie\Permission\Models\Role::create([
+        $role = Role::create([
             'name' => 'Editor',
             'guard_name' => 'web',
         ]);
@@ -88,7 +89,7 @@ class UserManagementTest extends TestCase
         $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
-        $role = \Spatie\Permission\Models\Role::create([
+        $role = Role::create([
             'name' => 'Manager',
             'guard_name' => 'web',
         ]);
