@@ -14,7 +14,7 @@ defineProps({
 });
 
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['users.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['user.write'] ?? false);
 
 const breadcrumbs = [
     { label: '仪表盘', href: '/dashboard' },

@@ -12,7 +12,7 @@ class SettingsPageTest extends TestCase
 
     public function test_users_with_settings_read_permission_can_view_the_settings_page(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['settings.read', 'form-lab.read']);
 
         $this->actingAs($user)
             ->get('/settings')
@@ -25,18 +25,30 @@ class SettingsPageTest extends TestCase
                 ->where('groups.4.action_label', '打开实验室'));
     }
 
+    public function test_settings_page_hides_form_lab_entry_without_form_lab_permission(): void
+    {
+        $user = $this->createUserWithPermissions(['settings.read']);
+
+        $this->actingAs($user)
+            ->get('/settings')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Index')
+                ->has('groups', 4));
+    }
+
     public function test_users_without_settings_permission_cannot_view_the_settings_page(): void
     {
-        $user = $this->createUserWithPermissions(['users.read']);
+        $user = $this->createUserWithPermissions(['user.read']);
 
         $this->actingAs($user)
             ->get('/settings')
             ->assertForbidden();
     }
 
-    public function test_users_with_settings_permission_can_view_form_lab_page(): void
+    public function test_users_with_form_lab_read_permission_can_view_form_lab_page(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['form-lab.read']);
 
         $this->actingAs($user)
             ->get('/settings/form-lab')
@@ -47,9 +59,9 @@ class SettingsPageTest extends TestCase
                 ->has('triggerModes', 3));
     }
 
-    public function test_users_without_settings_permission_cannot_view_form_lab_page(): void
+    public function test_users_without_form_lab_read_permission_cannot_view_form_lab_page(): void
     {
-        $user = $this->createUserWithPermissions(['users.read']);
+        $user = $this->createUserWithPermissions(['user.read']);
 
         $this->actingAs($user)
             ->get('/settings/form-lab')
@@ -58,7 +70,7 @@ class SettingsPageTest extends TestCase
 
     public function test_form_lab_returns_validation_errors_for_invalid_payload(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['form-lab.write']);
 
         $this->actingAs($user)
             ->from('/settings/form-lab')
@@ -84,7 +96,7 @@ class SettingsPageTest extends TestCase
 
     public function test_form_lab_nested_attribute_labels_are_localized(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['form-lab.write']);
 
         $this->actingAs($user)
             ->from('/settings/form-lab')
@@ -116,7 +128,7 @@ class SettingsPageTest extends TestCase
 
     public function test_form_lab_accepts_valid_nested_payload(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['form-lab.write']);
 
         $this->actingAs($user)
             ->post('/settings/form-lab', [
@@ -158,7 +170,7 @@ class SettingsPageTest extends TestCase
 
     public function test_users_without_settings_permission_cannot_view_horizon(): void
     {
-        $user = $this->createUserWithPermissions(['users.read']);
+        $user = $this->createUserWithPermissions(['user.read']);
 
         $this->actingAs($user)
             ->get('/horizon')

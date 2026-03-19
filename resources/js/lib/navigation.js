@@ -26,14 +26,14 @@ export const navigationSections = [
                 description: '维护后台用户、邮箱验证状态与基础资料。',
                 href: '/users',
                 icon: Users,
-                can: 'users.read',
+                can: 'user.read',
             },
             {
                 title: '角色权限',
                 description: '维护角色与读写权限集合。',
                 href: '/roles',
                 icon: ShieldCheck,
-                can: 'roles.read',
+                can: 'role.read',
             },
             {
                 title: '系统设置',

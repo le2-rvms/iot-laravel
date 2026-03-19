@@ -10,7 +10,7 @@ defineProps({
 });
 
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['roles.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['role.write'] ?? false);
 
 const breadcrumbs = [
     { label: '仪表盘', href: '/dashboard' },

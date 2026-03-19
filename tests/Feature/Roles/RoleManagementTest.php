@@ -22,12 +22,12 @@ class RoleManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Index')
                 ->has('roles.data')
-                ->where('auth.access', fn ($access) => ($access['roles.read'] ?? false) === true));
+                ->where('auth.access', fn ($access) => ($access['role.read'] ?? false) === true));
     }
 
     public function test_read_only_role_users_can_view_roles_but_cannot_write(): void
     {
-        $user = $this->createUserWithPermissions(['roles.read']);
+        $user = $this->createUserWithPermissions(['role.read']);
 
         $this->actingAs($user)
             ->get('/roles')
@@ -40,19 +40,19 @@ class RoleManagementTest extends TestCase
 
     public function test_users_with_roles_write_permission_can_create_and_update_roles(): void
     {
-        $user = $this->createUserWithPermissions(['roles.write']);
+        $user = $this->createUserWithPermissions(['role.write']);
 
         $this->actingAs($user)
             ->post('/roles', [
                 'name' => 'Operations',
-                'permissions' => ['users.read', 'users.write'],
+                'permissions' => ['user.read', 'user.write'],
             ])
             ->assertRedirect('/roles');
 
         $role = Role::findByName('Operations', 'web');
 
-        $this->assertTrue($role->hasPermissionTo('users.read'));
-        $this->assertTrue($role->hasPermissionTo('users.write'));
+        $this->assertTrue($role->hasPermissionTo('user.read'));
+        $this->assertTrue($role->hasPermissionTo('user.write'));
 
         $this->actingAs($user)
             ->put("/roles/{$role->id}", [
@@ -65,12 +65,32 @@ class RoleManagementTest extends TestCase
 
         $this->assertSame('Operations Updated', $role->name);
         $this->assertTrue($role->hasPermissionTo('settings.read'));
-        $this->assertFalse($role->hasPermissionTo('users.read'));
+        $this->assertFalse($role->hasPermissionTo('user.read'));
+    }
+
+    public function test_role_form_receives_permission_groups_discovered_from_controller_attributes(): void
+    {
+        $user = $this->createUserWithPermissions(['role.write']);
+
+        $this->actingAs($user)
+            ->get('/roles/create')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Roles/Create')
+                ->has('permissionGroups', 5)
+                ->where('permissionGroups', function ($groups): bool {
+                    $formLabGroup = collect($groups)->firstWhere('module', 'form-lab');
+
+                    return $formLabGroup !== null
+                        && $formLabGroup['label'] === '复杂表单实验室'
+                        && $formLabGroup['permissions'][0]['name'] === 'form-lab.read'
+                        && $formLabGroup['permissions'][1]['name'] === 'form-lab.write';
+                }));
     }
 
     public function test_role_validation_errors_are_returned_in_chinese(): void
     {
-        $user = $this->createUserWithPermissions(['roles.write']);
+        $user = $this->createUserWithPermissions(['role.write']);
 
         $this->actingAs($user)
             ->from('/roles/create')
@@ -110,7 +130,7 @@ class RoleManagementTest extends TestCase
             'name' => 'Bound Role',
             'guard_name' => 'web',
         ]);
-        $user = $this->createUserWithPermissions(['users.read']);
+        $user = $this->createUserWithPermissions(['user.read']);
         $user->syncRoles([$role->name]);
 
         $this->actingAs($admin)

@@ -28,7 +28,7 @@ class UserManagementTest extends TestCase
                 ->component('Users/Index')
                 ->has('users.data', 4)
                 ->where('filters.search', '')
-                ->where('auth.access', fn ($access) => ($access['users.read'] ?? false) === true)
+                ->where('auth.access', fn ($access) => ($access['user.read'] ?? false) === true)
                 ->missing('auth.roles'));
     }
 
@@ -62,7 +62,7 @@ class UserManagementTest extends TestCase
             'name' => 'Editor',
             'guard_name' => 'web',
         ]);
-        $role->syncPermissions(['users.read']);
+        $role->syncPermissions(['user.read']);
 
         $this->actingAs($admin)
             ->post('/users', [
@@ -93,7 +93,7 @@ class UserManagementTest extends TestCase
             'name' => 'Manager',
             'guard_name' => 'web',
         ]);
-        $role->syncPermissions(['users.read', 'users.write']);
+        $role->syncPermissions(['user.read', 'user.write']);
 
         $this->actingAs($admin)
             ->put("/users/{$user->id}", [
@@ -178,7 +178,7 @@ class UserManagementTest extends TestCase
 
     public function test_read_only_users_can_view_users_but_cannot_modify_them(): void
     {
-        $user = $this->createUserWithPermissions(['users.read']);
+        $user = $this->createUserWithPermissions(['user.read']);
         $target = User::factory()->create();
 
         $this->actingAs($user)
@@ -198,7 +198,7 @@ class UserManagementTest extends TestCase
     {
         Notification::fake();
 
-        $user = $this->createUserWithPermissions(['users.write']);
+        $user = $this->createUserWithPermissions(['user.write']);
 
         $this->actingAs($user)
             ->post('/users', [
@@ -227,7 +227,7 @@ class UserManagementTest extends TestCase
 
     public function test_user_validation_errors_are_returned_in_chinese(): void
     {
-        $user = $this->createUserWithPermissions(['users.write']);
+        $user = $this->createUserWithPermissions(['user.write']);
 
         $this->actingAs($user)
             ->from('/users/create')

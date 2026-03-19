@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Roles;
 
+use App\Attributes\PermissionAction;
+use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Roles\StoreRoleRequest;
 use App\Http\Requests\Roles\UpdateRoleRequest;
@@ -11,8 +13,10 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
+#[PermissionGroup('角色权限')]
 class RoleController extends Controller
 {
+    #[PermissionAction('read')]
     public function index(): Response
     {
         $roles = Role::query()
@@ -36,6 +40,7 @@ class RoleController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function create(): Response
     {
         return Inertia::render('Roles/Create', [
@@ -43,6 +48,7 @@ class RoleController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function store(StoreRoleRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -57,6 +63,7 @@ class RoleController extends Controller
         return to_route('roles.index')->with('success', '角色已创建。');
     }
 
+    #[PermissionAction('write')]
     public function edit(Role $role): Response
     {
         $role->loadMissing('permissions:id,name');
@@ -72,6 +79,7 @@ class RoleController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $validated = $request->validated();
@@ -86,6 +94,7 @@ class RoleController extends Controller
         return to_route('roles.edit', $role)->with('success', '角色已更新。');
     }
 
+    #[PermissionAction('write')]
     public function destroy(Role $role): RedirectResponse
     {
         if ($role->name === PermissionRegistry::superAdminRole()) {

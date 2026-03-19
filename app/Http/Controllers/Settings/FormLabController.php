@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Attributes\PermissionAction;
+use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\StoreNotificationRuleRequest;
 use Illuminate\Http\RedirectResponse;
@@ -9,8 +11,10 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
+#[PermissionGroup('复杂表单实验室')]
 class FormLabController extends Controller
 {
+    #[PermissionAction('read')]
     public function create(): Response
     {
         return Inertia::render('Settings/FormLab', [
@@ -27,6 +31,7 @@ class FormLabController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function store(StoreNotificationRuleRequest $request): RedirectResponse
     {
         Log::info('settings.form_lab.submitted', $request->validated());

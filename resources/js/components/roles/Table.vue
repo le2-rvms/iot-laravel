@@ -13,7 +13,7 @@ defineProps({
 
 const confirmDialog = useConfirmDialog();
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['roles.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['role.write'] ?? false);
 
 function confirmDelete(role) {
     confirmDialog.open({

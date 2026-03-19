@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Attributes\PermissionAction;
+use App\Attributes\PermissionGroup;
 use App\Models\Auth\User;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
+#[PermissionGroup('仪表盘')]
 class DashboardController extends Controller
 {
+    #[PermissionAction('read')]
     public function __invoke(): Response
     {
         $user = request()->user();
@@ -22,13 +25,13 @@ class DashboardController extends Controller
                     'title' => '用户管理',
                     'description' => '维护后台用户、邮箱验证状态与基础资料。',
                     'href' => '/users',
-                    'permission' => 'users.read',
+                    'permission' => 'user.read',
                 ],
                 [
                     'title' => '角色权限',
                     'description' => '维护角色与模块读写权限的映射关系。',
                     'href' => '/roles',
-                    'permission' => 'roles.read',
+                    'permission' => 'role.read',
                 ],
                 [
                     'title' => '系统设置',

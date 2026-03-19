@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Attributes\PermissionAction;
+use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
@@ -13,8 +15,10 @@ use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 
+#[PermissionGroup('用户管理')]
 class UserController extends Controller
 {
+    #[PermissionAction('read')]
     public function index(Request $request): Response
     {
         $search = trim((string) $request->string('search'));
@@ -48,6 +52,7 @@ class UserController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function create(): Response
     {
         return Inertia::render('Users/Create', [
@@ -55,6 +60,7 @@ class UserController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function store(StoreUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -67,6 +73,7 @@ class UserController extends Controller
         return to_route('users.index')->with('success', '用户已创建，并已发送验证邮件。');
     }
 
+    #[PermissionAction('write')]
     public function edit(User $user): Response
     {
         $user->loadMissing('roles:id,name');
@@ -83,6 +90,7 @@ class UserController extends Controller
         ]);
     }
 
+    #[PermissionAction('write')]
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $validated = $request->validated();
@@ -112,6 +120,7 @@ class UserController extends Controller
         return to_route('users.edit', $user)->with('success', '用户信息已更新。');
     }
 
+    #[PermissionAction('write')]
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();

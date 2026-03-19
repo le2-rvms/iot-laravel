@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AuthorizeControllerPermission;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\Settings\FormLabController;
@@ -12,36 +13,18 @@ Route::get('/', function () {
     return Auth::check() ? to_route('dashboard') : to_route('login');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', DashboardController::class)
-        ->middleware('can:dashboard.read')
-        ->name('dashboard');
+Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('users', UserController::class)
-        ->only(['index'])
-        ->middleware('can:users.read');
-
-    Route::resource('users', UserController::class)
-        ->except(['index', 'show'])
-        ->middleware('can:users.write');
+        ->except(['show']);
 
     Route::resource('roles', RoleController::class)
-        ->only(['index'])
-        ->middleware('can:roles.read');
+        ->except(['show']);
 
-    Route::resource('roles', RoleController::class)
-        ->except(['index', 'show'])
-        ->middleware('can:roles.write');
+    Route::get('/settings', SettingsController::class)->name('settings.index');
 
-    Route::get('/settings', SettingsController::class)
-        ->middleware('can:settings.read')
-        ->name('settings.index');
+    Route::get('/settings/form-lab', [FormLabController::class, 'create'])->name('settings.form-lab');
 
-    Route::get('/settings/form-lab', [FormLabController::class, 'create'])
-        ->middleware('can:settings.read')
-        ->name('settings.form-lab');
-
-    Route::post('/settings/form-lab', [FormLabController::class, 'store'])
-        ->middleware('can:settings.read')
-        ->name('settings.form-lab.store');
+    Route::post('/settings/form-lab', [FormLabController::class, 'store'])->name('settings.form-lab.store');
 });
