@@ -28,6 +28,12 @@ class SettingsController extends Controller
                     'title' => '权限与安全配置',
                     'description' => '后续可扩展密码策略、登录限制与权限审计设置。',
                 ],
+                [
+                    'title' => '复杂表单实验室',
+                    'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                    'href' => route('settings.form-lab'),
+                    'action_label' => '打开实验室',
+                ],
             ],
         ]);
     }

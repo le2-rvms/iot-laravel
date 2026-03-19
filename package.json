@@ -26,7 +26,9 @@
         "reka-ui": "^2.9.2",
         "tailwind-merge": "^3.5.0",
         "unplugin-vue-components": "^31.0.0",
+        "vee-validate": "^4.15.1",
         "vue": "^3.5.30",
-        "vue-sonner": "^2.0.9"
+        "vue-sonner": "^2.0.9",
+        "yup": "^1.7.1"
     }
 }

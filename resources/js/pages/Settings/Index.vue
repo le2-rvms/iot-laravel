@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
@@ -32,8 +32,11 @@ const breadcrumbs = [
                 <UiCardHeader>
                     <UiCardTitle>{{ group.title }}</UiCardTitle>
                 </UiCardHeader>
-                <UiCardContent class="text-sm leading-6 text-slate-500">
-                    {{ group.description }}
+                <UiCardContent class="space-y-4 text-sm leading-6 text-slate-500">
+                    <p>{{ group.description }}</p>
+                    <UiButton v-if="group.href" as-child variant="outline" class="rounded-xl">
+                        <Link :href="group.href">{{ group.action_label }}</Link>
+                    </UiButton>
                 </UiCardContent>
             </UiCard>
         </div>

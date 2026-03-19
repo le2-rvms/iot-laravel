@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Roles\RoleController;
+use App\Http\Controllers\Settings\FormLabController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Users\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -35,4 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings', SettingsController::class)
         ->middleware('can:settings.read')
         ->name('settings.index');
+
+    Route::get('/settings/form-lab', [FormLabController::class, 'create'])
+        ->middleware('can:settings.read')
+        ->name('settings.form-lab');
+
+    Route::post('/settings/form-lab', [FormLabController::class, 'store'])
+        ->middleware('can:settings.read')
+        ->name('settings.form-lab.store');
 });
