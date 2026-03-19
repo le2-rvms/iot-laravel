@@ -8,6 +8,7 @@
 - 首个业务模块选 `Users`，只覆盖现有 `users` 表的 `name/email/password`；管理员后台创建用户后立即发送验证邮件。
 - 队列后端默认使用 `Redis`，并已接入 `Laravel Horizon` 作为官方队列监控面板。
 - Laravel 默认框架语言切为简体中文，通过 `laravel-lang/lang` 维护验证、认证、密码重置、分页等中文文案。
+- 模型统一补充 `PHPDoc @property` 中文字段说明，并通过 `attributeLabels()` 与 `FormRequest::attributes()` 收口验证字段显示名。
 
 ## 初始化步骤
 

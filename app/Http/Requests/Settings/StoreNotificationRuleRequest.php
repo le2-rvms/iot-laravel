@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Settings;
 
+use App\Models\Settings\NotificationChannel;
+use App\Models\Settings\NotificationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -33,6 +36,21 @@ class StoreNotificationRuleRequest extends FormRequest
             'channels.*.retries' => ['required', 'integer', 'min:0', 'max:10'],
             'channels.*.enabled' => ['required', 'boolean'],
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return array_merge(
+            NotificationRule::attributeLabels(),
+            Arr::dot([
+                'channels' => [
+                    '*' => NotificationChannel::attributeLabels(),
+                ],
+            ]),
+        );
     }
 
     public function withValidator(Validator $validator): void

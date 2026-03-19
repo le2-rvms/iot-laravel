@@ -225,7 +225,7 @@ class UserManagementTest extends TestCase
             ->assertRedirect('/users');
     }
 
-    public function test_user_validation_errors_are_returned(): void
+    public function test_user_validation_errors_are_returned_in_chinese(): void
     {
         $user = $this->createUserWithPermissions(['users.write']);
 
@@ -239,5 +239,12 @@ class UserManagementTest extends TestCase
             ])
             ->assertRedirect('/users/create')
             ->assertSessionHasErrors(['name', 'email', 'password', 'roles.0']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('名称 不能为空。', $errors->first('name'));
+        $this->assertSame('邮箱 不能为空。', $errors->first('email'));
+        $this->assertSame('密码 不能为空。', $errors->first('password'));
+        $this->assertSame('角色 不存在。', $errors->first('roles.0'));
     }
 }

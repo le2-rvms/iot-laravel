@@ -68,7 +68,7 @@ class RoleManagementTest extends TestCase
         $this->assertFalse($role->hasPermissionTo('users.read'));
     }
 
-    public function test_role_validation_errors_are_returned(): void
+    public function test_role_validation_errors_are_returned_in_chinese(): void
     {
         $user = $this->createUserWithPermissions(['roles.write']);
 
@@ -80,6 +80,11 @@ class RoleManagementTest extends TestCase
             ])
             ->assertRedirect('/roles/create')
             ->assertSessionHasErrors(['name', 'permissions.0']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('角色名称 不能为空。', $errors->first('name'));
+        $this->assertSame('权限名称 不存在。', $errors->first('permissions.0'));
     }
 
     public function test_super_admin_role_cannot_be_deleted(): void

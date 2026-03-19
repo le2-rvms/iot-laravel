@@ -75,6 +75,43 @@ class SettingsPageTest extends TestCase
             ])
             ->assertRedirect('/settings/form-lab')
             ->assertSessionHasErrors(['name', 'threshold', 'quiet_hours_start', 'channels']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('规则名称 不能为空。', $errors->first('name'));
+        $this->assertSame('阈值触发模式下必须填写阈值。', $errors->first('threshold'));
+    }
+
+    public function test_form_lab_nested_attribute_labels_are_localized(): void
+    {
+        $user = $this->createUserWithPermissions(['settings.read']);
+
+        $this->actingAs($user)
+            ->from('/settings/form-lab')
+            ->post('/settings/form-lab', [
+                'name' => '规则A',
+                'enabled' => true,
+                'description' => '',
+                'trigger_mode' => 'manual',
+                'threshold' => null,
+                'quiet_hours_enabled' => false,
+                'quiet_hours_start' => null,
+                'quiet_hours_end' => null,
+                'channels' => [
+                    [
+                        'type' => 'email',
+                        'target' => '',
+                        'retries' => 1,
+                        'enabled' => true,
+                    ],
+                ],
+            ])
+            ->assertRedirect('/settings/form-lab')
+            ->assertSessionHasErrors(['channels.0.target']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('渠道目标 不能为空。', $errors->first('channels.0.target'));
     }
 
     public function test_form_lab_accepts_valid_nested_payload(): void

@@ -34,4 +34,15 @@ class StoreRoleRequest extends FormRequest
             ],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return array_merge(Role::attributeLabels(), [
+            'permissions' => Permission::attributeLabels()['name'],
+            'permissions.*' => Permission::attributeLabels()['name'],
+        ]);
+    }
 }
