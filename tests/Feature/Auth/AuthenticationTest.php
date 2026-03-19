@@ -64,6 +64,7 @@ class AuthenticationTest extends TestCase
         ])->assertRedirect('/login')
             ->assertSessionHasErrors('email');
 
+        $this->assertSame(__('auth.failed'), session('errors')->getBag('default')->first('email'));
         $this->assertGuest();
     }
 
@@ -82,7 +83,7 @@ class AuthenticationTest extends TestCase
 
         $this->post('/forgot-password', [
             'email' => $user->email,
-        ])->assertSessionHas('status');
+        ])->assertSessionHas('status', __('passwords.sent'));
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -125,6 +126,8 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'new-password',
         ])->assertRedirect('/reset-password/invalid')
             ->assertSessionHasErrors('email');
+
+        $this->assertSame(__('passwords.token'), session('errors')->getBag('default')->first('email'));
     }
 
     public function test_unverified_users_are_redirected_to_the_verification_notice(): void
@@ -154,7 +157,16 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user)
             ->post('/email/verification-notification')
-            ->assertSessionHas('status');
+            ->assertSessionHas('success', __('A new verification link has been sent to the email address you provided during registration.'));
+
+        $this->actingAs($user)
+            ->withSession([
+                'success' => __('A new verification link has been sent to the email address you provided during registration.'),
+            ])
+            ->get('/email/verify')
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/VerifyEmail')
+                ->where('flash.success', __('A new verification link has been sent to the email address you provided during registration.')));
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }

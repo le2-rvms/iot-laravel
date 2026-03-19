@@ -68,6 +68,20 @@ class RoleManagementTest extends TestCase
         $this->assertFalse($role->hasPermissionTo('users.read'));
     }
 
+    public function test_role_validation_errors_are_returned(): void
+    {
+        $user = $this->createUserWithPermissions(['roles.write']);
+
+        $this->actingAs($user)
+            ->from('/roles/create')
+            ->post('/roles', [
+                'name' => '',
+                'permissions' => ['invalid.permission'],
+            ])
+            ->assertRedirect('/roles/create')
+            ->assertSessionHasErrors(['name', 'permissions.0']);
+    }
+
     public function test_super_admin_role_cannot_be_deleted(): void
     {
         $admin = $this->createSuperAdmin();

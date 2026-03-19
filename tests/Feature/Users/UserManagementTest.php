@@ -224,4 +224,20 @@ class UserManagementTest extends TestCase
             ->delete("/users/{$created->id}")
             ->assertRedirect('/users');
     }
+
+    public function test_user_validation_errors_are_returned(): void
+    {
+        $user = $this->createUserWithPermissions(['users.write']);
+
+        $this->actingAs($user)
+            ->from('/users/create')
+            ->post('/users', [
+                'name' => '',
+                'email' => '',
+                'password' => '',
+                'roles' => ['missing-role'],
+            ])
+            ->assertRedirect('/users/create')
+            ->assertSessionHasErrors(['name', 'email', 'password', 'roles.0']);
+    }
 }

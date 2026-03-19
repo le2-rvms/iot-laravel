@@ -7,6 +7,7 @@
 - 首版邮箱验证为“硬拦路”模式：后台核心页面默认放在 `auth + verified` 后面，未验证用户统一进入 `/email/verify`。
 - 首个业务模块选 `Users`，只覆盖现有 `users` 表的 `name/email/password`；管理员后台创建用户后立即发送验证邮件。
 - 队列后端默认使用 `Redis`，并已接入 `Laravel Horizon` 作为官方队列监控面板。
+- Laravel 默认框架语言切为简体中文，通过 `laravel-lang/lang` 维护验证、认证、密码重置、分页等中文文案。
 
 ## 初始化步骤
 
