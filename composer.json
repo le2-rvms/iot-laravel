@@ -38,15 +38,15 @@
     "scripts": {
         "setup": [
             "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
+            "@php -r \"file_exists('.env.dev') || copy('.env.example', '.env.dev');\"",
+            "APP_ENV=dev php artisan key:generate",
+            "APP_ENV=dev php artisan migrate --force",
             "npm install",
             "npm run build"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan horizon\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,horizon,logs,vite --kill-others"
+            "APP_ENV=dev npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan horizon\" \"php artisan pail --timeout=0\" \"npm run dev -- --mode dev\" --names=server,horizon,logs,vite --kill-others"
         ],
         "test": [
             "@php artisan config:clear --ansi",
@@ -61,12 +61,12 @@
             "@php artisan lang:update"
         ],
         "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env.dev') || copy('.env.example', '.env.dev');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
+            "APP_ENV=dev php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
+            "APP_ENV=dev php artisan migrate --graceful --ansi"
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
