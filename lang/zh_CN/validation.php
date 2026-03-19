@@ -156,4 +156,14 @@ return [
     'uppercase'              => ':attribute 必须大写',
     'url'                    => ':attribute 格式不正确。',
     'uuid'                   => ':attribute 必须是有效的 UUID。',
+
+    'attributes' => [
+        'current_password' => '当前密码',
+        'email' => '邮箱',
+        'name' => '名称',
+        'password' => '密码',
+        'password_confirmation' => '确认密码',
+        'remember' => '记住我',
+        'token' => '重置令牌',
+    ],
 ];

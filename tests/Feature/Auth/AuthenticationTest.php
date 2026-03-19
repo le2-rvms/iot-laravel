@@ -68,6 +68,20 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_login_validation_errors_are_returned_in_chinese(): void
+    {
+        $this->from('/login')->post('/login', [
+            'email' => '',
+            'password' => '',
+        ])->assertRedirect('/login')
+            ->assertSessionHasErrors(['email', 'password']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('邮箱 不能为空。', $errors->first('email'));
+        $this->assertSame('密码 不能为空。', $errors->first('password'));
+    }
+
     public function test_forgot_password_screen_renders(): void
     {
         $this->get('/forgot-password')
@@ -86,6 +100,18 @@ class AuthenticationTest extends TestCase
         ])->assertSessionHas('status', __('passwords.sent'));
 
         Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    public function test_forgot_password_validation_errors_are_returned_in_chinese(): void
+    {
+        $this->from('/forgot-password')->post('/forgot-password', [
+            'email' => '',
+        ])->assertRedirect('/forgot-password')
+            ->assertSessionHasErrors(['email']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('邮箱 不能为空。', $errors->first('email'));
     }
 
     public function test_reset_password_screen_renders(): void
@@ -128,6 +154,22 @@ class AuthenticationTest extends TestCase
             ->assertSessionHasErrors('email');
 
         $this->assertSame(__('passwords.token'), session('errors')->getBag('default')->first('email'));
+    }
+
+    public function test_reset_password_validation_errors_are_returned_in_chinese(): void
+    {
+        $this->from('/reset-password/invalid')->post('/reset-password', [
+            'token' => 'invalid-token',
+            'email' => '',
+            'password' => '',
+            'password_confirmation' => '',
+        ])->assertRedirect('/reset-password/invalid')
+            ->assertSessionHasErrors(['email', 'password']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('邮箱 不能为空。', $errors->first('email'));
+        $this->assertSame('密码 不能为空。', $errors->first('password'));
     }
 
     public function test_unverified_users_are_redirected_to_the_verification_notice(): void
