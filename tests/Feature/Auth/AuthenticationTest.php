@@ -24,7 +24,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_form(): void
     {
-        $user = User::factory()->create([
+        $user = $this->createSuperAdmin([
             'password' => 'password',
         ]);
 
@@ -38,7 +38,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_login_with_remember_me_enabled(): void
     {
-        $user = User::factory()->create([
+        $user = $this->createSuperAdmin([
             'password' => 'password',
         ]);
 

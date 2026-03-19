@@ -8,6 +8,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    availableRoles: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const breadcrumbs = [
@@ -25,6 +29,6 @@ const breadcrumbs = [
         description="编辑基础资料；若修改邮箱，系统会重置验证状态并重新发送验证邮件。"
         :breadcrumbs="breadcrumbs"
     >
-        <UserForm mode="edit" :user="props.user" />
+        <UserForm mode="edit" :user="props.user" :available-roles="props.availableRoles" />
     </AppLayout>
 </template>

@@ -11,6 +11,10 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    availableRoles: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const isEdit = computed(() => props.mode === 'edit');
@@ -19,7 +23,20 @@ const form = useForm({
     name: props.user?.name ?? '',
     email: props.user?.email ?? '',
     password: '',
+    roles: props.user?.roles ?? [],
 });
+
+function toggleRole(roleName, checked) {
+    if (checked) {
+        if (!form.roles.includes(roleName)) {
+            form.roles = [...form.roles, roleName];
+        }
+
+        return;
+    }
+
+    form.roles = form.roles.filter((role) => role !== roleName);
+}
 
 function submit() {
     if (isEdit.value) {
@@ -76,6 +93,39 @@ function submit() {
                         {{ isEdit ? '若修改邮箱，系统会重置验证状态并重新发送验证邮件。' : '创建后将立即发送邮箱验证邮件。' }}
                     </p>
                     <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="space-y-1">
+                        <UiLabel>角色分配</UiLabel>
+                        <p class="text-sm text-slate-500">
+                            首版用户支持多角色，权限全部来源于角色，不直接赋权给用户。
+                        </p>
+                    </div>
+
+                    <div v-if="availableRoles.length" class="grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-2">
+                        <label
+                            v-for="role in availableRoles"
+                            :key="role.name"
+                            class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                        >
+                            <UiCheckbox
+                                :model-value="form.roles.includes(role.name)"
+                                @update:model-value="(checked) => toggleRole(role.name, checked)"
+                            />
+                            <span class="text-sm font-medium text-slate-700">{{ role.name }}</span>
+                        </label>
+                    </div>
+
+                    <UiAlert v-else>
+                        <UiAlertTitle>暂无可分配角色</UiAlertTitle>
+                        <UiAlertDescription>
+                            请先在角色权限模块中创建角色，再为用户分配访问权限。
+                        </UiAlertDescription>
+                    </UiAlert>
+
+                    <p v-if="form.errors.roles" class="text-sm text-red-600">{{ form.errors.roles }}</p>
+                    <p v-if="form.errors['roles.0']" class="text-sm text-red-600">{{ form.errors['roles.0'] }}</p>
                 </div>
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-slate-200 sm:flex-row sm:justify-end">

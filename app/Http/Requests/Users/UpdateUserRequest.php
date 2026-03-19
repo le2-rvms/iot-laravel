@@ -28,6 +28,12 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
             'password' => ['nullable', 'string', Password::defaults()],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => [
+                'string',
+                'distinct',
+                Rule::exists('roles', 'name')->where('guard_name', 'web'),
+            ],
         ];
     }
 }

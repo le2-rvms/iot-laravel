@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'auth' => [
                 'user' => fn () => $request->user()?->only('id', 'name', 'email', 'email_verified_at'),
+                'access' => fn () => PermissionRegistry::accessMap($request->user()),
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success') ?? $request->session()->get('status'),

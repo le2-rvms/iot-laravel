@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -19,6 +20,7 @@ class UserController extends Controller
         $search = trim((string) $request->string('search'));
 
         $users = User::query()
+            ->with('roles:id,name')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($nestedQuery) use ($search) {
                     $nestedQuery
@@ -34,6 +36,7 @@ class UserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at?->toDateTimeString(),
+                'roles' => $user->roles->pluck('name')->sort()->values()->all(),
                 'created_at' => $user->created_at?->toDateTimeString(),
             ]);
 
@@ -47,12 +50,17 @@ class UserController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Users/Create', [
+            'availableRoles' => $this->availableRoles(),
+        ]);
     }
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        $user = User::create($request->validated());
+        $validated = $request->validated();
+        $user = User::create(Arr::except($validated, ['roles']));
+
+        $user->syncRoles($validated['roles'] ?? []);
 
         $user->sendEmailVerificationNotification();
 
@@ -61,13 +69,17 @@ class UserController extends Controller
 
     public function edit(User $user): Response
     {
+        $user->loadMissing('roles:id,name');
+
         return Inertia::render('Users/Edit', [
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at?->toDateTimeString(),
+                'roles' => $user->roles->pluck('name')->sort()->values()->all(),
             ],
+            'availableRoles' => $this->availableRoles(),
         ]);
     }
 
@@ -80,6 +92,9 @@ class UserController extends Controller
             $validated = Arr::except($validated, ['password']);
         }
 
+        $roles = $validated['roles'] ?? [];
+        $validated = Arr::except($validated, ['roles']);
+
         if ($emailChanged) {
             $user->forceFill([
                 'email_verified_at' => null,
@@ -87,6 +102,7 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+        $user->syncRoles($roles);
 
         if ($emailChanged) {
             $user->save();
@@ -101,5 +117,19 @@ class UserController extends Controller
         $user->delete();
 
         return to_route('users.index')->with('success', '用户已删除。');
+    }
+
+    /**
+     * @return array<int, array{name: string}>
+     */
+    protected function availableRoles(): array
+    {
+        return Role::query()
+            ->orderBy('name')
+            ->get(['name'])
+            ->map(fn (Role $role) => [
+                'name' => $role->name,
+            ])
+            ->all();
     }
 }
