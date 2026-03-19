@@ -19,7 +19,10 @@ class SettingsPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Index')
-                ->has('groups', 5));
+                ->has('groups', 5)
+                ->where('groups.2.action_label', '打开 Horizon')
+                ->where('groups.2.native', true)
+                ->where('groups.4.action_label', '打开实验室'));
     }
 
     public function test_users_without_settings_permission_cannot_view_the_settings_page(): void
@@ -105,5 +108,29 @@ class SettingsPageTest extends TestCase
             ])
             ->assertRedirect('/settings/form-lab')
             ->assertSessionHas('success', '复杂表单示例提交成功。');
+    }
+
+    public function test_users_with_settings_permission_can_view_horizon(): void
+    {
+        $user = $this->createUserWithPermissions(['settings.read']);
+
+        $this->actingAs($user)
+            ->get('/horizon')
+            ->assertOk();
+    }
+
+    public function test_users_without_settings_permission_cannot_view_horizon(): void
+    {
+        $user = $this->createUserWithPermissions(['users.read']);
+
+        $this->actingAs($user)
+            ->get('/horizon')
+            ->assertForbidden();
+    }
+
+    public function test_guests_are_redirected_when_visiting_horizon(): void
+    {
+        $this->get('/horizon')
+            ->assertRedirect('/login');
     }
 }

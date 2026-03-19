@@ -33,8 +33,11 @@ const breadcrumbs = [
                 </UiCardHeader>
                 <UiCardContent class="space-y-4 text-sm leading-6 text-slate-500">
                     <p>{{ group.description }}</p>
-                    <UiButton v-if="group.href" as-child variant="outline" class="rounded-xl">
+                    <UiButton v-if="group.href && !group.native" as-child variant="outline" class="rounded-xl">
                         <Link :href="group.href">{{ group.action_label }}</Link>
+                    </UiButton>
+                    <UiButton v-else-if="group.href" as-child variant="outline" class="rounded-xl">
+                        <a :href="group.href">{{ group.action_label }}</a>
                     </UiButton>
                 </UiCardContent>
             </UiCard>

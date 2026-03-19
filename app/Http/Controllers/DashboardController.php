@@ -66,8 +66,8 @@ class DashboardController extends Controller
                 ],
                 [
                     'title' => '监控与队列',
-                    'description' => '后续可平滑接入 Horizon、Pulse、Telescope。',
-                    'status' => '待接入',
+                    'description' => '已接入 Horizon 队列面板，Pulse 与 Telescope 仍可后续扩展。',
+                    'status' => 'Horizon 已接入',
                 ],
             ]),
         ]);

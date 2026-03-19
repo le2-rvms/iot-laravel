@@ -22,7 +22,10 @@ class SettingsController extends Controller
                 ],
                 [
                     'title' => '队列与监控配置',
-                    'description' => '为 Horizon、Pulse、Telescope 等能力预留后台入口。',
+                    'description' => '已接入 Horizon 面板；Pulse 与 Telescope 仍作为后续扩展项。',
+                    'href' => url('/'.trim(config('horizon.path', 'horizon'), '/')),
+                    'action_label' => '打开 Horizon',
+                    'native' => true,
                 ],
                 [
                     'title' => '权限与安全配置',
@@ -33,6 +36,7 @@ class SettingsController extends Controller
                     'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
                     'href' => route('settings.form-lab'),
                     'action_label' => '打开实验室',
+                    'native' => false,
                 ],
             ],
         ]);
