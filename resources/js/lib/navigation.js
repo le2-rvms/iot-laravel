@@ -46,17 +46,19 @@ export const navigationSections = [
     },
 ];
 
+export function canAccessNavigationItem(item, access = {}) {
+    if (!item.can) {
+        return true;
+    }
+
+    return access[item.can] === true;
+}
+
 export function resolveNavigationSections(access = {}) {
     return navigationSections
         .map((section) => ({
             ...section,
-            items: section.items.filter((item) => {
-                if (!item.can) {
-                    return true;
-                }
-
-                return access[item.can] ?? true;
-            }),
+            items: section.items.filter((item) => canAccessNavigationItem(item, access)),
         }))
         .filter((section) => section.items.length > 0);
 }
