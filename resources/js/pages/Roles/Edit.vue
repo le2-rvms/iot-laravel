@@ -1,7 +1,5 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import RoleForm from '@/components/roles/RoleForm.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
     role: {
@@ -29,6 +27,6 @@ const breadcrumbs = [
         description="维护角色名称与读写权限。受保护角色会锁定关键字段。"
         :breadcrumbs="breadcrumbs"
     >
-        <RoleForm mode="edit" :role="role" :permission-groups="permissionGroups" />
+        <RolesForm mode="edit" :role="role" :permission-groups="permissionGroups" />
     </AppLayout>
 </template>

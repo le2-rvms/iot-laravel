@@ -3,10 +3,6 @@ import { computed } from 'vue';
 import { useForm as useVeeForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useInertiaFormBridge } from '@/composables/useInertiaFormBridge';
-import FieldError from '@/components/shared/forms/FieldError.vue';
-import FormFieldShell from '@/components/shared/forms/FormFieldShell.vue';
-import FormSection from '@/components/shared/forms/FormSection.vue';
-import RepeaterField from '@/components/shared/forms/RepeaterField.vue';
 
 const props = defineProps({
     channelTypes: {
@@ -149,18 +145,18 @@ const submit = handleSubmit((formValues) => {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <FormSection title="基础信息" description="演示复杂表单的基础字段、开关与说明文案。">
-            <FormFieldShell label="规则名称" for-id="rule-name" :error="errors.name">
+        <SharedFormsFormSection title="基础信息" description="演示复杂表单的基础字段、开关与说明文案。">
+            <SharedFormsFormFieldShell label="规则名称" for-id="rule-name" :error="errors.name">
                 <UiInput id="rule-name" v-model="name" :aria-invalid="Boolean(errors.name)" />
-            </FormFieldShell>
+            </SharedFormsFormFieldShell>
 
-            <FormFieldShell label="规则说明" for-id="rule-description" :error="errors.description">
+            <SharedFormsFormFieldShell label="规则说明" for-id="rule-description" :error="errors.description">
                 <textarea
                     id="rule-description"
                     v-model="description"
                     class="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-28 w-full rounded-xl border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
                 />
-            </FormFieldShell>
+            </SharedFormsFormFieldShell>
 
             <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
                 <UiCheckbox v-model="enabled" />
@@ -169,10 +165,10 @@ const submit = handleSubmit((formValues) => {
                     <p class="text-xs text-slate-500">关闭后规则仍会保留，但不会参与触发。</p>
                 </div>
             </label>
-        </FormSection>
+        </SharedFormsFormSection>
 
-        <FormSection title="触发规则" description="演示条件联动与 schema 级别的条件校验。">
-            <FormFieldShell label="触发方式" for-id="trigger-mode" :error="errors.trigger_mode">
+        <SharedFormsFormSection title="触发规则" description="演示条件联动与 schema 级别的条件校验。">
+            <SharedFormsFormFieldShell label="触发方式" for-id="trigger-mode" :error="errors.trigger_mode">
                 <select
                     id="trigger-mode"
                     v-model="triggerMode"
@@ -182,9 +178,9 @@ const submit = handleSubmit((formValues) => {
                         {{ mode.label }}
                     </option>
                 </select>
-            </FormFieldShell>
+            </SharedFormsFormFieldShell>
 
-            <FormFieldShell
+            <SharedFormsFormFieldShell
                 v-if="showThreshold"
                 label="触发阈值"
                 for-id="threshold"
@@ -192,10 +188,10 @@ const submit = handleSubmit((formValues) => {
                 :error="errors.threshold"
             >
                 <UiInput id="threshold" v-model="threshold" type="number" min="1" max="1000" />
-            </FormFieldShell>
-        </FormSection>
+            </SharedFormsFormFieldShell>
+        </SharedFormsFormSection>
 
-        <FormSection title="静默时段" description="启用后必须填写开始与结束时间。">
+        <SharedFormsFormSection title="静默时段" description="启用后必须填写开始与结束时间。">
             <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
                 <UiCheckbox v-model="quietHoursEnabled" />
                 <div>
@@ -205,16 +201,16 @@ const submit = handleSubmit((formValues) => {
             </label>
 
             <div v-if="showQuietHours" class="grid gap-4 md:grid-cols-2">
-                <FormFieldShell label="开始时间" for-id="quiet-start" :error="errors.quiet_hours_start">
+                <SharedFormsFormFieldShell label="开始时间" for-id="quiet-start" :error="errors.quiet_hours_start">
                     <UiInput id="quiet-start" v-model="quietHoursStart" type="time" />
-                </FormFieldShell>
-                <FormFieldShell label="结束时间" for-id="quiet-end" :error="errors.quiet_hours_end">
+                </SharedFormsFormFieldShell>
+                <SharedFormsFormFieldShell label="结束时间" for-id="quiet-end" :error="errors.quiet_hours_end">
                     <UiInput id="quiet-end" v-model="quietHoursEnd" type="time" />
-                </FormFieldShell>
+                </SharedFormsFormFieldShell>
             </div>
-        </FormSection>
+        </SharedFormsFormSection>
 
-        <RepeaterField
+        <SharedFormsRepeaterField
             title="通知渠道"
             description="演示 useFieldArray、数组项删除和每项独立校验。"
             add-label="新增渠道"
@@ -244,7 +240,7 @@ const submit = handleSubmit((formValues) => {
                     </UiButton>
                 </UiCardHeader>
                 <UiCardContent class="grid gap-4 md:grid-cols-2">
-                    <FormFieldShell label="渠道类型" :error="errors[`channels[${index}].type`]">
+                    <SharedFormsFormFieldShell label="渠道类型" :error="errors[`channels[${index}].type`]">
                         <select
                             v-model="values.channels[index].type"
                             class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-xl border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
@@ -253,15 +249,15 @@ const submit = handleSubmit((formValues) => {
                                 {{ type.label }}
                             </option>
                         </select>
-                    </FormFieldShell>
+                    </SharedFormsFormFieldShell>
 
-                    <FormFieldShell label="目标" :error="errors[`channels[${index}].target`]">
+                    <SharedFormsFormFieldShell label="目标" :error="errors[`channels[${index}].target`]">
                         <UiInput v-model="values.channels[index].target" />
-                    </FormFieldShell>
+                    </SharedFormsFormFieldShell>
 
-                    <FormFieldShell label="重试次数" :error="errors[`channels[${index}].retries`]">
+                    <SharedFormsFormFieldShell label="重试次数" :error="errors[`channels[${index}].retries`]">
                         <UiInput v-model="values.channels[index].retries" type="number" min="0" max="10" />
-                    </FormFieldShell>
+                    </SharedFormsFormFieldShell>
 
                     <div class="flex items-center">
                         <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
@@ -274,7 +270,7 @@ const submit = handleSubmit((formValues) => {
                     </div>
                 </UiCardContent>
             </UiCard>
-        </RepeaterField>
+        </SharedFormsRepeaterField>
 
         <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
@@ -284,6 +280,6 @@ const submit = handleSubmit((formValues) => {
             </UiCardContent>
         </UiCard>
 
-        <FieldError :message="errors.channels" />
+        <SharedFormsFieldError :message="errors.channels" />
     </form>
 </template>

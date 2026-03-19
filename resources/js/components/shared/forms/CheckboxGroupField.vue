@@ -1,6 +1,4 @@
 <script setup>
-import FormFieldShell from '@/components/shared/forms/FormFieldShell.vue';
-
 defineProps({
     label: {
         type: String,
@@ -28,7 +26,7 @@ const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
-    <FormFieldShell :label="label" :description="description" :error="error">
+    <SharedFormsFormFieldShell :label="label" :description="description" :error="error">
         <div class="grid gap-3 md:grid-cols-2">
             <label
                 v-for="option in options"
@@ -52,5 +50,5 @@ const emit = defineEmits(['update:modelValue']);
                 </div>
             </label>
         </div>
-    </FormFieldShell>
+    </SharedFormsFormFieldShell>
 </template>

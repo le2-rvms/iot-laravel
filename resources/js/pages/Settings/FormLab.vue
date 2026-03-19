@@ -1,7 +1,5 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import NotificationRuleForm from '@/components/settings/NotificationRuleForm.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
     channelTypes: {
@@ -29,6 +27,6 @@ const breadcrumbs = [
         description="使用 vee-validate + yup + Inertia 演示复杂表单的标准实现方式。"
         :breadcrumbs="breadcrumbs"
     >
-        <NotificationRuleForm :channel-types="channelTypes" :trigger-modes="triggerModes" />
+        <SettingsNotificationRuleForm :channel-types="channelTypes" :trigger-modes="triggerModes" />
     </AppLayout>
 </template>

@@ -1,6 +1,4 @@
 <script setup>
-import FieldError from '@/components/shared/forms/FieldError.vue';
-
 defineProps({
     label: {
         type: String,
@@ -27,6 +25,6 @@ defineProps({
         <UiLabel v-else>{{ label }}</UiLabel>
         <slot />
         <p v-if="description" class="text-sm text-slate-500">{{ description }}</p>
-        <FieldError :message="error" />
+        <SharedFormsFieldError :message="error" />
     </div>
 </template>

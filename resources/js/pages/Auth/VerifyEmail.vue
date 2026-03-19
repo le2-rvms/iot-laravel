@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
-import AuthLayout from '@/layouts/AuthLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
 const page = usePage();

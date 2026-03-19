@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import PermissionMatrix from '@/components/roles/PermissionMatrix.vue';
 
 const props = defineProps({
     mode: {
@@ -83,7 +82,7 @@ function submit() {
                         </p>
                     </div>
 
-                    <PermissionMatrix
+                    <RolesPermissionMatrix
                         :groups="permissionGroups"
                         :selected-permissions="form.permissions"
                         :disabled="isProtected"

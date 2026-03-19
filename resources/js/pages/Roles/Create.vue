@@ -1,7 +1,5 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import RoleForm from '@/components/roles/RoleForm.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
     permissionGroups: {
@@ -25,6 +23,6 @@ const breadcrumbs = [
         description="角色决定模块的读写权限，用户通过角色获得后台访问能力。"
         :breadcrumbs="breadcrumbs"
     >
-        <RoleForm mode="create" :permission-groups="permissionGroups" />
+        <RolesForm mode="create" :permission-groups="permissionGroups" />
     </AppLayout>
 </template>

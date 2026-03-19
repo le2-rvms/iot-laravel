@@ -1,9 +1,5 @@
 <script setup>
 import { Deferred, Head, Link } from '@inertiajs/vue3';
-import DataTableShell from '@/components/app/DataTableShell.vue';
-import EmptyState from '@/components/app/EmptyState.vue';
-import LoadingState from '@/components/app/LoadingState.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
     stats: {
@@ -73,7 +69,7 @@ const breadcrumbs = [
 
                 <Deferred data="systemCards">
                     <template #fallback>
-                        <LoadingState :rows="2" />
+                        <AppLoadingState :rows="2" />
                     </template>
 
                     <div class="grid gap-4">
@@ -97,10 +93,10 @@ const breadcrumbs = [
             <section>
                 <Deferred data="recentUsers">
                     <template #fallback>
-                        <LoadingState :rows="4" />
+                        <AppLoadingState :rows="4" />
                     </template>
 
-                    <DataTableShell v-if="recentUsers?.length">
+                    <AppDataTableShell v-if="recentUsers?.length">
                         <div class="border-b border-slate-200 px-6 py-5">
                             <h2 class="text-lg font-semibold text-slate-950">最近创建的用户</h2>
                             <p class="mt-1 text-sm text-slate-500">优先延后加载次级列表数据，优化首屏感知速度。</p>
@@ -127,9 +123,9 @@ const breadcrumbs = [
                                 </UiTableRow>
                             </UiTableBody>
                         </UiTable>
-                    </DataTableShell>
+                    </AppDataTableShell>
 
-                    <EmptyState
+                    <AppEmptyState
                         v-else
                         title="暂无用户数据"
                         description="创建第一个后台用户后，这里会显示最近的入库记录。"

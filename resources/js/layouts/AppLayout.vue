@@ -1,9 +1,4 @@
 <script setup>
-import AppHeader from '@/components/app/AppHeader.vue';
-import AppSidebar from '@/components/app/AppSidebar.vue';
-import ConfirmDialog from '@/components/app/ConfirmDialog.vue';
-import FlashToaster from '@/components/app/FlashToaster.vue';
-
 defineProps({
     title: {
         type: String,
@@ -22,8 +17,8 @@ defineProps({
 
 <template>
     <div class="min-h-screen bg-slate-50 text-slate-950">
-        <FlashToaster />
-        <ConfirmDialog />
+        <AppFlashToaster />
+        <AppConfirmDialog />
 
         <div class="grid min-h-screen lg:grid-cols-[280px_1fr]">
             <aside class="hidden border-r border-slate-200 bg-white lg:block">

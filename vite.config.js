@@ -4,7 +4,6 @@ import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import Components from 'unplugin-vue-components/vite';
-import { uiResolver } from './resources/js/lib/ui-resolver.js';
 
 export default defineConfig({
     plugins: [
@@ -14,8 +13,12 @@ export default defineConfig({
         }),
         vue(),
         Components({
+            dirs: ['resources/js/components', 'resources/js/layouts'],
+            extensions: ['vue'],
+            deep: true,
             dts: false,
-            resolvers: [uiResolver()],
+            directoryAsNamespace: true,
+            collapseSamePrefixes: true,
         }),
         tailwindcss(),
     ],

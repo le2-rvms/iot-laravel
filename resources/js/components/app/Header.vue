@@ -1,8 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { Menu } from 'lucide-vue-next';
-import AppSidebar from '@/components/app/AppSidebar.vue';
-import UserMenu from '@/components/app/UserMenu.vue';
 
 defineProps({
     title: {
@@ -71,7 +69,7 @@ defineProps({
 
             <div class="flex shrink-0 items-center gap-3">
                 <slot name="actions" />
-                <UserMenu />
+                <AppUserMenu />
             </div>
         </div>
     </header>

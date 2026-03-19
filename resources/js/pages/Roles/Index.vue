@@ -1,12 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import DataTableShell from '@/components/app/DataTableShell.vue';
-import EmptyState from '@/components/app/EmptyState.vue';
-import PageToolbar from '@/components/app/PageToolbar.vue';
-import PaginationBar from '@/components/app/PaginationBar.vue';
-import RolesTable from '@/components/roles/RolesTable.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 defineProps({
     roles: {
@@ -33,22 +27,22 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <PageToolbar title="角色列表" description="创建角色并维护模块级读写权限。">
+            <AppPageToolbar title="角色列表" description="创建角色并维护模块级读写权限。">
                 <template #actions v-if="canWrite">
                     <UiButton as-child class="rounded-xl">
                         <Link href="/roles/create">新建角色</Link>
                     </UiButton>
                 </template>
-            </PageToolbar>
+            </AppPageToolbar>
 
-            <DataTableShell v-if="roles.data.length">
+            <AppDataTableShell v-if="roles.data.length">
                 <RolesTable :roles="roles" />
                 <template #footer>
-                    <PaginationBar :links="roles.links" />
+                    <AppPaginationBar :links="roles.links" />
                 </template>
-            </DataTableShell>
+            </AppDataTableShell>
 
-            <EmptyState
+            <AppEmptyState
                 v-else
                 title="还没有角色"
                 description="先创建角色，再把角色分配给后台用户。"
