@@ -1,11 +1,29 @@
 <script setup>
-import * as icons from 'lucide-vue-next';
-import { Link, usePage } from '@inertiajs/vue3';
+import {
+    FileCheck2,
+    LayoutGrid,
+    ScanSearch,
+    ShieldCheck,
+    SlidersHorizontal,
+    SlidersVertical,
+    Users,
+} from "lucide-vue-next";
+import { Link, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
 
+const navigationIcons = {
+    LayoutGrid,
+    Users,
+    ShieldCheck,
+    SlidersHorizontal,
+    SlidersVertical,
+    FileCheck2,
+    ScanSearch,
+};
+
 function isActive(href) {
-    if (href === '/dashboard') {
+    if (href === "/dashboard") {
         return page.url === href;
     }
 
@@ -13,7 +31,7 @@ function isActive(href) {
 }
 
 function resolveNavigationIcon(icon) {
-    return icons[icon] ?? icons.LayoutGrid;
+    return navigationIcons[icon] ?? LayoutGrid;
 }
 </script>
 
@@ -21,14 +39,20 @@ function resolveNavigationIcon(icon) {
     <div class="flex h-full flex-col">
         <div class="border-b border-sidebar-border px-6 py-6">
             <div class="space-y-3">
-                <div class="inline-flex size-11 items-center justify-center rounded-2xl border border-sidebar-border bg-sidebar-accent text-sm font-semibold text-sidebar-primary shadow-sm">
+                <div
+                    class="inline-flex size-11 items-center justify-center rounded-2xl border border-sidebar-border bg-sidebar-accent text-sm font-semibold text-sidebar-primary shadow-sm"
+                >
                     {{ $page.props.app.name?.slice(0, 1) }}
                 </div>
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-sidebar-foreground/60">
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.28em] text-sidebar-foreground/60"
+                    >
                         后台系统
                     </p>
-                    <p class="mt-1 text-lg font-semibold text-sidebar-foreground">
+                    <p
+                        class="mt-1 text-lg font-semibold text-sidebar-foreground"
+                    >
                         {{ $page.props.app.name }}
                     </p>
                 </div>
@@ -41,7 +65,9 @@ function resolveNavigationIcon(icon) {
                 :key="section.title"
                 class="space-y-3"
             >
-                <p class="px-2 text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60">
+                <p
+                    class="px-2 text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60"
+                >
                     {{ section.title }}
                 </p>
 
@@ -62,7 +88,11 @@ function resolveNavigationIcon(icon) {
                         <component
                             :is="resolveNavigationIcon(item.icon)"
                             class="mt-0.5 size-5 shrink-0"
-                            :class="isActive(item.href) ? 'text-sidebar-primary' : 'text-sidebar-foreground/55'"
+                            :class="
+                                isActive(item.href)
+                                    ? 'text-sidebar-primary'
+                                    : 'text-sidebar-foreground/55'
+                            "
                         />
                         <div class="min-w-0">
                             <div class="font-medium">
@@ -70,7 +100,11 @@ function resolveNavigationIcon(icon) {
                             </div>
                             <p
                                 class="mt-1 text-xs leading-5"
-                                :class="isActive(item.href) ? 'text-sidebar-accent-foreground/75' : 'text-sidebar-foreground/60'"
+                                :class="
+                                    isActive(item.href)
+                                        ? 'text-sidebar-accent-foreground/75'
+                                        : 'text-sidebar-foreground/60'
+                                "
                             >
                                 {{ item.description }}
                             </p>
@@ -81,15 +115,25 @@ function resolveNavigationIcon(icon) {
         </div>
 
         <div class="border-t border-sidebar-border px-6 py-5">
-            <div class="rounded-xl border border-sidebar-border bg-sidebar-accent/65 px-4 py-4">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60">
+            <div
+                class="rounded-xl border border-sidebar-border bg-sidebar-accent/65 px-4 py-4"
+            >
+                <p
+                    class="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60"
+                >
                     认证状态
                 </p>
-                <p class="mt-2 text-sm font-medium text-sidebar-accent-foreground">
+                <p
+                    class="mt-2 text-sm font-medium text-sidebar-accent-foreground"
+                >
                     {{ $page.props.auth.user?.name }}
                 </p>
                 <p class="mt-1 text-xs text-sidebar-foreground/60">
-                    邮箱{{ $page.props.auth.user?.email_verified_at ? '已验证' : '待验证' }}
+                    邮箱{{
+                        $page.props.auth.user?.email_verified_at
+                            ? "已验证"
+                            : "待验证"
+                    }}
                 </p>
             </div>
         </div>

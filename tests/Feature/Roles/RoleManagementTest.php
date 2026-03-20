@@ -58,14 +58,14 @@ class RoleManagementTest extends TestCase
         $this->actingAs($user)
             ->put("/roles/{$role->id}", [
                 'name' => 'Operations Updated',
-                'permissions' => ['settings.read'],
+                'permissions' => ['settings-system-config.read'],
             ])
             ->assertRedirect("/roles/{$role->id}/edit");
 
         $role = $role->fresh();
 
         $this->assertSame('Operations Updated', $role->name);
-        $this->assertTrue($role->hasPermissionTo('settings.read'));
+        $this->assertTrue($role->hasPermissionTo('settings-system-config.read'));
         $this->assertFalse($role->hasPermissionTo('user.read'));
     }
 
@@ -78,13 +78,23 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Create')
-                ->has('permissionGroups', 6)
+                ->has('permissionGroups', 7)
                 ->where('permissionGroups', function ($groups): bool {
+                    $applicationGroup = collect($groups)->firstWhere('module', 'settings-application-config');
+                    $systemGroup = collect($groups)->firstWhere('module', 'settings-system-config');
                     $veeValidateGroup = collect($groups)->firstWhere('module', 'settings-vee-validate');
                     $precognitionGroup = collect($groups)->firstWhere('module', 'settings-precognition');
 
-                    return $veeValidateGroup !== null
+                    return $applicationGroup !== null
+                        && $systemGroup !== null
+                        && $veeValidateGroup !== null
                         && $precognitionGroup !== null
+                        && $applicationGroup['label'] === '应用配置'
+                        && $applicationGroup['permissions'][0]['name'] === 'settings-application-config.read'
+                        && $applicationGroup['permissions'][1]['name'] === 'settings-application-config.write'
+                        && $systemGroup['label'] === '系统配置'
+                        && $systemGroup['permissions'][0]['name'] === 'settings-system-config.read'
+                        && $systemGroup['permissions'][1]['name'] === 'settings-system-config.write'
                         && $veeValidateGroup['label'] === '复杂表单实验室'
                         && $veeValidateGroup['permissions'][0]['name'] === 'settings-vee-validate.read'
                         && $veeValidateGroup['permissions'][1]['name'] === 'settings-vee-validate.write'

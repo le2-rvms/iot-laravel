@@ -274,8 +274,8 @@ const submit = handleSubmit((formValues) => {
 
         <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
-                <UiButton type="submit" class="rounded-xl" :disabled="bridge.processing.value">
-                    {{ bridge.processing.value ? '提交中...' : '提交示例表单' }}
+                <UiButton type="submit" class="min-w-40 justify-center rounded-xl" :disabled="bridge.processing.value">
+                    {{ bridge.processing.value ? '提交中' : '提交示例表单' }}
                 </UiButton>
             </UiCardContent>
         </UiCard>

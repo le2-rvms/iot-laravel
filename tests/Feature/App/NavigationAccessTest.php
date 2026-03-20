@@ -25,7 +25,31 @@ class NavigationAccessTest extends TestCase
                 ->where('auth.access', fn ($access) => ($access['dashboard.read'] ?? false) === true
                     && ($access['user.read'] ?? false) === false
                     && ($access['role.read'] ?? false) === false
-                    && ($access['settings.read'] ?? false) === false)
+                    && ($access['settings-system-config.read'] ?? false) === false
+                    && ($access['settings-vee-validate.read'] ?? false) === false)
                 ->where('quickLinks', []));
+    }
+
+    public function test_dashboard_exposes_settings_related_links_directly(): void
+    {
+        $user = $this->createUserWithPermissions([
+            'dashboard.read',
+            'settings-application-config.read',
+            'settings-vee-validate.read',
+            'settings-precognition.read',
+        ]);
+
+        $this->actingAs($user)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Dashboard')
+                ->where('quickLinks', function ($links): bool {
+                    $links = collect($links);
+
+                    return $links->contains(fn (array $link) => $link['title'] === '应用配置' && $link['href'] === '/settings/application-configs')
+                        && $links->contains(fn (array $link) => $link['title'] === 'VeeValidate 实验室' && $link['href'] === '/settings/vee-validate')
+                        && $links->contains(fn (array $link) => $link['title'] === 'Precognition 实验室' && $link['href'] === '/settings/precognition');
+                }));
     }
 }

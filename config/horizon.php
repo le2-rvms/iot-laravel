@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'middleware' => ['web', 'auth', 'verified', 'can:settings.read'],
+    'middleware' => ['web', 'auth', 'verified', 'can:settings-system-config.read'],
 
     /*
     |--------------------------------------------------------------------------

@@ -47,6 +47,11 @@ class DashboardController extends Controller
                     'description' => '已接入 Horizon 队列面板，Pulse 与 Telescope 仍可后续扩展。',
                     'status' => 'Horizon 已接入',
                 ],
+                [
+                    'title' => '邮件与通知配置',
+                    'description' => '后续可接入通知频道、邮件模板与重试策略设置。',
+                    'status' => '规划中',
+                ],
             ]),
         ]);
     }

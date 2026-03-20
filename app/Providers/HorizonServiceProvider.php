@@ -29,7 +29,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewHorizon', function (?User $user = null) {
-            return $user?->can('settings.read') ?? false;
+            return $user?->can('settings-system-config.read') ?? false;
         });
     }
 }

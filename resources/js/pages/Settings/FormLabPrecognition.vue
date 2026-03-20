@@ -10,7 +10,6 @@ defineProps({
 
 const breadcrumbs = [
     { label: '仪表盘', href: '/dashboard' },
-    { label: '系统设置', href: '/settings' },
     { label: 'Precognition 实验室' },
 ];
 </script>

@@ -98,8 +98,8 @@ function submit() {
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
                     <Link href="/roles">返回列表</Link>
                 </UiButton>
-                <UiButton type="submit" class="w-full rounded-xl sm:w-auto" :disabled="form.processing">
-                    {{ form.processing ? '保存中...' : isEdit ? '保存角色' : '创建角色' }}
+                <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
+                    {{ form.processing ? '保存中' : isEdit ? '保存角色' : '创建角色' }}
                 </UiButton>
             </UiCardFooter>
         </UiCard>

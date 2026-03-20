@@ -24,10 +24,12 @@ class PermissionRegistryTest extends TestCase
 
         $this->assertSame('仪表盘', $groups['dashboard']['label']);
         $this->assertSame('用户管理', $groups['user']['label']);
+        $this->assertSame('应用配置', $groups['settings-application-config']['label']);
+        $this->assertSame('系统配置', $groups['settings-system-config']['label']);
         $this->assertSame('复杂表单实验室', $groups['settings-vee-validate']['label']);
         $this->assertSame('Precognition 表单实验室', $groups['settings-precognition']['label']);
         $this->assertEqualsCanonicalizing(
-            ['dashboard.read', 'role.read', 'role.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'settings.read', 'user.read', 'user.write'],
+            ['dashboard.read', 'role.read', 'role.write', 'settings-application-config.read', 'settings-application-config.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-system-config.read', 'settings-system-config.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'user.read', 'user.write'],
             PermissionRegistry::permissionNames(),
         );
     }

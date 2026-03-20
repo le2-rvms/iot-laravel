@@ -21,7 +21,7 @@ class NavigationRegistryTest extends TestCase
         $this->assertSame('/dashboard', $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/users', '/roles', '/settings'],
+            ['/users', '/roles', '/settings/application-configs', '/settings/system-configs'],
             array_column($sections[1]['items'], 'href'),
         );
     }
@@ -54,7 +54,7 @@ class NavigationRegistryTest extends TestCase
 
     public function test_dashboard_quick_links_only_include_allowed_items_marked_for_dashboard(): void
     {
-        $user = $this->createUserWithPermissions(['user.read', 'settings.read']);
+        $user = $this->createUserWithPermissions(['user.read', 'settings-system-config.read', 'settings-vee-validate.read']);
 
         $links = NavigationRegistry::dashboardQuickLinksFor($user);
 
@@ -65,9 +65,14 @@ class NavigationRegistryTest extends TestCase
                 'href' => '/users',
             ],
             [
-                'title' => '系统设置',
-                'description' => '查看配置分组与后续扩展入口。',
-                'href' => '/settings',
+                'title' => '系统配置',
+                'description' => '维护系统层的公共设定、展示策略与后台说明。',
+                'href' => '/settings/system-configs',
+            ],
+            [
+                'title' => 'VeeValidate 实验室',
+                'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                'href' => '/settings/vee-validate',
             ],
         ], $links);
     }

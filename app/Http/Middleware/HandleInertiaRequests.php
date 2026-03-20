@@ -6,6 +6,7 @@ use App\Support\NavigationRegistry;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Str;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -51,7 +52,13 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success') ?? $request->session()->get('status'),
+                'success_key' => fn () => ($request->session()->has('success') || $request->session()->has('status'))
+                    ? Str::uuid()->toString()
+                    : null,
                 'error' => fn () => $request->session()->get('error'),
+                'error_key' => fn () => $request->session()->has('error')
+                    ? Str::uuid()->toString()
+                    : null,
             ],
         ];
     }

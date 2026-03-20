@@ -7,7 +7,7 @@ use App\Models\Auth\User;
 class NavigationRegistry
 {
     /**
-     * @return array<int, array{title: string, items: array<int, array{title: string, description: string, href: string, icon: string, permission?: string, show_in_dashboard?: bool, dashboard_description?: string}>}>
+     * @return array<int, array{title: string, items: array<int, array{title: string, description: string, href: string, icon: string, permission?: string, show_in_sidebar?: bool, show_in_dashboard?: bool, dashboard_description?: string}>}>
      */
     protected static function definitions(): array
     {
@@ -47,12 +47,41 @@ class NavigationRegistry
                         'show_in_dashboard' => true,
                     ],
                     [
-                        'title' => '系统设置',
-                        'description' => '查看系统配置分组与后续扩展入口。',
-                        'dashboard_description' => '查看配置分组与后续扩展入口。',
-                        'href' => '/settings',
-                        'icon' => 'Settings',
-                        'permission' => 'settings.read',
+                        'title' => '应用配置',
+                        'description' => '维护应用层的可配置键值、打码策略与备注说明。',
+                        'dashboard_description' => '维护应用层的可配置键值、打码策略与备注说明。',
+                        'href' => '/settings/application-configs',
+                        'icon' => 'SlidersHorizontal',
+                        'permission' => 'settings-application-config.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
+                        'title' => '系统配置',
+                        'description' => '维护系统层的公共设定、展示策略与后台说明。',
+                        'dashboard_description' => '维护系统层的公共设定、展示策略与后台说明。',
+                        'href' => '/settings/system-configs',
+                        'icon' => 'SlidersVertical',
+                        'permission' => 'settings-system-config.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
+                        'title' => 'VeeValidate 实验室',
+                        'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                        'dashboard_description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                        'href' => '/settings/vee-validate',
+                        'icon' => 'FileCheck2',
+                        'permission' => 'settings-vee-validate.read',
+                        'show_in_sidebar' => false,
+                        'show_in_dashboard' => true,
+                    ],
+                    [
+                        'title' => 'Precognition 实验室',
+                        'description' => '查看服务端实时预校验与最终提交共用规则的表单接入示例。',
+                        'dashboard_description' => '查看服务端实时预校验与最终提交共用规则的表单接入示例。',
+                        'href' => '/settings/precognition',
+                        'icon' => 'ScanSearch',
+                        'permission' => 'settings-precognition.read',
+                        'show_in_sidebar' => false,
                         'show_in_dashboard' => true,
                     ],
                 ],
@@ -70,7 +99,7 @@ class NavigationRegistry
                 return [
                     'title' => $section['title'],
                     'items' => collect($section['items'])
-                        ->filter(fn (array $item): bool => self::canAccess($item, $user))
+                        ->filter(fn (array $item): bool => ($item['show_in_sidebar'] ?? true) && self::canAccess($item, $user))
                         ->map(fn (array $item): array => [
                             'title' => $item['title'],
                             'description' => $item['description'],

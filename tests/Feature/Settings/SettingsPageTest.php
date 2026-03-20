@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Settings;
 
+use App\Models\Settings\Config;
+use App\Values\Settings\ConfigCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -9,82 +11,6 @@ use Tests\TestCase;
 class SettingsPageTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_users_with_settings_read_permission_can_view_the_settings_page(): void
-    {
-        $user = $this->createUserWithPermissions(['settings.read', 'settings-vee-validate.read', 'settings-precognition.read']);
-
-        $this->actingAs($user)
-            ->get('/settings')
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Index')
-                ->has('groups', 6)
-                ->where('groups', function ($groups): bool {
-                    $groups = collect($groups);
-
-                    return $groups->contains(fn (array $group) => $group['title'] === 'VeeValidate 实验室' && $group['href'] === route('vee-validate.index'))
-                        && $groups->contains(fn (array $group) => $group['title'] === 'Precognition 实验室' && $group['href'] === route('precognition.index'))
-                        && $groups->contains(fn (array $group) => ($group['action_label'] ?? null) === '打开 Horizon' && ($group['native'] ?? null) === true);
-                }));
-    }
-
-    public function test_settings_page_hides_form_lab_entry_without_form_lab_permission(): void
-    {
-        $user = $this->createUserWithPermissions(['settings.read']);
-
-        $this->actingAs($user)
-            ->get('/settings')
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Index')
-                ->has('groups', 4));
-    }
-
-    public function test_settings_page_only_shows_vee_validate_lab_when_precognition_permission_is_missing(): void
-    {
-        $user = $this->createUserWithPermissions(['settings.read', 'settings-vee-validate.read']);
-
-        $this->actingAs($user)
-            ->get('/settings')
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Index')
-                ->has('groups', 5)
-                ->where('groups', function ($groups): bool {
-                    $groups = collect($groups);
-
-                    return $groups->contains(fn (array $group) => $group['title'] === 'VeeValidate 实验室' && $group['href'] === route('vee-validate.index'))
-                        && ! $groups->contains(fn (array $group) => $group['title'] === 'Precognition 实验室');
-                }));
-    }
-
-    public function test_settings_page_only_shows_precognition_lab_when_vee_validate_permission_is_missing(): void
-    {
-        $user = $this->createUserWithPermissions(['settings.read', 'settings-precognition.read']);
-
-        $this->actingAs($user)
-            ->get('/settings')
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Index')
-                ->has('groups', 5)
-                ->where('groups', function ($groups): bool {
-                    $groups = collect($groups);
-
-                    return ! $groups->contains(fn (array $group) => $group['title'] === 'VeeValidate 实验室' && $group['href'] === route('vee-validate.index'))
-                        && $groups->contains(fn (array $group) => $group['title'] === 'Precognition 实验室' && $group['href'] === route('precognition.index'));
-                }));
-    }
-
-    public function test_users_without_settings_permission_cannot_view_the_settings_page(): void
-    {
-        $user = $this->createUserWithPermissions(['user.read']);
-
-        $this->actingAs($user)
-            ->get('/settings')
-            ->assertForbidden();
-    }
 
     public function test_users_with_form_lab_read_permission_can_view_form_lab_page(): void
     {
@@ -360,9 +286,9 @@ class SettingsPageTest extends TestCase
         }
     }
 
-    public function test_users_with_settings_permission_can_view_horizon(): void
+    public function test_users_with_system_config_permission_can_view_horizon(): void
     {
-        $user = $this->createUserWithPermissions(['settings.read']);
+        $user = $this->createUserWithPermissions(['settings-system-config.read']);
 
         $this->actingAs($user)
             ->get('/horizon')
@@ -382,5 +308,302 @@ class SettingsPageTest extends TestCase
     {
         $this->get('/horizon')
             ->assertRedirect('/login');
+    }
+
+    public function test_users_with_application_config_read_permission_can_view_the_application_config_index(): void
+    {
+        Config::query()->create([
+            'key' => 'app.name',
+            'value' => 'IoT Admin',
+            'category' => ConfigCategory::APPLICATION,
+            'is_masked' => false,
+            'remark' => '应用名称',
+        ]);
+
+        $user = $this->createUserWithPermissions(['settings-application-config.read']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Index')
+                ->where('category', ConfigCategory::APPLICATION)
+                ->where('configs.data.0.key', 'app.name')
+                ->where('configs.data.0.value_display', 'IoT Admin'));
+    }
+
+    public function test_users_with_system_config_read_permission_can_view_the_system_config_index(): void
+    {
+        Config::query()->create([
+            'key' => 'system.notice',
+            'value' => '维护中',
+            'category' => ConfigCategory::SYSTEM,
+            'is_masked' => false,
+            'remark' => '系统公告',
+        ]);
+
+        $user = $this->createUserWithPermissions(['settings-system-config.read']);
+
+        $this->actingAs($user)
+            ->get(route('system-configs.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Index')
+                ->where('category', ConfigCategory::SYSTEM)
+                ->where('configs.data.0.key', 'system.notice'));
+    }
+
+    public function test_users_without_application_config_permission_cannot_view_the_application_config_index(): void
+    {
+        $user = $this->createUserWithPermissions(['user.read']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.index'))
+            ->assertForbidden();
+    }
+
+    public function test_users_without_system_config_permission_cannot_view_the_system_config_index(): void
+    {
+        $user = $this->createUserWithPermissions(['user.read']);
+
+        $this->actingAs($user)
+            ->get(route('system-configs.index'))
+            ->assertForbidden();
+    }
+
+    public function test_setting_write_permissions_control_create_edit_and_mutations(): void
+    {
+        $applicationConfig = Config::query()->create([
+            'key' => 'app.secret',
+            'value' => 'token',
+            'category' => ConfigCategory::APPLICATION,
+            'is_masked' => true,
+            'remark' => '应用密钥',
+        ]);
+        $readOnlyUser = $this->createUserWithPermissions(['settings-application-config.read']);
+        $writeUser = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $this->actingAs($readOnlyUser)
+            ->get(route('application-configs.create'))
+            ->assertForbidden();
+
+        $this->actingAs($readOnlyUser)
+            ->post(route('application-configs.store'), [
+                'key' => 'app.locale',
+                'value' => 'zh_CN',
+                'is_masked' => false,
+                'remark' => '默认语言',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($writeUser)
+            ->get(route('application-configs.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Create')
+                ->where('category', ConfigCategory::APPLICATION));
+
+        $this->actingAs($writeUser)
+            ->get(route('application-configs.edit', $applicationConfig))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Edit')
+                ->where('config.key', 'app.secret'));
+    }
+
+    public function test_application_config_list_search_only_matches_key_and_remark(): void
+    {
+        Config::query()->create([
+            'key' => 'app.name',
+            'value' => 'IoT Admin',
+            'category' => ConfigCategory::APPLICATION,
+            'is_masked' => false,
+            'remark' => '应用名称',
+        ]);
+        Config::query()->create([
+            'key' => 'app.secret',
+            'value' => 'token-123',
+            'category' => ConfigCategory::APPLICATION,
+            'is_masked' => true,
+            'remark' => '鉴权密钥',
+        ]);
+
+        $user = $this->createUserWithPermissions(['settings-application-config.read']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.index', ['search' => '密钥']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Index')
+                ->has('configs.data', 1)
+                ->where('configs.data.0.key', 'app.secret')
+                ->where('configs.data.0.value_display', '*****'));
+    }
+
+    public function test_application_config_can_be_created_with_write_permission(): void
+    {
+        $user = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $this->actingAs($user)
+            ->post(route('application-configs.store'), [
+                'key' => 'app.theme',
+                'value' => 'neutral',
+                'is_masked' => false,
+                'remark' => '默认主题',
+            ])
+            ->assertRedirect(route('application-configs.index'))
+            ->assertSessionHas('success', '应用配置已创建。');
+
+        $this->assertDatabaseHas('configs', [
+            'key' => 'app.theme',
+            'category' => ConfigCategory::APPLICATION,
+        ]);
+    }
+
+    public function test_application_config_store_supports_precognition_for_requested_field_errors(): void
+    {
+        $user = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $response = $this->actingAs($user)
+            ->withPrecognition()
+            ->postJson(route('application-configs.store'), [
+                'key' => '',
+                'value' => '',
+                'is_masked' => false,
+                'remark' => '',
+            ], [
+                'Precognition-Validate-Only' => 'key',
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertHeader('Precognition', 'true');
+        $response->assertJsonPath('errors.key.0', '配置键 不能为空。');
+        $response->assertJsonMissingPath('errors.value');
+        $response->assertJsonMissingPath('errors.remark');
+    }
+
+    public function test_system_config_can_be_updated_with_write_permission(): void
+    {
+        $config = Config::query()->create([
+            'key' => 'system.notice',
+            'value' => '旧公告',
+            'category' => ConfigCategory::SYSTEM,
+            'is_masked' => false,
+            'remark' => '系统公告',
+        ]);
+        $user = $this->createUserWithPermissions(['settings-system-config.write']);
+
+        $this->actingAs($user)
+            ->put(route('system-configs.update', $config), [
+                'key' => 'system.notice',
+                'value' => '新公告',
+                'is_masked' => true,
+                'remark' => '新的系统公告',
+            ])
+            ->assertRedirect(route('system-configs.index'))
+            ->assertSessionHas('success', '系统配置已更新。');
+
+        $this->assertDatabaseHas('configs', [
+            'id' => $config->id,
+            'value' => '新公告',
+            'is_masked' => true,
+        ]);
+    }
+
+    public function test_system_config_update_supports_successful_precognition_validation(): void
+    {
+        $config = Config::query()->create([
+            'key' => 'system.notice',
+            'value' => '旧公告',
+            'category' => ConfigCategory::SYSTEM,
+            'is_masked' => false,
+            'remark' => '系统公告',
+        ]);
+        $user = $this->createUserWithPermissions(['settings-system-config.write']);
+
+        $this->actingAs($user)
+            ->withPrecognition()
+            ->putJson(route('system-configs.update', $config), [
+                'key' => 'system.notice',
+                'value' => '新公告',
+                'is_masked' => true,
+                'remark' => '新的系统公告',
+            ], [
+                'Precognition-Validate-Only' => 'value',
+            ])
+            ->assertSuccessfulPrecognition();
+    }
+
+    public function test_application_config_can_be_deleted_with_write_permission(): void
+    {
+        $config = Config::query()->create([
+            'key' => 'app.locale',
+            'value' => 'zh_CN',
+            'category' => ConfigCategory::APPLICATION,
+            'is_masked' => false,
+            'remark' => '默认语言',
+        ]);
+        $user = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $this->actingAs($user)
+            ->delete(route('application-configs.destroy', $config))
+            ->assertRedirect(route('application-configs.index'))
+            ->assertSessionHas('success', '应用配置已删除。');
+
+        $this->assertDatabaseMissing('configs', [
+            'id' => $config->id,
+        ]);
+    }
+
+    public function test_category_mismatch_returns_not_found_for_edit_update_and_destroy(): void
+    {
+        $config = Config::query()->create([
+            'key' => 'system.secret',
+            'value' => '123',
+            'category' => ConfigCategory::SYSTEM,
+            'is_masked' => true,
+            'remark' => '系统密钥',
+        ]);
+        $user = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.edit', $config))
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->put(route('application-configs.update', $config), [
+                'key' => 'system.secret',
+                'value' => '456',
+                'is_masked' => true,
+                'remark' => '系统密钥',
+            ])
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->delete(route('application-configs.destroy', $config))
+            ->assertNotFound();
+    }
+
+    public function test_setting_validation_errors_are_returned_in_chinese(): void
+    {
+        $user = $this->createUserWithPermissions(['settings-application-config.write']);
+
+        $this->actingAs($user)
+            ->from(route('application-configs.create'))
+            ->post(route('application-configs.store'), [
+                'key' => '',
+                'value' => '',
+                'is_masked' => '',
+                'remark' => '',
+            ])
+            ->assertRedirect(route('application-configs.create'))
+            ->assertSessionHasErrors(['key', 'value', 'is_masked', 'remark']);
+
+        $errors = session('errors')->getBag('default');
+
+        $this->assertSame('配置键 不能为空。', $errors->first('key'));
+        $this->assertSame('配置值 不能为空。', $errors->first('value'));
+        $this->assertSame('是否打码 不能为空。', $errors->first('is_masked'));
+        $this->assertSame('备注 不能为空。', $errors->first('remark'));
     }
 }
