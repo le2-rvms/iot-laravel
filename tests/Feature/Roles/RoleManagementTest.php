@@ -22,6 +22,7 @@ class RoleManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Index')
                 ->has('roles.data')
+                ->where('roles.data.0.permissions.0', '仪表盘 · 读取')
                 ->where('auth.access', fn ($access) => ($access['role.read'] ?? false) === true));
     }
 
@@ -115,7 +116,7 @@ class RoleManagementTest extends TestCase
     public function test_super_admin_role_cannot_be_deleted(): void
     {
         $admin = $this->createSuperAdmin();
-        $superAdminRole = Role::findByName(PermissionRegistry::superAdminRole(), 'web');
+        $superAdminRole = Role::findByName(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
         $rolesTable = config('permission.table_names.roles');
 
         $this->actingAs($admin)
@@ -123,7 +124,7 @@ class RoleManagementTest extends TestCase
             ->assertRedirect('/roles');
 
         $this->assertDatabaseHas($rolesTable, [
-            'name' => PermissionRegistry::superAdminRole(),
+            'name' => PermissionRegistry::SUPER_ADMIN_ROLE,
         ]);
     }
 

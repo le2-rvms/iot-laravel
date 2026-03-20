@@ -19,6 +19,8 @@ class RoleController extends Controller
     #[PermissionAction('read')]
     public function index(): Response
     {
+        $permissionLabels = PermissionRegistry::permissionLabels();
+
         $roles = Role::query()
             ->withCount('users')
             ->with('permissions:id,name')
@@ -30,8 +32,13 @@ class RoleController extends Controller
                 'name' => $role->name,
                 'users_count' => $role->users_count,
                 'permissions_count' => $role->permissions->count(),
-                'permissions' => $role->permissions->pluck('name')->sort()->values()->all(),
-                'is_protected' => $role->name === PermissionRegistry::superAdminRole(),
+                'permissions' => $role->permissions
+                    ->pluck('name')
+                    ->sort()
+                    ->map(fn (string $permission) => $permissionLabels[$permission] ?? $permission)
+                    ->values()
+                    ->all(),
+                'is_protected' => $role->name === PermissionRegistry::SUPER_ADMIN_ROLE,
                 'created_at' => $role->created_at?->toDateTimeString(),
             ]);
 
@@ -44,7 +51,7 @@ class RoleController extends Controller
     public function create(): Response
     {
         return Inertia::render('Roles/Create', [
-            'permissionGroups' => PermissionRegistry::groupedForFrontend(),
+            'permissionGroups' => PermissionRegistry::definitions(),
         ]);
     }
 
@@ -69,12 +76,12 @@ class RoleController extends Controller
         $role->loadMissing('permissions:id,name');
 
         return Inertia::render('Roles/Edit', [
-            'permissionGroups' => PermissionRegistry::groupedForFrontend(),
+            'permissionGroups' => PermissionRegistry::definitions(),
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
                 'permissions' => $role->permissions->pluck('name')->sort()->values()->all(),
-                'is_protected' => $role->name === PermissionRegistry::superAdminRole(),
+                'is_protected' => $role->name === PermissionRegistry::SUPER_ADMIN_ROLE,
             ],
         ]);
     }
@@ -83,13 +90,17 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $validated = $request->validated();
-        $isProtected = $role->name === PermissionRegistry::superAdminRole();
+        $isProtected = $role->name === PermissionRegistry::SUPER_ADMIN_ROLE;
 
         $role->update([
             'name' => $isProtected ? $role->name : $validated['name'],
         ]);
 
-        $role->syncPermissions($isProtected ? PermissionRegistry::all() : ($validated['permissions'] ?? []));
+        $role->syncPermissions(
+            $isProtected
+                ? PermissionRegistry::permissionNames()
+                : ($validated['permissions'] ?? []),
+        );
 
         return to_route('roles.edit', $role)->with('success', '角色已更新。');
     }
@@ -97,7 +108,7 @@ class RoleController extends Controller
     #[PermissionAction('write')]
     public function destroy(Role $role): RedirectResponse
     {
-        if ($role->name === PermissionRegistry::superAdminRole()) {
+        if ($role->name === PermissionRegistry::SUPER_ADMIN_ROLE) {
             return to_route('roles.index')->with('error', 'Super Admin 角色不可删除。');
         }
 

@@ -20,7 +20,7 @@ class PermissionRegistryTest extends TestCase
 
     public function test_it_discovers_permissions_from_controller_attributes(): void
     {
-        $groups = collect(PermissionRegistry::groupedForFrontend())->keyBy('module');
+        $groups = collect(PermissionRegistry::definitions())->keyBy('module');
 
         $this->assertSame('仪表盘', $groups['dashboard']['label']);
         $this->assertSame('用户管理', $groups['user']['label']);
@@ -28,18 +28,19 @@ class PermissionRegistryTest extends TestCase
         $this->assertSame('Precognition 表单实验室', $groups['settings-precognition']['label']);
         $this->assertEqualsCanonicalizing(
             ['dashboard.read', 'role.read', 'role.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'settings.read', 'user.read', 'user.write'],
-            PermissionRegistry::all(),
+            PermissionRegistry::permissionNames(),
         );
     }
 
     public function test_it_returns_frontend_permission_groups_with_action_labels(): void
     {
-        $groups = PermissionRegistry::groupedForFrontend();
+        $groups = PermissionRegistry::definitions();
         $userGroup = collect($groups)->firstWhere('module', 'user');
 
         $this->assertSame('用户管理', $userGroup['label']);
         $this->assertSame('读取', $userGroup['permissions'][0]['action_label']);
         $this->assertSame('写入', $userGroup['permissions'][1]['action_label']);
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
     }
 
     public function test_it_resolves_permission_names_for_controller_actions(): void

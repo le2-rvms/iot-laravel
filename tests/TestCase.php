@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
         $this->seedPermissions();
 
         $user = User::factory()->create($attributes);
-        $user->assignRole(PermissionRegistry::superAdminRole());
+        $user->assignRole(PermissionRegistry::SUPER_ADMIN_ROLE);
 
         return $user;
     }

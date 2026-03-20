@@ -13,16 +13,18 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        $permissionNames = PermissionRegistry::permissionNames();
+
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        foreach (PermissionRegistry::all() as $permissionName) {
+        foreach ($permissionNames as $permissionName) {
             Permission::findOrCreate($permissionName, 'web');
         }
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $superAdmin = Role::findOrCreate(PermissionRegistry::superAdminRole(), 'web');
-        $superAdmin->syncPermissions(PermissionRegistry::all());
+        $superAdmin = Role::findOrCreate(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
+        $superAdmin->syncPermissions($permissionNames);
 
         $admin = User::query()->where('email', 'admin@example.com')->first();
 

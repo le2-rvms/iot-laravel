@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, string $ability) {
-            return $user->hasRole(PermissionRegistry::superAdminRole()) ? true : null;
+            return $user->hasRole(PermissionRegistry::SUPER_ADMIN_ROLE) ? true : null;
         });
     }
 }

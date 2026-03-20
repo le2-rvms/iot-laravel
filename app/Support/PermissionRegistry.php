@@ -33,27 +33,81 @@ class PermissionRegistry
 
     /**
      * @var array{
-     *     all: array<int, string>,
-     *     frontend: array<int, array{module: string, label: string, permissions: array<int, array{name: string, action: string, action_label: string}>>>,
+     *     module: string,
+     *     label: string,
+     *     permissions: array<int, array{name: string, action: string, action_label: string}>,
      *     actions: array<string, string>
      * }|null
      */
     private static ?array $cache = null;
 
     /**
-     * @return array<int, string>
+     * @return array<int, array{
+     *     module: string,
+     *     label: string,
+     *     permissions: array<int, array{name: string, action: string, action_label: string}>,
+     *     actions: array<string, string>
+     * }>
      */
-    public static function all(): array
+    public static function definitions(): array
     {
-        return self::scan()['all'];
+        if (self::$cache !== null) {
+            return self::$cache;
+        }
+
+        $definitions = [];
+
+        foreach (File::allFiles(app_path('Http/Controllers')) as $file) {
+            $className = self::classFromControllerFile($file->getRealPath());
+
+            if (! class_exists($className)) {
+                continue;
+            }
+
+            $definition = self::describeController(new ReflectionClass($className));
+
+            if (! $definition) {
+                continue;
+            }
+
+            $definitions[$className] = $definition;
+        }
+
+        ksort($definitions);
+
+        return self::$cache = array_values($definitions);
     }
 
     /**
-     * @return array<int, array{module: string, label: string, permissions: array<int, array{name: string, action: string, action_label: string}>}>
+     * @return array<int, string>
      */
-    public static function groupedForFrontend(): array
+    public static function permissionNames(): array
     {
-        return self::scan()['frontend'];
+        $names = [];
+
+        foreach (self::definitions() as $definition) {
+            foreach ($definition['permissions'] as $permission) {
+                $names[] = $permission['name'];
+            }
+        }
+
+        return $names;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function permissionLabels(): array
+    {
+        $labels = [];
+
+        foreach (self::definitions() as $definition) {
+            foreach ($definition['permissions'] as $permission) {
+                $labels[$permission['name']] = "{$definition['label']} · {$permission['action_label']}";
+            }
+        }
+
+        return $labels;
     }
 
     /**
@@ -65,20 +119,19 @@ class PermissionRegistry
             return [];
         }
 
-        return collect(self::all())
-            ->mapWithKeys(fn (string $permission) => [$permission => $user->can($permission)])
-            ->all();
-    }
+        $access = [];
 
-    public static function superAdminRole(): string
-    {
-        return self::SUPER_ADMIN_ROLE;
+        foreach (self::permissionNames() as $permission) {
+            $access[$permission] = $user->can($permission);
+        }
+
+        return $access;
     }
 
     public static function permissionForControllerAction(string $controllerClass, string $actionMethod): string
     {
         $actionKey = self::actionKey($controllerClass, $actionMethod);
-        $actions = self::scan()['actions'];
+        $actions = self::actionPermissions();
 
         if (isset($actions[$actionKey])) {
             return $actions[$actionKey];
@@ -109,61 +162,6 @@ class PermissionRegistry
     public static function flushCache(): void
     {
         self::$cache = null;
-    }
-
-    /**
-     * @return array{name: string, action: string, action_label: string}
-     */
-    protected static function permission(string $name, string $action, string $actionLabel): array
-    {
-        return [
-            'name' => $name,
-            'action' => $action,
-            'action_label' => $actionLabel,
-        ];
-    }
-
-    /**
-     * @return array{
-     *     all: array<int, string>,
-     *     frontend: array<int, array{module: string, label: string, permissions: array<int, array{name: string, action: string, action_label: string}>>>,
-     *     actions: array<string, string>
-     * }
-     */
-    private static function scan(): array
-    {
-        return self::$cache ??= self::discoverRegistryData();
-    }
-
-    /**
-     * @return array{
-     *     all: array<int, string>,
-     *     frontend: array<int, array{module: string, label: string, permissions: array<int, array{name: string, action: string, action_label: string}>>>,
-     *     actions: array<string, string>
-     * }
-     */
-    private static function discoverRegistryData(): array
-    {
-        $groups = collect(File::allFiles(app_path('Http/Controllers')))
-            ->map(fn (\SplFileInfo $file) => self::classFromControllerFile($file->getRealPath()))
-            ->filter(fn (string $className) => class_exists($className))
-            ->sort()
-            ->map(fn (string $className) => self::describeController(new ReflectionClass($className)))
-            ->filter()
-            ->values();
-
-        return [
-            'all' => $groups
-                ->flatMap(fn (array $group) => collect($group['permissions'])->pluck('name'))
-                ->values()
-                ->all(),
-            'frontend' => $groups
-                ->values()
-                ->all(),
-            'actions' => $groups
-                ->flatMap(fn (array $group) => $group['actions'])
-                ->all(),
-        ];
     }
 
     /**
@@ -199,11 +197,11 @@ class PermissionRegistry
             }
 
             $action = $actionAttribute->newInstance()->action;
-            $permission = self::permission(
-                self::permissionName($module, $action),
-                $action,
-                self::ACTION_LABELS[$action],
-            );
+            $permission = [
+                'name' => self::permissionName($module, $action),
+                'action' => $action,
+                'action_label' => self::ACTION_LABELS[$action],
+            ];
 
             $permissions[$permission['name']] = $permission;
             $actions[self::actionKey($reflection->getName(), $method->getName())] = $permission['name'];
@@ -255,5 +253,19 @@ class PermissionRegistry
         $controllerClass = ltrim($controllerClass, '\\');
 
         return "{$controllerClass}@{$actionMethod}";
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function actionPermissions(): array
+    {
+        $actions = [];
+
+        foreach (self::definitions() as $definition) {
+            $actions += $definition['actions'];
+        }
+
+        return $actions;
     }
 }
