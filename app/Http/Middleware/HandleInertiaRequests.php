@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\NavigationRegistry;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -40,6 +41,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'app' => [
                 'name' => config('app.name'),
+            ],
+            'navigation' => [
+                'sections' => fn () => NavigationRegistry::sidebarFor($request->user()),
             ],
             'auth' => [
                 'user' => fn () => $request->user()?->only('id', 'name', 'email', 'email_verified_at'),

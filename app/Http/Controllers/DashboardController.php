@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
 use App\Models\Auth\User;
+use App\Support\NavigationRegistry;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,33 +21,7 @@ class DashboardController extends Controller
             'stats' => [
                 'usersCount' => User::count(),
             ],
-            'quickLinks' => collect([
-                [
-                    'title' => '用户管理',
-                    'description' => '维护后台用户、邮箱验证状态与基础资料。',
-                    'href' => '/users',
-                    'permission' => 'user.read',
-                ],
-                [
-                    'title' => '角色权限',
-                    'description' => '维护角色与模块读写权限的映射关系。',
-                    'href' => '/roles',
-                    'permission' => 'role.read',
-                ],
-                [
-                    'title' => '系统设置',
-                    'description' => '查看配置分组与后续扩展入口。',
-                    'href' => '/settings',
-                    'permission' => 'settings.read',
-                ],
-            ])->filter(fn (array $link) => $user?->can($link['permission']))
-                ->map(fn (array $link) => [
-                    'title' => $link['title'],
-                    'description' => $link['description'],
-                    'href' => $link['href'],
-                ])
-                ->values()
-                ->all(),
+            'quickLinks' => NavigationRegistry::dashboardQuickLinksFor($user),
             'recentUsers' => Inertia::defer(fn () => User::query()
                 ->with('roles:id,name')
                 ->latest()

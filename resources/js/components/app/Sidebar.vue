@@ -1,11 +1,8 @@
 <script setup>
-import { computed } from 'vue';
+import * as icons from 'lucide-vue-next';
 import { Link, usePage } from '@inertiajs/vue3';
-import { resolveNavigationSections } from '@/lib/navigation';
 
 const page = usePage();
-
-const sections = computed(() => resolveNavigationSections(page.props.auth?.access ?? {}));
 
 function isActive(href) {
     if (href === '/dashboard') {
@@ -13,6 +10,10 @@ function isActive(href) {
     }
 
     return page.url === href || page.url.startsWith(`${href}/`);
+}
+
+function resolveNavigationIcon(icon) {
+    return icons[icon] ?? icons.LayoutGrid;
 }
 </script>
 
@@ -36,7 +37,7 @@ function isActive(href) {
 
         <div class="flex-1 space-y-8 overflow-y-auto px-4 py-6">
             <section
-                v-for="section in sections"
+                v-for="section in $page.props.navigation?.sections ?? []"
                 :key="section.title"
                 class="space-y-3"
             >
@@ -59,7 +60,7 @@ function isActive(href) {
                         ]"
                     >
                         <component
-                            :is="item.icon"
+                            :is="resolveNavigationIcon(item.icon)"
                             class="mt-0.5 size-5 shrink-0"
                             :class="isActive(item.href) ? 'text-white' : 'text-slate-500'"
                         />
