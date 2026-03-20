@@ -40,20 +40,20 @@ defineProps({
 
                 <UiBreadcrumb v-if="breadcrumbs.length" class="mb-2">
                     <UiBreadcrumbList>
-                        <UiBreadcrumbItem
-                            v-for="item in breadcrumbs"
-                            :key="item.label"
-                        >
-                            <UiBreadcrumbLink
-                                v-if="item.href"
-                                as-child
-                            >
-                                <Link :href="item.href">{{ item.label }}</Link>
-                            </UiBreadcrumbLink>
-                            <UiBreadcrumbPage v-else>
-                                {{ item.label }}
-                            </UiBreadcrumbPage>
-                        </UiBreadcrumbItem>
+                        <template v-for="(item, index) in breadcrumbs" :key="item.href ?? item.label">
+                            <UiBreadcrumbItem>
+                                <UiBreadcrumbLink
+                                    v-if="item.href"
+                                    as-child
+                                >
+                                    <Link :href="item.href">{{ item.label }}</Link>
+                                </UiBreadcrumbLink>
+                                <UiBreadcrumbPage v-else>
+                                    {{ item.label }}
+                                </UiBreadcrumbPage>
+                            </UiBreadcrumbItem>
+                            <UiBreadcrumbSeparator v-if="index < breadcrumbs.length - 1" />
+                        </template>
                     </UiBreadcrumbList>
                 </UiBreadcrumb>
 
