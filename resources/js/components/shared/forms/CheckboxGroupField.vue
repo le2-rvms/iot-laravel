@@ -31,7 +31,7 @@ const emit = defineEmits(['update:modelValue']);
             <label
                 v-for="option in options"
                 :key="option.value"
-                class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3"
             >
                 <UiCheckbox
                     :model-value="modelValue.includes(option.value)"
@@ -45,8 +45,8 @@ const emit = defineEmits(['update:modelValue']);
                     "
                 />
                 <div>
-                    <p class="text-sm font-medium text-slate-800">{{ option.label }}</p>
-                    <p v-if="option.description" class="text-xs text-slate-500">{{ option.description }}</p>
+                    <p class="app-copy-strong text-sm font-medium">{{ option.label }}</p>
+                    <p v-if="option.description" class="app-copy-muted text-xs">{{ option.description }}</p>
                 </div>
             </label>
         </div>

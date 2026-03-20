@@ -158,11 +158,11 @@ const submit = handleSubmit((formValues) => {
                 />
             </SharedFormsFormFieldShell>
 
-            <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <label class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3">
                 <UiCheckbox v-model="enabled" />
                 <div>
-                    <p class="text-sm font-medium text-slate-800">启用规则</p>
-                    <p class="text-xs text-slate-500">关闭后规则仍会保留，但不会参与触发。</p>
+                    <p class="app-copy-strong text-sm font-medium">启用规则</p>
+                    <p class="app-copy-muted text-xs">关闭后规则仍会保留，但不会参与触发。</p>
                 </div>
             </label>
         </SharedFormsFormSection>
@@ -192,11 +192,11 @@ const submit = handleSubmit((formValues) => {
         </SharedFormsFormSection>
 
         <SharedFormsFormSection title="静默时段" description="启用后必须填写开始与结束时间。">
-            <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <label class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3">
                 <UiCheckbox v-model="quietHoursEnabled" />
                 <div>
-                    <p class="text-sm font-medium text-slate-800">启用静默时段</p>
-                    <p class="text-xs text-slate-500">适合非工作时段抑制通知。</p>
+                    <p class="app-copy-strong text-sm font-medium">启用静默时段</p>
+                    <p class="app-copy-muted text-xs">适合非工作时段抑制通知。</p>
                 </div>
             </label>
 
@@ -220,7 +220,7 @@ const submit = handleSubmit((formValues) => {
             <UiCard
                 v-for="(field, index) in channels.fields.value"
                 :key="field.key"
-                class="rounded-2xl border-slate-200 shadow-none"
+                class="app-panel-card rounded-xl shadow-none"
             >
                 <UiCardHeader class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
@@ -260,11 +260,11 @@ const submit = handleSubmit((formValues) => {
                     </SharedFormsFormFieldShell>
 
                     <div class="flex items-center">
-                        <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+                        <label class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3">
                             <UiCheckbox v-model="values.channels[index].enabled" />
                             <div>
-                                <p class="text-sm font-medium text-slate-800">启用此渠道</p>
-                                <p class="text-xs text-slate-500">至少保留一个启用中的渠道。</p>
+                                <p class="app-copy-strong text-sm font-medium">启用此渠道</p>
+                                <p class="app-copy-muted text-xs">至少保留一个启用中的渠道。</p>
                             </div>
                         </label>
                     </div>
@@ -272,7 +272,7 @@ const submit = handleSubmit((formValues) => {
             </UiCard>
         </SharedFormsRepeaterField>
 
-        <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
                 <UiButton type="submit" class="rounded-xl" :disabled="bridge.processing.value">
                     {{ bridge.processing.value ? '提交中...' : '提交示例表单' }}

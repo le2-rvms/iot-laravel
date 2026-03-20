@@ -39,9 +39,8 @@ const breadcrumbs = [
                 </template>
             </AppPageToolbar>
 
-            <UsersUserFilters :filters="filters" />
-
             <AppDataTableShell v-if="users.data.length">
+                <UsersUserFilters :filters="filters" />
                 <UsersTable :users="users" />
                 <template #footer>
                     <AppPaginationBar :links="users.links" />

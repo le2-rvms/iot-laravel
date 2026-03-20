@@ -1,6 +1,6 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
-import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-vue-next';
+import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { usePage } from '@inertiajs/vue3';
@@ -42,7 +42,7 @@ function confirmDelete(user) {
                 <UiTableHead>角色</UiTableHead>
                 <UiTableHead class="w-[18%]">验证状态</UiTableHead>
                 <UiTableHead class="w-[20%]">创建时间</UiTableHead>
-                <UiTableHead class="w-[72px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -50,11 +50,11 @@ function confirmDelete(user) {
             <UiTableRow v-for="user in users.data" :key="user.id">
                 <UiTableCell>
                     <div class="space-y-1">
-                        <div class="font-medium text-slate-950">{{ user.name }}</div>
-                        <div class="text-xs text-slate-500">ID: {{ user.id }}</div>
+                        <div class="app-copy-strong font-medium">{{ user.name }}</div>
+                        <div class="app-copy-muted text-xs">ID: {{ user.id }}</div>
                     </div>
                 </UiTableCell>
-                <UiTableCell class="text-slate-600">{{ user.email }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ user.email }}</UiTableCell>
                 <UiTableCell>
                     <div class="flex flex-wrap gap-2">
                         <UiBadge
@@ -64,7 +64,7 @@ function confirmDelete(user) {
                         >
                             {{ role }}
                         </UiBadge>
-                        <span v-if="!user.roles.length" class="text-xs text-slate-400">未分配角色</span>
+                        <span v-if="!user.roles.length" class="app-copy-muted-soft text-xs">未分配角色</span>
                     </div>
                 </UiTableCell>
                 <UiTableCell>
@@ -72,30 +72,28 @@ function confirmDelete(user) {
                         {{ user.email_verified_at ? '已验证' : '待验证' }}
                     </UiBadge>
                 </UiTableCell>
-                <UiTableCell class="text-slate-600">
+                <UiTableCell class="app-copy-muted">
                     {{ user.created_at?.slice(0, 10) }}
                 </UiTableCell>
                 <UiTableCell class="text-right">
-                    <UiDropdownMenu v-if="canWrite">
-                        <UiDropdownMenuTrigger as-child>
-                            <UiButton variant="ghost" size="icon" class="rounded-xl">
-                                <MoreHorizontal class="size-4" />
-                            </UiButton>
-                        </UiDropdownMenuTrigger>
-                        <UiDropdownMenuContent align="end">
-                            <UiDropdownMenuItem as-child>
-                                <Link :href="`/users/${user.id}/edit`" class="flex cursor-pointer items-center">
-                                    <PencilLine class="mr-2 size-4" />
-                                    编辑
-                                </Link>
-                            </UiDropdownMenuItem>
-                            <UiDropdownMenuItem class="text-red-600 focus:text-red-600" @select.prevent="confirmDelete(user)">
-                                <Trash2 class="mr-2 size-4" />
-                                删除
-                            </UiDropdownMenuItem>
-                        </UiDropdownMenuContent>
-                    </UiDropdownMenu>
-                    <span v-else class="text-xs text-slate-400">只读</span>
+                    <div v-if="canWrite" class="flex justify-end gap-2">
+                        <UiButton as-child variant="outline" size="sm" class="rounded-lg">
+                            <Link :href="`/users/${user.id}/edit`" class="inline-flex items-center gap-2">
+                                <PencilLine class="size-4" />
+                                编辑
+                            </Link>
+                        </UiButton>
+                        <UiButton
+                            variant="outline"
+                            size="sm"
+                            class="rounded-lg text-red-600 hover:text-red-600"
+                            @click="confirmDelete(user)"
+                        >
+                            <Trash2 class="size-4" />
+                            删除
+                        </UiButton>
+                    </div>
+                    <span v-else class="app-copy-muted-soft text-xs">只读</span>
                 </UiTableCell>
             </UiTableRow>
         </UiTableBody>

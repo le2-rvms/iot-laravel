@@ -55,7 +55,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? '编辑用户' : '创建用户' }}</UiCardTitle>
                 <UiCardDescription>
@@ -89,7 +89,7 @@ function submit() {
                         :placeholder="isEdit ? '留空则不修改密码' : ''"
                         :aria-invalid="Boolean(form.errors.password)"
                     />
-                    <p class="text-sm text-slate-500">
+                    <p class="app-copy-muted text-sm">
                         {{ isEdit ? '若修改邮箱，系统会重置验证状态并重新发送验证邮件。' : '创建后将立即发送邮箱验证邮件。' }}
                     </p>
                     <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
@@ -98,22 +98,22 @@ function submit() {
                 <div class="space-y-3">
                     <div class="space-y-1">
                         <UiLabel>角色分配</UiLabel>
-                        <p class="text-sm text-slate-500">
+                        <p class="app-copy-muted text-sm">
                             首版用户支持多角色，权限全部来源于角色，不直接赋权给用户。
                         </p>
                     </div>
 
-                    <div v-if="availableRoles.length" class="grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-2">
+                    <div v-if="availableRoles.length" class="grid gap-3 rounded-xl border border-app-subtle-border bg-app-subtle/28 p-4 md:grid-cols-2">
                         <label
                             v-for="role in availableRoles"
                             :key="role.name"
-                            class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                            class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3"
                         >
                             <UiCheckbox
                                 :model-value="form.roles.includes(role.name)"
                                 @update:model-value="(checked) => toggleRole(role.name, checked)"
                             />
-                            <span class="text-sm font-medium text-slate-700">{{ role.name }}</span>
+                            <span class="app-copy-strong text-sm font-medium">{{ role.name }}</span>
                         </label>
                     </div>
 
@@ -128,7 +128,7 @@ function submit() {
                     <p v-if="form.errors['roles.0']" class="text-sm text-red-600">{{ form.errors['roles.0'] }}</p>
                 </div>
             </UiCardContent>
-            <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-slate-200 sm:flex-row sm:justify-end">
+            <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
                     <Link href="/users">返回列表</Link>
                 </UiButton>

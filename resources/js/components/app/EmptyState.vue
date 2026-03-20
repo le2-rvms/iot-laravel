@@ -23,12 +23,12 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-        <div class="flex size-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-600">
+    <div class="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-app-subtle-border bg-app-panel px-6 py-16 text-center">
+        <div class="flex size-14 items-center justify-center rounded-xl bg-app-subtle text-app-subtle-foreground">
             <Inbox class="size-6" />
         </div>
-        <h3 class="mt-5 text-lg font-semibold text-slate-950">{{ title }}</h3>
-        <p v-if="description" class="mt-2 max-w-md text-sm leading-6 text-slate-500">
+        <h3 class="mt-5 text-lg font-semibold text-app-panel-foreground">{{ title }}</h3>
+        <p v-if="description" class="mt-2 max-w-md text-sm leading-6 text-app-subtle-foreground">
             {{ description }}
         </p>
         <UiButton v-if="actionHref && actionLabel" as-child class="mt-6 rounded-xl">

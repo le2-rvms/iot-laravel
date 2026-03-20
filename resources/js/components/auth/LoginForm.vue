@@ -42,7 +42,7 @@ function submit() {
         <div class="space-y-2">
             <div class="flex items-center justify-between gap-3">
                 <UiLabel for="login-password">密码</UiLabel>
-                <Link href="/forgot-password" class="text-sm font-medium text-slate-600 transition hover:text-slate-950">
+                <Link href="/forgot-password" class="app-link-muted text-sm font-medium">
                     忘记密码？
                 </Link>
             </div>
@@ -56,9 +56,9 @@ function submit() {
             <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
         </div>
 
-        <label class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3">
+        <label class="app-option-card flex items-center gap-3 rounded-2xl border px-4 py-3">
             <UiCheckbox v-model="form.remember" />
-            <span class="text-sm text-slate-700">记住我</span>
+            <span class="app-copy-strong text-sm">记住我</span>
         </label>
 
         <UiButton type="submit" class="h-11 w-full rounded-2xl" :disabled="form.processing">

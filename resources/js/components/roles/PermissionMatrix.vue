@@ -22,7 +22,7 @@ const emit = defineEmits(['toggle']);
         <UiCard
             v-for="group in props.groups"
             :key="group.module"
-            class="rounded-2xl border-slate-200 shadow-none"
+            class="app-panel-card rounded-xl shadow-none"
         >
             <UiCardHeader class="pb-4">
                 <UiCardTitle class="text-base">{{ group.label }}</UiCardTitle>
@@ -34,7 +34,7 @@ const emit = defineEmits(['toggle']);
                 <label
                     v-for="permission in group.permissions"
                     :key="permission.name"
-                    class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                    class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3"
                 >
                     <UiCheckbox
                         :disabled="disabled"
@@ -42,8 +42,8 @@ const emit = defineEmits(['toggle']);
                         @update:model-value="(checked) => emit('toggle', permission.name, checked)"
                     />
                     <div>
-                        <p class="text-sm font-medium text-slate-800">{{ permission.action_label }}</p>
-                        <p class="text-xs text-slate-500">{{ permission.name }}</p>
+                        <p class="app-copy-strong text-sm font-medium">{{ permission.action_label }}</p>
+                        <p class="app-copy-muted text-xs">{{ permission.name }}</p>
                     </div>
                 </label>
             </UiCardContent>

@@ -40,7 +40,7 @@ function submit() {
             {{ form.processing ? '发送中...' : '发送重置邮件' }}
         </UiButton>
 
-        <Link href="/login" class="block text-center text-sm font-medium text-slate-600 transition hover:text-slate-950">
+        <Link href="/login" class="app-link-muted block text-center text-sm font-medium">
             返回登录
         </Link>
     </form>

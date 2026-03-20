@@ -133,7 +133,7 @@ function submit() {
             </div>
         </SharedFormsFormSection>
 
-        <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
                 <UiButton type="submit" class="rounded-xl" :disabled="form.processing">
                     {{ form.processing ? '提交中...' : '提交 Precognition 示例' }}

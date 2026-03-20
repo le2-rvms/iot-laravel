@@ -24,7 +24,7 @@ defineProps({
         <UiLabel v-if="forId" :for="forId">{{ label }}</UiLabel>
         <UiLabel v-else>{{ label }}</UiLabel>
         <slot />
-        <p v-if="description" class="text-sm text-slate-500">{{ description }}</p>
+        <p v-if="description" class="app-copy-muted text-sm">{{ description }}</p>
         <SharedFormsFieldError :message="error" />
     </div>
 </template>

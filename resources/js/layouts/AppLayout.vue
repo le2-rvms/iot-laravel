@@ -16,12 +16,12 @@ defineProps({
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-50 text-slate-950">
+    <div class="min-h-screen bg-app-shell text-foreground">
         <AppFlashToaster />
         <AppConfirmDialog />
 
         <div class="grid min-h-screen lg:grid-cols-[280px_1fr]">
-            <aside class="hidden border-r border-slate-200 bg-white lg:block">
+            <aside class="hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:block">
                 <AppSidebar />
             </aside>
 
@@ -32,7 +32,7 @@ defineProps({
                     </template>
                 </AppHeader>
 
-                <main class="flex-1 px-6 py-6 lg:px-10">
+                <main class="flex-1 px-6 py-5 lg:px-10 lg:py-6">
                     <div class="mx-auto w-full max-w-7xl">
                         <slot />
                     </div>

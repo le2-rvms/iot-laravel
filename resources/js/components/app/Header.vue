@@ -19,8 +19,8 @@ defineProps({
 </script>
 
 <template>
-    <header class="border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div class="mx-auto flex w-full max-w-7xl items-start justify-between gap-6 px-6 py-4 lg:px-10">
+    <header class="border-b border-app-panel-border/80 bg-background/90 text-app-panel-foreground backdrop-blur">
+        <div class="mx-auto flex w-full max-w-7xl items-start justify-between gap-6 px-6 py-4 lg:px-10 lg:py-5">
             <div class="min-w-0 flex-1">
                 <div class="mb-3 flex items-center gap-3 lg:hidden">
                     <UiSheet>
@@ -33,12 +33,12 @@ defineProps({
                             <AppSidebar />
                         </UiSheetContent>
                     </UiSheet>
-                    <span class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <span class="text-sm font-semibold uppercase tracking-[0.2em] text-app-subtle-foreground">
                         {{ $page.props.app.name }}
                     </span>
                 </div>
 
-                <UiBreadcrumb v-if="breadcrumbs.length" class="mb-3">
+                <UiBreadcrumb v-if="breadcrumbs.length" class="mb-2">
                     <UiBreadcrumbList>
                         <UiBreadcrumbItem
                             v-for="item in breadcrumbs"
@@ -58,10 +58,10 @@ defineProps({
                 </UiBreadcrumb>
 
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-semibold tracking-tight text-slate-950">
+                    <h1 class="text-2xl font-semibold tracking-tight text-app-panel-foreground lg:text-[2rem]">
                         {{ title }}
                     </h1>
-                    <p v-if="description" class="max-w-3xl text-sm leading-6 text-slate-500">
+                    <p v-if="description" class="max-w-3xl text-sm leading-6 text-app-subtle-foreground">
                         {{ description }}
                     </p>
                 </div>

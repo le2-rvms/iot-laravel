@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-vue-next';
+import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 
 defineProps({
@@ -40,7 +40,7 @@ function confirmDelete(role) {
                 <UiTableHead>绑定用户</UiTableHead>
                 <UiTableHead>已选权限</UiTableHead>
                 <UiTableHead>创建时间</UiTableHead>
-                <UiTableHead class="w-[72px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -48,7 +48,7 @@ function confirmDelete(role) {
             <UiTableRow v-for="role in roles.data" :key="role.id">
                 <UiTableCell>
                     <div class="space-y-1">
-                        <div class="flex items-center gap-2 font-medium text-slate-950">
+                        <div class="app-copy-strong flex items-center gap-2 font-medium">
                             <span>{{ role.name }}</span>
                             <UiBadge v-if="role.is_protected" variant="outline">受保护</UiBadge>
                         </div>
@@ -65,29 +65,24 @@ function confirmDelete(role) {
                 </UiTableCell>
                 <UiTableCell>{{ role.created_at?.slice(0, 10) }}</UiTableCell>
                 <UiTableCell class="text-right">
-                    <UiDropdownMenu v-if="canWrite">
-                        <UiDropdownMenuTrigger as-child>
-                            <UiButton variant="ghost" size="icon" class="rounded-xl">
-                                <MoreHorizontal class="size-4" />
-                            </UiButton>
-                        </UiDropdownMenuTrigger>
-                        <UiDropdownMenuContent align="end">
-                            <UiDropdownMenuItem as-child>
-                                <Link :href="`/roles/${role.id}/edit`" class="flex cursor-pointer items-center">
-                                    <PencilLine class="mr-2 size-4" />
-                                    编辑
-                                </Link>
-                            </UiDropdownMenuItem>
-                            <UiDropdownMenuItem
-                                class="text-red-600 focus:text-red-600"
-                                @select.prevent="confirmDelete(role)"
-                            >
-                                <Trash2 class="mr-2 size-4" />
-                                删除
-                            </UiDropdownMenuItem>
-                        </UiDropdownMenuContent>
-                    </UiDropdownMenu>
-                    <span v-else class="text-xs text-slate-400">只读</span>
+                    <div v-if="canWrite" class="flex justify-end gap-2">
+                        <UiButton as-child variant="outline" size="sm" class="rounded-lg">
+                            <Link :href="`/roles/${role.id}/edit`" class="inline-flex items-center gap-2">
+                                <PencilLine class="size-4" />
+                                编辑
+                            </Link>
+                        </UiButton>
+                        <UiButton
+                            variant="outline"
+                            size="sm"
+                            class="rounded-lg text-red-600 hover:text-red-600"
+                            @click="confirmDelete(role)"
+                        >
+                            <Trash2 class="size-4" />
+                            删除
+                        </UiButton>
+                    </div>
+                    <span v-else class="app-copy-muted-soft text-xs">只读</span>
                 </UiTableCell>
             </UiTableRow>
         </UiTableBody>

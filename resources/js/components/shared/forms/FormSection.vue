@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+    <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
         <UiCardHeader>
             <UiCardTitle>{{ title }}</UiCardTitle>
             <UiCardDescription v-if="description">

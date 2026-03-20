@@ -253,6 +253,5 @@ return [
         'routes',
         'composer.lock',
         'composer.json',
-        '.env',
     ],
 ];

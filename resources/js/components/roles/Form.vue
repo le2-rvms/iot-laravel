@@ -50,7 +50,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <UiCard class="rounded-[1.75rem] border-slate-200 shadow-sm">
+        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? '编辑角色' : '创建角色' }}</UiCardTitle>
                 <UiCardDescription>
@@ -68,7 +68,7 @@ function submit() {
                         :aria-invalid="Boolean(form.errors.name)"
                         placeholder="例如：运营管理员"
                     />
-                    <p v-if="isProtected" class="text-sm text-slate-500">
+                    <p v-if="isProtected" class="app-copy-muted text-sm">
                         Super Admin 角色名称固定，避免破坏全局放行逻辑。
                     </p>
                     <p v-if="form.errors.name" class="text-sm text-red-600">{{ form.errors.name }}</p>
@@ -77,7 +77,7 @@ function submit() {
                 <div class="space-y-3">
                     <div class="space-y-1">
                         <UiLabel>权限配置</UiLabel>
-                        <p class="text-sm text-slate-500">
+                        <p class="app-copy-muted text-sm">
                             删除、创建、编辑等修改型操作统一归入 `write`。
                         </p>
                     </div>
@@ -94,7 +94,7 @@ function submit() {
                 </div>
             </UiCardContent>
 
-            <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-slate-200 sm:flex-row sm:justify-end">
+            <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
                     <Link href="/roles">返回列表</Link>
                 </UiButton>

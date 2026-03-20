@@ -34,31 +34,31 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <section class="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-                <UiCard class="rounded-[1.75rem] border-0 bg-slate-950 text-white shadow-xl shadow-slate-950/10">
+            <section class="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+                <UiCard class="rounded-[1.5rem] border border-app-panel-border bg-app-panel text-app-panel-foreground shadow-sm">
                     <UiCardHeader>
-                        <UiCardDescription class="text-slate-300">欢迎回来</UiCardDescription>
+                        <UiCardDescription class="text-app-subtle-foreground">欢迎回来</UiCardDescription>
                         <UiCardTitle class="text-3xl tracking-tight">
                             {{ $page.props.auth.user?.name }}
                         </UiCardTitle>
                     </UiCardHeader>
                     <UiCardContent class="grid gap-6 lg:grid-cols-[200px_1fr]">
-                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                            <p class="text-sm text-slate-300">当前用户总数</p>
+                        <div class="rounded-xl border border-app-subtle-border bg-app-subtle/70 p-5">
+                            <p class="text-sm text-app-subtle-foreground">当前用户总数</p>
                             <p class="mt-3 text-4xl font-semibold">{{ stats.usersCount }}</p>
                         </div>
                         <div class="grid gap-3">
                             <UiCard
                                 v-for="link in quickLinks"
                                 :key="link.href"
-                                class="rounded-2xl border border-white/10 bg-white/5 text-white shadow-none"
+                                class="rounded-xl border border-app-subtle-border bg-app-subtle/70 text-app-panel-foreground shadow-none"
                             >
                                 <UiCardContent class="flex items-center justify-between gap-4 p-5">
                                     <div>
                                         <p class="font-medium">{{ link.title }}</p>
-                                        <p class="mt-1 text-sm text-slate-300">{{ link.description }}</p>
+                                        <p class="mt-1 text-sm text-app-subtle-foreground">{{ link.description }}</p>
                                     </div>
-                                    <UiButton as-child variant="secondary" class="rounded-xl">
+                                    <UiButton as-child class="rounded-xl">
                                         <Link :href="link.href">进入</Link>
                                     </UiButton>
                                 </UiCardContent>
@@ -76,13 +76,13 @@ const breadcrumbs = [
                         <UiCard
                             v-for="card in systemCards"
                             :key="card.title"
-                            class="rounded-[1.75rem] border-slate-200 shadow-sm"
+                            class="rounded-[1.5rem] border-app-panel-border bg-app-panel shadow-sm"
                         >
                             <UiCardHeader>
                                 <UiCardDescription>{{ card.status }}</UiCardDescription>
                                 <UiCardTitle>{{ card.title }}</UiCardTitle>
                             </UiCardHeader>
-                            <UiCardContent class="text-sm leading-6 text-slate-500">
+                            <UiCardContent class="text-sm leading-6 text-app-subtle-foreground">
                                 {{ card.description }}
                             </UiCardContent>
                         </UiCard>
@@ -97,9 +97,9 @@ const breadcrumbs = [
                     </template>
 
                     <AppDataTableShell v-if="recentUsers?.length">
-                        <div class="border-b border-slate-200 px-6 py-5">
-                            <h2 class="text-lg font-semibold text-slate-950">最近创建的用户</h2>
-                            <p class="mt-1 text-sm text-slate-500">优先延后加载次级列表数据，优化首屏感知速度。</p>
+                        <div class="border-b border-app-panel-border/80 px-5 py-5">
+                            <h2 class="text-lg font-semibold text-app-panel-foreground">最近创建的用户</h2>
+                            <p class="mt-1 text-sm text-app-subtle-foreground">优先延后加载次级列表数据，优化首屏感知速度。</p>
                         </div>
                         <UiTable>
                             <UiTableHeader>
