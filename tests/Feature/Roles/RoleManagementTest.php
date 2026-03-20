@@ -77,14 +77,19 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Create')
-                ->has('permissionGroups', 5)
+                ->has('permissionGroups', 6)
                 ->where('permissionGroups', function ($groups): bool {
-                    $formLabGroup = collect($groups)->firstWhere('module', 'form-lab');
+                    $veeValidateGroup = collect($groups)->firstWhere('module', 'settings-vee-validate');
+                    $precognitionGroup = collect($groups)->firstWhere('module', 'settings-precognition');
 
-                    return $formLabGroup !== null
-                        && $formLabGroup['label'] === '复杂表单实验室'
-                        && $formLabGroup['permissions'][0]['name'] === 'form-lab.read'
-                        && $formLabGroup['permissions'][1]['name'] === 'form-lab.write';
+                    return $veeValidateGroup !== null
+                        && $precognitionGroup !== null
+                        && $veeValidateGroup['label'] === '复杂表单实验室'
+                        && $veeValidateGroup['permissions'][0]['name'] === 'settings-vee-validate.read'
+                        && $veeValidateGroup['permissions'][1]['name'] === 'settings-vee-validate.write'
+                        && $precognitionGroup['label'] === 'Precognition 表单实验室'
+                        && $precognitionGroup['permissions'][0]['name'] === 'settings-precognition.read'
+                        && $precognitionGroup['permissions'][1]['name'] === 'settings-precognition.write';
                 }));
     }
 

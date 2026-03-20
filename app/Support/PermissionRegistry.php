@@ -144,7 +144,7 @@ class PermissionRegistry
      */
     private static function discoverRegistryData(): array
     {
-        $controllers = collect(File::allFiles(app_path('Http/Controllers')))
+        $groups = collect(File::allFiles(app_path('Http/Controllers')))
             ->map(fn (\SplFileInfo $file) => self::classFromControllerFile($file->getRealPath()))
             ->filter(fn (string $className) => class_exists($className))
             ->sort()
@@ -153,20 +153,15 @@ class PermissionRegistry
             ->values();
 
         return [
-            'all' => $controllers
-                ->flatMap(fn (array $controller) => collect($controller['permissions'])->pluck('name'))
+            'all' => $groups
+                ->flatMap(fn (array $group) => collect($group['permissions'])->pluck('name'))
                 ->values()
                 ->all(),
-            'frontend' => $controllers
-                ->map(fn (array $controller) => [
-                    'module' => $controller['module'],
-                    'label' => $controller['label'],
-                    'permissions' => $controller['permissions'],
-                ])
+            'frontend' => $groups
                 ->values()
                 ->all(),
-            'actions' => $controllers
-                ->flatMap(fn (array $controller) => $controller['actions'])
+            'actions' => $groups
+                ->flatMap(fn (array $group) => $group['actions'])
                 ->all(),
         ];
     }
@@ -187,6 +182,7 @@ class PermissionRegistry
             return null;
         }
 
+        $group = $groupAttribute->newInstance();
         $module = self::moduleKey($reflection);
         $permissions = [];
         $actions = [];
@@ -224,7 +220,7 @@ class PermissionRegistry
 
         return [
             'module' => $module,
-            'label' => $groupAttribute->newInstance()->label,
+            'label' => $group->label,
             'permissions' => array_values($permissions),
             'actions' => $actions,
         ];

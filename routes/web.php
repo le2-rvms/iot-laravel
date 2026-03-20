@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Middleware\AuthorizeControllerPermission;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Roles\RoleController;
-use App\Http\Controllers\Settings\FormLabController;
 use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Settings\SettingsPrecognitionController;
+use App\Http\Controllers\Settings\SettingsVeeValidateController;
 use App\Http\Controllers\Users\UserController;
+use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,9 @@ Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->g
 
     Route::get('/settings', SettingsController::class)->name('settings.index');
 
-    Route::get('/settings/form-lab', [FormLabController::class, 'create'])->name('settings.form-lab');
+    Route::resource('settings/vee-validate', SettingsVeeValidateController::class)
+        ->only(['index', 'store']);
 
-    Route::post('/settings/form-lab', [FormLabController::class, 'store'])->name('settings.form-lab.store');
+    Route::resource('settings/precognition', SettingsPrecognitionController::class)
+        ->only(['index', 'store']);
 });

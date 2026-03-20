@@ -3,7 +3,8 @@
 namespace Tests\Unit\Support;
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Settings\FormLabController;
+use App\Http\Controllers\Settings\SettingsPrecognitionController;
+use App\Http\Controllers\Settings\SettingsVeeValidateController;
 use App\Http\Controllers\Users\UserController;
 use App\Support\PermissionRegistry;
 use Tests\TestCase;
@@ -23,9 +24,10 @@ class PermissionRegistryTest extends TestCase
 
         $this->assertSame('仪表盘', $groups['dashboard']['label']);
         $this->assertSame('用户管理', $groups['user']['label']);
-        $this->assertSame('复杂表单实验室', $groups['form-lab']['label']);
+        $this->assertSame('复杂表单实验室', $groups['settings-vee-validate']['label']);
+        $this->assertSame('Precognition 表单实验室', $groups['settings-precognition']['label']);
         $this->assertEqualsCanonicalizing(
-            ['dashboard.read', 'form-lab.read', 'form-lab.write', 'role.read', 'role.write', 'settings.read', 'user.read', 'user.write'],
+            ['dashboard.read', 'role.read', 'role.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'settings.read', 'user.read', 'user.write'],
             PermissionRegistry::all(),
         );
     }
@@ -44,6 +46,7 @@ class PermissionRegistryTest extends TestCase
     {
         $this->assertSame('dashboard.read', PermissionRegistry::permissionForControllerAction(DashboardController::class, '__invoke'));
         $this->assertSame('user.read', PermissionRegistry::permissionForControllerAction(UserController::class, 'index'));
-        $this->assertSame('form-lab.write', PermissionRegistry::permissionForControllerAction(FormLabController::class, 'store'));
+        $this->assertSame('settings-vee-validate.write', PermissionRegistry::permissionForControllerAction(SettingsVeeValidateController::class, 'store'));
+        $this->assertSame('settings-precognition.write', PermissionRegistry::permissionForControllerAction(SettingsPrecognitionController::class, 'store'));
     }
 }

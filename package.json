@@ -22,6 +22,7 @@
         "@vueuse/core": "^14.2.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "laravel-precognition": "^1.0.2",
         "lucide-vue-next": "^0.577.0",
         "reka-ui": "^2.9.2",
         "tailwind-merge": "^3.5.0",

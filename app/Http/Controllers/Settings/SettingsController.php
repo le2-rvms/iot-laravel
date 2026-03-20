@@ -35,12 +35,20 @@ class SettingsController extends Controller
                 'description' => '后续可扩展密码策略、登录限制与权限审计设置。',
             ],
             [
-                'title' => '复杂表单实验室',
+                'title' => 'VeeValidate 实验室',
                 'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
-                'href' => route('settings.form-lab'),
+                'href' => route('vee-validate.index'),
                 'action_label' => '打开实验室',
                 'native' => false,
-                'permission' => 'form-lab.read',
+                'permission' => 'settings-vee-validate.read',
+            ],
+            [
+                'title' => 'Precognition 实验室',
+                'description' => '查看服务端实时预校验与最终提交共用规则的表单接入示例。',
+                'href' => route('precognition.index'),
+                'action_label' => '打开实验室',
+                'native' => false,
+                'permission' => 'settings-precognition.read',
             ],
         ])
             ->filter(fn (array $group) => ! isset($group['permission']) || request()->user()?->can($group['permission']))

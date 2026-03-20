@@ -12,17 +12,13 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 #[PermissionGroup('复杂表单实验室')]
-class FormLabController extends Controller
+class SettingsVeeValidateController extends Controller
 {
     #[PermissionAction('read')]
-    public function create(): Response
+    public function index(): Response
     {
         return Inertia::render('Settings/FormLab', [
-            'channelTypes' => [
-                ['value' => 'email', 'label' => 'Email'],
-                ['value' => 'webhook', 'label' => 'Webhook'],
-                ['value' => 'sms', 'label' => 'SMS'],
-            ],
+            'channelTypes' => $this->channelTypes(),
             'triggerModes' => [
                 ['value' => 'threshold', 'label' => '阈值触发'],
                 ['value' => 'schedule', 'label' => '定时触发'],
@@ -36,6 +32,18 @@ class FormLabController extends Controller
     {
         Log::info('settings.form_lab.submitted', $request->validated());
 
-        return to_route('settings.form-lab')->with('success', '复杂表单示例提交成功。');
+        return to_route('vee-validate.index')->with('success', '复杂表单示例提交成功。');
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    protected function channelTypes(): array
+    {
+        return [
+            ['value' => 'email', 'label' => 'Email'],
+            ['value' => 'webhook', 'label' => 'Webhook'],
+            ['value' => 'sms', 'label' => 'SMS'],
+        ];
     }
 }
