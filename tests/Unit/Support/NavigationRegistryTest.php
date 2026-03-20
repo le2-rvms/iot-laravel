@@ -71,7 +71,7 @@ class NavigationRegistryTest extends TestCase
             ],
             [
                 'title' => 'VeeValidate 实验室',
-                'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                'description' => '用于演练通知规则的填写流程。',
                 'href' => '/settings/vee-validate',
             ],
         ], $links);

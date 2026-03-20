@@ -23,7 +23,7 @@ const breadcrumbs = [
 
     <AppLayout
         title="复杂表单实验室"
-        description="使用 vee-validate + yup + Inertia 演示复杂表单的标准实现方式。"
+        description="用于演练通知规则的填写流程。"
         :breadcrumbs="breadcrumbs"
     >
         <SettingsNotificationRuleForm :channel-types="channelTypes" :trigger-modes="triggerModes" />

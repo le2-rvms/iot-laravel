@@ -145,7 +145,7 @@ const submit = handleSubmit((formValues) => {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <SharedFormsFormSection title="基础信息" description="演示复杂表单的基础字段、开关与说明文案。">
+        <SharedFormsFormSection title="基础信息" description="填写规则名称、说明和启用状态。">
             <SharedFormsFormFieldShell label="规则名称" for-id="rule-name" :error="errors.name">
                 <UiInput id="rule-name" v-model="name" :aria-invalid="Boolean(errors.name)" />
             </SharedFormsFormFieldShell>
@@ -167,7 +167,7 @@ const submit = handleSubmit((formValues) => {
             </label>
         </SharedFormsFormSection>
 
-        <SharedFormsFormSection title="触发规则" description="演示条件联动与 schema 级别的条件校验。">
+        <SharedFormsFormSection title="触发规则" description="设置规则在什么情况下生效。">
             <SharedFormsFormFieldShell label="触发方式" for-id="trigger-mode" :error="errors.trigger_mode">
                 <select
                     id="trigger-mode"
@@ -191,7 +191,7 @@ const submit = handleSubmit((formValues) => {
             </SharedFormsFormFieldShell>
         </SharedFormsFormSection>
 
-        <SharedFormsFormSection title="静默时段" description="启用后必须填写开始与结束时间。">
+        <SharedFormsFormSection title="静默时段" description="需要避开提醒的时间段可在这里设置。">
             <label class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3">
                 <UiCheckbox v-model="quietHoursEnabled" />
                 <div>
@@ -212,7 +212,7 @@ const submit = handleSubmit((formValues) => {
 
         <SharedFormsRepeaterField
             title="通知渠道"
-            description="演示 useFieldArray、数组项删除和每项独立校验。"
+            description="为规则添加一个或多个通知接收方式。"
             add-label="新增渠道"
             :error="errors.channels"
             @add="addChannel"
@@ -226,7 +226,7 @@ const submit = handleSubmit((formValues) => {
                     <div>
                         <UiCardTitle class="text-base">渠道 {{ index + 1 }}</UiCardTitle>
                         <UiCardDescription>
-                            类型不同，目标字段使用不同格式校验。
+                            不同渠道的填写要求会有所不同。
                         </UiCardDescription>
                     </div>
                     <UiButton
@@ -275,7 +275,7 @@ const submit = handleSubmit((formValues) => {
         <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
                 <UiButton type="submit" class="min-w-40 justify-center rounded-xl" :disabled="bridge.processing.value">
-                    {{ bridge.processing.value ? '提交中' : '提交示例表单' }}
+                    {{ bridge.processing.value ? '提交中' : '提交规则' }}
                 </UiButton>
             </UiCardContent>
         </UiCard>

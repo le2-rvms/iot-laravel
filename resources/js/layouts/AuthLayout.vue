@@ -28,15 +28,15 @@ defineProps({
                         </div>
                         <div class="space-y-4">
                             <h1 class="max-w-xl text-4xl font-semibold tracking-tight">
-                                服务端主导的后台管理骨架
+                                欢迎使用后台管理系统
                             </h1>
                             <p class="max-w-lg text-base leading-7 text-app-subtle-foreground">
-                                Laravel 负责路由、鉴权与业务逻辑，Inertia 与 Vue 只负责页面桥接与交互层。
+                                请使用已开通的账号登录，处理用户、角色和系统配置等日常工作。
                             </p>
                         </div>
                     </div>
                     <div class="rounded-xl border border-app-subtle-border bg-app-subtle/70 p-6 text-sm leading-6 text-app-subtle-foreground">
-                        认证页统一收敛在单独布局下，保持视觉与交互的一致性。
+                        登录后可查看常用功能入口，并继续完成各项管理操作。
                     </div>
                 </div>
 

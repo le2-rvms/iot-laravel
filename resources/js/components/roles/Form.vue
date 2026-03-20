@@ -54,7 +54,7 @@ function submit() {
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? '编辑角色' : '创建角色' }}</UiCardTitle>
                 <UiCardDescription>
-                    角色是权限集合。首版统一采用 `module.read` 与 `module.write` 两层权限模型。
+                    为不同岗位配置可访问的功能范围。
                 </UiCardDescription>
             </UiCardHeader>
 
@@ -69,7 +69,7 @@ function submit() {
                         placeholder="例如：运营管理员"
                     />
                     <p v-if="isProtected" class="app-copy-muted text-sm">
-                        Super Admin 角色名称固定，避免破坏全局放行逻辑。
+                        系统管理员角色名称固定，避免影响现有权限分配。
                     </p>
                     <p v-if="form.errors.name" class="text-sm text-red-600">{{ form.errors.name }}</p>
                 </div>
@@ -78,7 +78,7 @@ function submit() {
                     <div class="space-y-1">
                         <UiLabel>权限配置</UiLabel>
                         <p class="app-copy-muted text-sm">
-                            删除、创建、编辑等修改型操作统一归入 `write`。
+                            可按模块勾选允许查看和维护的功能。
                         </p>
                     </div>
 

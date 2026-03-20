@@ -79,7 +79,7 @@ function initials(name) {
         </UiDropdownMenuTrigger>
 
         <UiDropdownMenuContent align="end" class="w-80 rounded-xl">
-            <UiDropdownMenuLabel>当前登录用户</UiDropdownMenuLabel>
+            <UiDropdownMenuLabel>我的账号</UiDropdownMenuLabel>
             <UiDropdownMenuSeparator />
             <UiDropdownMenuItem :disabled="true">
                 <div class="space-y-1">

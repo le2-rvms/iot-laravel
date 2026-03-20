@@ -12,7 +12,7 @@ const breadcrumbs = [
 
     <AppLayout
         title="修改密码"
-        description="更新当前登录账号的密码；提交成功后会保持当前登录状态。"
+        description="更新登录密码，完成后可继续使用当前账号。"
         :breadcrumbs="breadcrumbs"
     >
         <AccountPasswordForm />

@@ -143,7 +143,7 @@ class SettingsPageTest extends TestCase
                 ],
             ])
             ->assertRedirect('/settings/vee-validate')
-            ->assertSessionHas('success', '复杂表单示例提交成功。');
+            ->assertSessionHas('success', '规则内容已提交。');
     }
 
     public function test_precognition_form_returns_validation_errors_for_invalid_payload(): void
@@ -185,7 +185,7 @@ class SettingsPageTest extends TestCase
                 'notes' => '服务端实时预校验示例',
             ])
             ->assertRedirect(route('precognition.index'))
-            ->assertSessionHas('success', 'Precognition 示例提交成功。');
+            ->assertSessionHas('success', '规则内容已提交。');
     }
 
     public function test_precognition_only_returns_requested_field_errors(): void

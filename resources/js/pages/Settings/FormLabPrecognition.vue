@@ -19,7 +19,7 @@ const breadcrumbs = [
 
     <AppLayout
         title="Precognition 实验室"
-        description="使用 Laravel Precognition + Inertia 演示服务端实时预校验，不依赖 vee-validate 或 yup。"
+        description="用于体验填写过程中的实时校验反馈。"
         :breadcrumbs="breadcrumbs"
     >
         <SettingsPrecognitionRuleForm :channel-types="channelTypes" />

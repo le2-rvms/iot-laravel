@@ -66,8 +66,8 @@ class NavigationRegistry
                     ],
                     [
                         'title' => 'VeeValidate 实验室',
-                        'description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
-                        'dashboard_description' => '查看 vee-validate + yup + Inertia 的复杂表单接入示例。',
+                        'description' => '用于演练通知规则的填写流程。',
+                        'dashboard_description' => '用于演练通知规则的填写流程。',
                         'href' => '/settings/vee-validate',
                         'icon' => 'FileCheck2',
                         'permission' => 'settings-vee-validate.read',
@@ -76,8 +76,8 @@ class NavigationRegistry
                     ],
                     [
                         'title' => 'Precognition 实验室',
-                        'description' => '查看服务端实时预校验与最终提交共用规则的表单接入示例。',
-                        'dashboard_description' => '查看服务端实时预校验与最终提交共用规则的表单接入示例。',
+                        'description' => '用于体验填写过程中的实时校验反馈。',
+                        'dashboard_description' => '用于体验填写过程中的实时校验反馈。',
                         'href' => '/settings/precognition',
                         'icon' => 'ScanSearch',
                         'permission' => 'settings-precognition.read',

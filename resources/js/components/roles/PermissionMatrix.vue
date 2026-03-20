@@ -27,7 +27,7 @@ const emit = defineEmits(['toggle']);
             <UiCardHeader class="pb-4">
                 <UiCardTitle class="text-base">{{ group.label }}</UiCardTitle>
                 <UiCardDescription>
-                    每个模块统一按 read / write 管理权限。
+                    每个模块分为查看和维护两类权限。
                 </UiCardDescription>
             </UiCardHeader>
             <UiCardContent class="space-y-3">

@@ -37,7 +37,7 @@ const breadcrumbs = computed(() => [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar :title="`${resource.title}列表`" description="统一使用搜索、表格、分页和直接操作按钮的后台列表结构。">
+            <AppPageToolbar :title="`${resource.title}列表`" description="可按关键字查找，并直接维护配置项。">
                 <template #actions v-if="canWrite">
                     <UiButton as-child class="rounded-xl">
                         <Link :href="resource.create_href">新建配置项</Link>
@@ -53,7 +53,7 @@ const breadcrumbs = computed(() => [
                 <AppEmptyState
                     v-else
                     :title="hasSearch ? '未找到匹配的配置项' : `还没有${resource.title}`"
-                    :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部配置项。' : '创建首个配置项后，这里会展示标准的设置 CRUD 列表结构。'"
+                    :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部配置项。' : '创建第一个配置项后，可在这里集中查看和维护。'"
                     :action-label="!hasSearch && canWrite ? '创建配置项' : ''"
                     :action-href="!hasSearch && canWrite ? resource.create_href : ''"
                 />

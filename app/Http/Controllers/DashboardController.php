@@ -38,18 +38,18 @@ class DashboardController extends Controller
                 ->all()),
             'systemCards' => Inertia::defer(fn () => [
                 [
-                    'title' => '权限系统',
-                    'description' => '已接入 read/write 权限模型，后续可继续扩展更细业务模块。',
-                    'status' => '已接入',
+                    'title' => '权限设置',
+                    'description' => '已支持按角色分配查看和维护权限。',
+                    'status' => '可用',
                 ],
                 [
-                    'title' => '监控与队列',
-                    'description' => '已接入 Horizon 队列面板，Pulse 与 Telescope 仍可后续扩展。',
-                    'status' => 'Horizon 已接入',
+                    'title' => '运行监控',
+                    'description' => '队列任务和基础运行状态可持续关注。',
+                    'status' => '已开启',
                 ],
                 [
-                    'title' => '邮件与通知配置',
-                    'description' => '后续可接入通知频道、邮件模板与重试策略设置。',
+                    'title' => '消息配置',
+                    'description' => '可继续补充通知渠道、模板和发送策略。',
                     'status' => '规划中',
                 ],
             ]),

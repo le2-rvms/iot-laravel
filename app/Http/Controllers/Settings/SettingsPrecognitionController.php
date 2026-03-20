@@ -27,7 +27,7 @@ class SettingsPrecognitionController extends Controller
     {
         Log::info('settings.form_lab.precognition_submitted', $request->validated());
 
-        return to_route('precognition.index')->with('success', 'Precognition 示例提交成功。');
+        return to_route('precognition.index')->with('success', '规则内容已提交。');
     }
 
     /**

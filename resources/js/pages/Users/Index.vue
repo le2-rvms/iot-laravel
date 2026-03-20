@@ -27,11 +27,11 @@ const breadcrumbs = [
 
     <AppLayout
         title="用户管理"
-        description="列表页采用工具栏、表格、分页与操作区的统一结构。"
+        description="查看、筛选并维护后台用户资料。"
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="用户列表" description="搜索、分页和操作都通过 Inertia 与 Laravel 控制器协同完成。">
+            <AppPageToolbar title="用户列表" description="支持按姓名或邮箱筛选，并可继续新增用户。">
                 <template #actions v-if="canWrite">
                     <UiButton as-child class="rounded-xl">
                         <Link href="/users/create">新建用户</Link>
@@ -50,7 +50,7 @@ const breadcrumbs = [
             <AppEmptyState
                 v-else
                 title="还没有用户数据"
-                description="当前列表为空。创建首个后台用户后，这里会展示标准 CRUD 列表结构。"
+                description="创建第一个后台用户后，可在这里查看和维护账号信息。"
                 :action-label="canWrite ? '创建用户' : ''"
                 :action-href="canWrite ? '/users/create' : ''"
             />

@@ -38,7 +38,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <SharedFormsFormSection title="基础信息" description="示例重点是 blur 触发服务端实时预校验。">
+        <SharedFormsFormSection title="基础信息" description="填写规则的基本信息。">
             <div class="grid gap-4 md:grid-cols-2">
                 <SharedFormsFormFieldShell label="规则名称" for-id="precognition-name" :error="form.errors.name">
                     <UiInput
@@ -63,7 +63,7 @@ function submit() {
             </div>
         </SharedFormsFormSection>
 
-        <SharedFormsFormSection title="通知目标" description="切换渠道后，渠道目标会重新按服务端规则校验。">
+        <SharedFormsFormSection title="通知目标" description="切换渠道后，按对应要求填写接收地址。">
             <div class="grid gap-4 md:grid-cols-2">
                 <SharedFormsFormFieldShell label="通知渠道" for-id="precognition-channel" :error="form.errors.channel">
                     <select
@@ -82,7 +82,7 @@ function submit() {
                 <SharedFormsFormFieldShell
                     label="渠道目标"
                     for-id="precognition-target"
-                    description="失焦后会触发服务端实时校验，并返回当前渠道对应的格式错误。"
+                    description="例如邮箱地址、回调地址或手机号。"
                     :error="form.errors.target"
                 >
                     <UiInput
@@ -96,7 +96,7 @@ function submit() {
             </div>
         </SharedFormsFormSection>
 
-        <SharedFormsFormSection title="策略控制" description="演示服务端数字范围校验与可选备注。">
+        <SharedFormsFormSection title="策略控制" description="设置每日发送上限和补充说明。">
             <div class="grid gap-4 md:grid-cols-2">
                 <SharedFormsFormFieldShell
                     label="每日上限"
@@ -136,7 +136,7 @@ function submit() {
         <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
                 <UiButton type="submit" class="min-w-40 justify-center rounded-xl" :disabled="form.processing">
-                    {{ form.processing ? '提交中' : '提交 Precognition 示例' }}
+                    {{ form.processing ? '提交中' : '提交规则' }}
                 </UiButton>
             </UiCardContent>
         </UiCard>

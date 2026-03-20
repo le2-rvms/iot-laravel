@@ -59,7 +59,7 @@ function submit() {
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? '编辑用户' : '创建用户' }}</UiCardTitle>
                 <UiCardDescription>
-                    使用 Laravel 验证作为最终真相，前端仅维护输入交互与提交流程。
+                    填写用户资料，并为账号分配可用角色。
                 </UiCardDescription>
             </UiCardHeader>
             <UiCardContent class="space-y-5">

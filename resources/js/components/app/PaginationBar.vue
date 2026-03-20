@@ -23,7 +23,7 @@ function decodeLabel(label) {
 <template>
     <div v-if="normalizedLinks.length > 3" class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-app-subtle-foreground">
-            使用 Laravel 分页结果，保持服务端为主的数据切片。
+            支持翻页查看更多数据。
         </p>
 
         <div class="flex flex-wrap items-center gap-2">

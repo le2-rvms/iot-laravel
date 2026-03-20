@@ -30,7 +30,7 @@ const breadcrumbs = [
 
     <AppLayout
         title="仪表盘"
-        description="首屏只返回必要数据，次级统计与列表通过 deferred props 延后加载。"
+        description="查看系统概览、常用入口和最近新增的账号。"
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
@@ -99,7 +99,7 @@ const breadcrumbs = [
                     <AppDataTableShell v-if="recentUsers?.length">
                         <div class="border-b border-app-panel-border/80 px-5 py-5">
                             <h2 class="text-lg font-semibold text-app-panel-foreground">最近创建的用户</h2>
-                            <p class="mt-1 text-sm text-app-subtle-foreground">优先延后加载次级列表数据，优化首屏感知速度。</p>
+                            <p class="mt-1 text-sm text-app-subtle-foreground">这里显示最近创建的账号记录。</p>
                         </div>
                         <UiTable>
                             <UiTableHeader>

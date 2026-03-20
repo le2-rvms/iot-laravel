@@ -21,7 +21,7 @@ function submit() {
             <UiCardHeader>
                 <UiCardTitle>修改密码</UiCardTitle>
                 <UiCardDescription>
-                    请输入当前密码后再设置新密码。更新完成后，当前会话会继续保持登录。
+                    请先输入当前密码，再设置新的登录密码。
                 </UiCardDescription>
             </UiCardHeader>
             <UiCardContent class="space-y-5">
@@ -49,7 +49,7 @@ function submit() {
                         :aria-invalid="Boolean(form.errors.password)"
                     />
                     <p class="app-copy-muted text-sm">
-                        新密码将沿用系统默认密码规则校验，并要求再次确认。
+                        请设置安全且便于记忆的新密码，并再次确认。
                     </p>
                     <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
                 </div>
@@ -73,7 +73,7 @@ function submit() {
                     <Link href="/dashboard">返回仪表盘</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
-                    {{ form.processing ? '保存中' : '更新密码' }}
+                    {{ form.processing ? '保存中' : '保存新密码' }}
                 </UiButton>
             </UiCardFooter>
         </UiCard>
