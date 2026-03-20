@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account\PasswordController as AccountPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\Settings\SettingsApplicationConfigController;
@@ -16,6 +17,10 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
+    // 避免与 Fortify 已存在的 password.update 路由名冲突。
+    Route::singleton('account/security-password', AccountPasswordController::class)
+        ->only(['edit', 'update']);
+
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('users', UserController::class)

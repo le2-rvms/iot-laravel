@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import { Check, ChevronDown, MoonStar, Palette, SunMedium } from 'lucide-vue-next';
+import { Check, ChevronDown, KeyRound, LogOut, MoonStar, Palette, SunMedium } from 'lucide-vue-next';
 import {
     MODE_LABELS,
     THEME_LABELS,
@@ -11,6 +11,7 @@ import {
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+const access = computed(() => page.props.auth.access ?? {});
 const themeState = ref(getCurrentTheme());
 
 const themeOptions = Object.entries(THEME_LABELS).map(([value, label]) => ({
@@ -27,6 +28,8 @@ const currentThemeName = computed(() => themeState.value.name);
 const currentThemeMode = computed(() => themeState.value.mode);
 const currentThemeLabel = computed(() => THEME_LABELS[currentThemeName.value]);
 const currentModeLabel = computed(() => MODE_LABELS[currentThemeMode.value]);
+// 修改密码页和提交都归到 write 权限，菜单入口保持同一判定口径。
+const canUpdatePassword = computed(() => access.value['password.write'] === true);
 
 const themeSwatchClasses = {
     neutral: 'bg-linear-to-br from-slate-500 to-slate-800',
@@ -44,6 +47,10 @@ function setThemeMode(mode) {
 
 function logout() {
     router.post('/logout');
+}
+
+function goToPasswordPage() {
+    router.get('/account/security-password/edit');
 }
 
 function initials(name) {
@@ -131,8 +138,16 @@ function initials(name) {
                     </div>
                 </div>
             </div>
+            <template v-if="canUpdatePassword">
+                <UiDropdownMenuSeparator />
+                <UiDropdownMenuItem @select.prevent="goToPasswordPage">
+                    <KeyRound class="size-4" />
+                    修改密码
+                </UiDropdownMenuItem>
+            </template>
             <UiDropdownMenuSeparator />
             <UiDropdownMenuItem @select.prevent="logout">
+                <LogOut class="size-4" />
                 退出登录
             </UiDropdownMenuItem>
         </UiDropdownMenuContent>

@@ -78,7 +78,7 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Create')
-                ->has('permissionGroups', 7)
+                ->has('permissionGroups', 8)
                 ->where('permissionGroups', function ($groups): bool {
                     $applicationGroup = collect($groups)->firstWhere('module', 'settings-application-config');
                     $systemGroup = collect($groups)->firstWhere('module', 'settings-system-config');
