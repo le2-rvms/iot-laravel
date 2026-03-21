@@ -27,7 +27,7 @@ class UserManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Users/Index')
                 ->has('users.data', 4)
-                ->where('filters.search', '')
+                ->where('filters', [])
                 ->where('auth.access', fn ($access) => ($access['user.read'] ?? false) === true)
                 ->missing('auth.roles'));
     }
@@ -127,7 +127,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    public function test_users_can_be_filtered_by_search(): void
+    public function test_users_can_be_filtered_by_search_callback(): void
     {
         $admin = $this->createSuperAdmin();
 
@@ -142,11 +142,34 @@ class UserManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/users?search=alice')
+            ->get('/users?search__func=alice')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Users/Index')
-                ->where('filters.search', 'alice')
+                ->where('filters.search__func', 'alice')
+                ->has('users.data', 1)
+                ->where('users.data.0.email', 'alice@example.com'));
+    }
+
+    public function test_users_can_be_filtered_by_declared_field_operator(): void
+    {
+        $admin = $this->createSuperAdmin();
+
+        User::factory()->create([
+            'name' => 'Alice Cooper',
+            'email' => 'alice@example.com',
+        ]);
+        User::factory()->create([
+            'name' => 'Alice Smith',
+            'email' => 'alice.smith@example.com',
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/users?name__eq=Alice Cooper')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Users/Index')
+                ->where('filters.name__eq', 'Alice Cooper')
                 ->has('users.data', 1)
                 ->where('users.data.0.email', 'alice@example.com'));
     }
@@ -169,11 +192,21 @@ class UserManagementTest extends TestCase
                 'X-Inertia-Partial-Component' => 'Users/Index',
                 'X-Inertia-Partial-Data' => 'users,filters',
             ])
-            ->get('/users?search=partial')
+            ->get('/users?search__func=partial')
             ->assertOk()
             ->assertJsonPath('component', 'Users/Index')
-            ->assertJsonPath('props.filters.search', 'partial')
+            ->assertJsonPath('props.filters.search__func', 'partial')
             ->assertJsonPath('props.users.data.0.email', 'partial@example.com');
+    }
+
+    public function test_legacy_search_query_is_rejected_with_a_validation_error(): void
+    {
+        $admin = $this->createSuperAdmin();
+
+        $this->actingAs($admin)
+            ->get('/users?search=alice')
+            ->assertStatus(422)
+            ->assertJsonPath('errors.search.0', '筛选条件格式无效，必须使用 field__operator 形式。');
     }
 
     public function test_read_only_users_can_view_users_but_cannot_modify_them(): void

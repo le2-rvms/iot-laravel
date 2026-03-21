@@ -432,7 +432,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-application-config.read']);
 
         $this->actingAs($user)
-            ->get(route('application-configs.index', ['search' => '密钥']))
+            ->get(route('application-configs.index', ['search__func' => '密钥']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Configs/Index')
@@ -461,14 +461,44 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-application-config.read']);
 
         $this->actingAs($user)
-            ->get(route('application-configs.index', ['search' => 'gateway']))
+            ->get(route('application-configs.index', ['search__func' => 'gateway']))
             ->assertOk()
             // 这里锁的是 PostgreSQL 目标环境下的大小写不敏感搜索行为。
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Configs/Index')
-                ->where('filters.search', 'gateway')
+                ->where('filters.search__func', 'gateway')
                 ->has('configs.data', 1)
                 ->where('configs.data.0.key', 'GatewayTimeout'));
+    }
+
+    public function test_application_config_list_can_be_filtered_by_declared_boolean_field(): void
+    {
+        Config::query()->create([
+            'key' => 'app.visible',
+            'value' => 'visible',
+            'category' => Category::APPLICATION,
+            'is_masked' => false,
+            'remark' => '公开配置',
+        ]);
+        Config::query()->create([
+            'key' => 'app.secret',
+            'value' => 'secret',
+            'category' => Category::APPLICATION,
+            'is_masked' => true,
+            'remark' => '私密配置',
+        ]);
+
+        $user = $this->createUserWithPermissions(['settings-application-config.read']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.index', ['is_masked__eq' => '1']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Index')
+                ->where('filters.is_masked__eq', '1')
+                ->has('configs.data', 1)
+                ->where('configs.data.0.key', 'app.secret')
+                ->where('configs.data.0.value_display', '*****'));
     }
 
     public function test_application_config_can_be_created_with_write_permission(): void

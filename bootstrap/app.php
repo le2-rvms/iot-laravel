@@ -28,6 +28,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+    // 保留异常配置注册，避免 Laravel 缺失默认异常处理器绑定。
+    ->withExceptions(function (Exceptions $exceptions): void {})
+    ->create();

@@ -23,7 +23,7 @@ class MqttAccountManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccounts/Index')
                 ->has('accounts.data', 3)
-                ->where('filters.search', '')
+                ->where('filters', [])
                 ->where('auth.access', fn ($access) => ($access['mqtt-account.read'] ?? false) === true));
     }
 
@@ -255,11 +255,11 @@ class MqttAccountManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/mqtt-accounts?search=alpha')
+            ->get('/mqtt-accounts?search__func=alpha')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccounts/Index')
-                ->where('filters.search', 'alpha')
+                ->where('filters.search__func', 'alpha')
                 ->has('accounts.data', 1)
                 ->where('accounts.data.0.user_name', 'alpha-gateway'));
     }
@@ -283,14 +283,37 @@ class MqttAccountManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/mqtt-accounts?search=gateway')
+            ->get('/mqtt-accounts?search__func=gateway')
             ->assertOk()
             // 这里锁的是 MQTT 列表与配置列表一致的大小写不敏感搜索约定。
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccounts/Index')
-                ->where('filters.search', 'gateway')
+                ->where('filters.search__func', 'gateway')
                 ->has('accounts.data', 1)
                 ->where('accounts.data.0.user_name', 'Gateway-A'));
+    }
+
+    public function test_mqtt_accounts_can_be_filtered_by_declared_boolean_field(): void
+    {
+        $user = $this->createUserWithPermissions(['mqtt-account.read']);
+
+        MqttAccount::factory()->create([
+            'user_name' => 'enabled-account',
+            'enabled' => true,
+        ]);
+        MqttAccount::factory()->create([
+            'user_name' => 'disabled-account',
+            'enabled' => false,
+        ]);
+
+        $this->actingAs($user)
+            ->get('/mqtt-accounts?enabled__eq=0')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('MqttAccounts/Index')
+                ->where('filters.enabled__eq', '0')
+                ->has('accounts.data', 1)
+                ->where('accounts.data.0.user_name', 'disabled-account'));
     }
 
     public function test_read_only_users_cannot_open_create_or_delete_mqtt_accounts(): void

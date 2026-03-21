@@ -9,6 +9,8 @@ use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
+use App\Support\ListQueryFilters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -21,18 +23,33 @@ class UserController extends Controller
     #[PermissionAction('read')]
     public function index(Request $request): Response
     {
-        $search = trim((string) $request->string('search'));
-
-        $users = User::query()
+        $query = User::query()
             ->with('roles:id,name')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($nestedQuery) use ($search) {
-                    $nestedQuery
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->latest()
+            ->latest();
+
+        $filters = (new ListQueryFilters(
+            request: $request,
+            fieldDefinitions: [
+                // 这些字段允许走 field__operator 语法；未声明字段一律拒绝。
+                'name',
+                'email',
+                'id' => ['integer'],
+            ],
+            callbacks: [
+                // search__func 承接原来的多字段关键字搜索语义。
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+
+                    $query->where(function (Builder $nestedQuery) use ($search): void {
+                        $nestedQuery
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        $users = $query
             ->paginate(10)
             ->withQueryString()
             ->through(fn (User $user) => [
@@ -45,9 +62,7 @@ class UserController extends Controller
             ]);
 
         return Inertia::render('Users/Index', [
-            'filters' => [
-                'search' => $search,
-            ],
+            'filters' => $filters,
             'users' => $users,
         ]);
     }

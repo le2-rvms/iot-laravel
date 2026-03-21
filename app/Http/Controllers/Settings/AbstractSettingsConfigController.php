@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\StoreSettingRequest;
 use App\Http\Requests\Settings\UpdateSettingRequest;
 use App\Models\Settings\Config;
+use App\Support\ListQueryFilters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,27 +23,41 @@ abstract class AbstractSettingsConfigController extends Controller
 
     protected function indexConfigs(Request $request): Response
     {
-        $search = trim((string) $request->string('search'));
-
-        $configs = Config::query()
+        $query = Config::query()
             ->where('category', $this->category)
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($nestedQuery) use ($search) {
+            ->orderBy('key');
+
+        $filters = (new ListQueryFilters(
+            request: $request,
+            fieldDefinitions: [
+                // 配置列表只开放展示层需要的少数字段给查询 DSL。
+                'key',
+                'remark',
+                'is_masked' => ['boolean'],
+            ],
+            callbacks: [
+                // search__func 承接配置列表的关键字搜索，不把 category 这类固定约束暴露到 URL。
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
                     $likeSearch = "%{$search}%";
 
-                    // 与 MQTT 列表保持一致，配置搜索也按大小写不敏感处理，避免系统内同类列表行为分裂。
-                    $nestedQuery
-                        ->whereRaw('LOWER(key) LIKE LOWER(?)', [$likeSearch])
-                        ->orWhereRaw('LOWER(remark) LIKE LOWER(?)', [$likeSearch]);
-                });
-            })
-            ->orderBy('key')
+                    $query->where(function (Builder $nestedQuery) use ($likeSearch): void {
+                        // 与 MQTT 列表保持一致，配置搜索也按大小写不敏感处理，避免系统内同类列表行为分裂。
+                        $nestedQuery
+                            ->whereRaw('LOWER(key) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereRaw('LOWER(remark) LIKE LOWER(?)', [$likeSearch]);
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        $configs = $query
             ->paginate(10)
             ->withQueryString();
 
         return Inertia::render('Settings/Configs/Index', [
             'category' => $this->category,
-            'filters' => ['search' => $search],
+            'filters' => $filters,
             'configs' => $configs,
         ]);
     }

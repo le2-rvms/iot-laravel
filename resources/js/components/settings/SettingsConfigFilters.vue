@@ -1,7 +1,7 @@
 <script setup>
-import { reactive, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { Search } from 'lucide-vue-next';
+import { router } from "@inertiajs/vue3";
+import { Search } from "lucide-vue-next";
+import { useFilterForm } from "@/composables/useFilterForm";
 
 const props = defineProps({
     filters: {
@@ -14,41 +14,38 @@ const props = defineProps({
     },
 });
 
-const state = reactive({
-    search: props.filters.search ?? '',
-});
-
-watch(
-    () => props.filters,
-    (filters) => {
-        state.search = filters.search ?? '';
-    },
-    { deep: true },
-);
+// 配置列表和其他列表共享同一套搜索表单约定，只是提交地址不同。
+const form = useFilterForm(() => props.filters);
 
 function submit() {
     router.get(
         props.indexHref,
-        {
-            search: state.search || undefined,
-        },
+        // 配置列表和其他列表保持同一套查询表单提交方式。
+        form,
         {
             preserveState: true,
             preserveScroll: true,
             replace: true,
-            only: ['configs', 'filters'],
+            only: ["configs", "filters"],
         },
     );
 }
 </script>
 
 <template>
-    <div class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4">
-        <form class="flex flex-col gap-3 lg:flex-row lg:items-center" @submit.prevent="submit">
+    <div
+        class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4"
+    >
+        <form
+            class="flex flex-col gap-3 lg:flex-row lg:items-center"
+            @submit.prevent="submit"
+        >
             <div class="relative flex-1">
-                <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-app-subtle-foreground" />
+                <Search
+                    class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-app-subtle-foreground"
+                />
                 <UiInput
-                    v-model="state.search"
+                    v-model="form.search__func"
                     class="h-11 rounded-2xl pl-10"
                     placeholder="按配置键或备注搜索"
                 />

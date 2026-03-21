@@ -16,7 +16,7 @@ const props = defineProps({
 const page = usePage();
 // 页面级按钮仍按权限收口，避免只靠路由保护导致用户先看到再点进 403。
 const canWrite = computed(() => page.props.auth?.access?.['mqtt-account.write'] ?? false);
-const hasSearch = computed(() => (props.filters.search ?? '').trim() !== '');
+const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
 
 // 列表页 breadcrumb 固定收口到 MQTT 账号管理，保持新建/编辑/返回路径一致。
 const breadcrumbs = [
