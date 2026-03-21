@@ -50,6 +50,7 @@ function logout() {
 }
 
 function goToPasswordPage() {
+    // 菜单直接跳到独立改密页，和资源路由 / 权限控制保持同一入口。
     router.get('/account/security-password/edit');
 }
 

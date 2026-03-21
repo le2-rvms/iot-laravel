@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
+use App\Concerns\TracksUpdatedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -18,5 +19,5 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class Role extends SpatieRole
 {
-    use ResolvesAttributeLabelsFromDocBlocks;
+    use ResolvesAttributeLabelsFromDocBlocks, TracksUpdatedBy;
 }

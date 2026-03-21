@@ -26,6 +26,7 @@ class PasswordController extends Controller
             'password' => $request->validated('password'),
         ]);
 
+        // 修改成功后回到同一页面，交由全局 flash/toast 给出结果提示。
         return redirect('/account/security-password/edit')->with('success', '密码已更新。');
     }
 }

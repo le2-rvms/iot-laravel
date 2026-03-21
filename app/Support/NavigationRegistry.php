@@ -47,6 +47,16 @@ class NavigationRegistry
                         'show_in_dashboard' => true,
                     ],
                     [
+                        'title' => 'MQTT账号管理',
+                        'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
+                        'dashboard_description' => '维护 MQTT 连接账号、设备标识与启用状态。',
+                        // 归到系统管理，强调它是后台接入能力，而不是单独的业务模块入口。
+                        'href' => '/mqtt-accounts',
+                        'icon' => 'Waypoints',
+                        'permission' => 'mqtt-account.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
                         'title' => '应用配置',
                         'description' => '维护应用层的可配置键值、打码策略与备注说明。',
                         'dashboard_description' => '维护应用层的可配置键值、打码策略与备注说明。',

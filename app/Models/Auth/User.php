@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
+use App\Concerns\TracksUpdatedBy;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,7 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable, ResolvesAttributeLabelsFromDocBlocks;
+    use HasFactory, HasRoles, Notifiable, ResolvesAttributeLabelsFromDocBlocks, TracksUpdatedBy;
 
     protected string $guard_name = 'web';
 

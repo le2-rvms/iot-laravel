@@ -3,7 +3,7 @@
 namespace Tests\Feature\Settings;
 
 use App\Models\Settings\Config;
-use App\Values\Settings\ConfigCategory;
+use App\Values\Settings\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -192,6 +192,7 @@ class SettingsPageTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['settings-precognition.write']);
 
+        // 这里锁的是 Precognition 的按字段预校验契约，避免一次请求把整张表单错误都提前返回。
         $response = $this->actingAs($user)
             ->withPrecognition()
             ->postJson(route('precognition.store'), [
@@ -315,7 +316,7 @@ class SettingsPageTest extends TestCase
         Config::query()->create([
             'key' => 'app.name',
             'value' => 'IoT Admin',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
             'is_masked' => false,
             'remark' => '应用名称',
         ]);
@@ -327,7 +328,7 @@ class SettingsPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Configs/Index')
-                ->where('category', ConfigCategory::APPLICATION)
+                ->where('category', Category::APPLICATION)
                 ->where('configs.data.0.key', 'app.name')
                 ->where('configs.data.0.value_display', 'IoT Admin'));
     }
@@ -337,7 +338,7 @@ class SettingsPageTest extends TestCase
         Config::query()->create([
             'key' => 'system.notice',
             'value' => '维护中',
-            'category' => ConfigCategory::SYSTEM,
+            'category' => Category::SYSTEM,
             'is_masked' => false,
             'remark' => '系统公告',
         ]);
@@ -349,7 +350,7 @@ class SettingsPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Configs/Index')
-                ->where('category', ConfigCategory::SYSTEM)
+                ->where('category', Category::SYSTEM)
                 ->where('configs.data.0.key', 'system.notice'));
     }
 
@@ -376,7 +377,7 @@ class SettingsPageTest extends TestCase
         $applicationConfig = Config::query()->create([
             'key' => 'app.secret',
             'value' => 'token',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
             'is_masked' => true,
             'remark' => '应用密钥',
         ]);
@@ -401,7 +402,7 @@ class SettingsPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/Configs/Create')
-                ->where('category', ConfigCategory::APPLICATION));
+                ->where('category', Category::APPLICATION));
 
         $this->actingAs($writeUser)
             ->get(route('application-configs.edit', $applicationConfig))
@@ -416,14 +417,14 @@ class SettingsPageTest extends TestCase
         Config::query()->create([
             'key' => 'app.name',
             'value' => 'IoT Admin',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
             'is_masked' => false,
             'remark' => '应用名称',
         ]);
         Config::query()->create([
             'key' => 'app.secret',
             'value' => 'token-123',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
             'is_masked' => true,
             'remark' => '鉴权密钥',
         ]);
@@ -438,6 +439,36 @@ class SettingsPageTest extends TestCase
                 ->has('configs.data', 1)
                 ->where('configs.data.0.key', 'app.secret')
                 ->where('configs.data.0.value_display', '*****'));
+    }
+
+    public function test_application_config_list_search_is_case_insensitive(): void
+    {
+        Config::query()->create([
+            'key' => 'GatewayTimeout',
+            'value' => '30',
+            'category' => Category::APPLICATION,
+            'is_masked' => false,
+            'remark' => '网关超时设置',
+        ]);
+        Config::query()->create([
+            'key' => 'sensor.timeout',
+            'value' => '10',
+            'category' => Category::APPLICATION,
+            'is_masked' => false,
+            'remark' => '传感器超时设置',
+        ]);
+
+        $user = $this->createUserWithPermissions(['settings-application-config.read']);
+
+        $this->actingAs($user)
+            ->get(route('application-configs.index', ['search' => 'gateway']))
+            ->assertOk()
+            // 这里锁的是 PostgreSQL 目标环境下的大小写不敏感搜索行为。
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Settings/Configs/Index')
+                ->where('filters.search', 'gateway')
+                ->has('configs.data', 1)
+                ->where('configs.data.0.key', 'GatewayTimeout'));
     }
 
     public function test_application_config_can_be_created_with_write_permission(): void
@@ -456,7 +487,7 @@ class SettingsPageTest extends TestCase
 
         $this->assertDatabaseHas('configs', [
             'key' => 'app.theme',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
         ]);
     }
 
@@ -487,7 +518,7 @@ class SettingsPageTest extends TestCase
         $config = Config::query()->create([
             'key' => 'system.notice',
             'value' => '旧公告',
-            'category' => ConfigCategory::SYSTEM,
+            'category' => Category::SYSTEM,
             'is_masked' => false,
             'remark' => '系统公告',
         ]);
@@ -515,7 +546,7 @@ class SettingsPageTest extends TestCase
         $config = Config::query()->create([
             'key' => 'system.notice',
             'value' => '旧公告',
-            'category' => ConfigCategory::SYSTEM,
+            'category' => Category::SYSTEM,
             'is_masked' => false,
             'remark' => '系统公告',
         ]);
@@ -539,7 +570,7 @@ class SettingsPageTest extends TestCase
         $config = Config::query()->create([
             'key' => 'app.locale',
             'value' => 'zh_CN',
-            'category' => ConfigCategory::APPLICATION,
+            'category' => Category::APPLICATION,
             'is_masked' => false,
             'remark' => '默认语言',
         ]);
@@ -560,7 +591,7 @@ class SettingsPageTest extends TestCase
         $config = Config::query()->create([
             'key' => 'system.secret',
             'value' => '123',
-            'category' => ConfigCategory::SYSTEM,
+            'category' => Category::SYSTEM,
             'is_masked' => true,
             'remark' => '系统密钥',
         ]);

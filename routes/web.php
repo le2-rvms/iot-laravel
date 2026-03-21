@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\PasswordController as AccountPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MqttAccounts\MqttAccountController;
 use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\Settings\SettingsApplicationConfigController;
 use App\Http\Controllers\Settings\SettingsPrecognitionController;
@@ -27,6 +28,10 @@ Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->g
         ->except(['show']);
 
     Route::resource('roles', RoleController::class)
+        ->except(['show']);
+
+    // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
+    Route::resource('mqtt-accounts', MqttAccountController::class)
         ->except(['show']);
 
     Route::resource('settings/application-configs', SettingsApplicationConfigController::class)

@@ -7,15 +7,18 @@ import {
     SlidersHorizontal,
     SlidersVertical,
     Users,
+    Waypoints,
 } from "lucide-vue-next";
 import { Link, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
 
+// 保持显式图标映射，避免再次回到整包动态导入导致打包体积放大。
 const navigationIcons = {
     LayoutGrid,
     Users,
     ShieldCheck,
+    Waypoints,
     SlidersHorizontal,
     SlidersVertical,
     FileCheck2,
@@ -31,6 +34,7 @@ function isActive(href) {
 }
 
 function resolveNavigationIcon(icon) {
+    // 后端导航只传图标名，前端在这里统一落到具体组件并提供兜底图标。
     return navigationIcons[icon] ?? LayoutGrid;
 }
 </script>

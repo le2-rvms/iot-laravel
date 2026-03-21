@@ -27,9 +27,12 @@ abstract class AbstractSettingsConfigController extends Controller
             ->where('category', $this->category)
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($nestedQuery) use ($search) {
+                    $likeSearch = "%{$search}%";
+
+                    // 与 MQTT 列表保持一致，配置搜索也按大小写不敏感处理，避免系统内同类列表行为分裂。
                     $nestedQuery
-                        ->where('key', 'like', "%{$search}%")
-                        ->orWhere('remark', 'like', "%{$search}%");
+                        ->whereRaw('LOWER(key) LIKE LOWER(?)', [$likeSearch])
+                        ->orWhereRaw('LOWER(remark) LIKE LOWER(?)', [$likeSearch]);
                 });
             })
             ->orderBy('key')
@@ -47,6 +50,7 @@ abstract class AbstractSettingsConfigController extends Controller
     {
         return Inertia::render('Settings/Configs/Create', [
             'category' => $this->category,
+            // 新建页直接带入固定分类，避免前端再次判断应用配置/系统配置属于哪一路由。
             'config' => new Config([
                 'category' => $this->category,
                 'is_masked' => false,

@@ -78,17 +78,26 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Roles/Create')
-                ->has('permissionGroups', 8)
+                ->has('permissionGroups', 9)
                 ->where('permissionGroups', function ($groups): bool {
+                    $passwordGroup = collect($groups)->firstWhere('module', 'password');
+                    $mqttAccountGroup = collect($groups)->firstWhere('module', 'mqtt-account');
                     $applicationGroup = collect($groups)->firstWhere('module', 'settings-application-config');
                     $systemGroup = collect($groups)->firstWhere('module', 'settings-system-config');
                     $veeValidateGroup = collect($groups)->firstWhere('module', 'settings-vee-validate');
                     $precognitionGroup = collect($groups)->firstWhere('module', 'settings-precognition');
 
-                    return $applicationGroup !== null
+                    return $passwordGroup !== null
+                        && $mqttAccountGroup !== null
+                        && $applicationGroup !== null
                         && $systemGroup !== null
                         && $veeValidateGroup !== null
                         && $precognitionGroup !== null
+                        && $passwordGroup['label'] === '账户密码'
+                        && $passwordGroup['permissions'][0]['name'] === 'password.write'
+                        && $mqttAccountGroup['label'] === 'MQTT账号管理'
+                        && $mqttAccountGroup['permissions'][0]['name'] === 'mqtt-account.read'
+                        && $mqttAccountGroup['permissions'][1]['name'] === 'mqtt-account.write'
                         && $applicationGroup['label'] === '应用配置'
                         && $applicationGroup['permissions'][0]['name'] === 'settings-application-config.read'
                         && $applicationGroup['permissions'][1]['name'] === 'settings-application-config.write'

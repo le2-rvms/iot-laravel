@@ -7,7 +7,7 @@ use App\Attributes\PermissionGroup;
 use App\Http\Requests\Settings\StoreSettingRequest;
 use App\Http\Requests\Settings\UpdateSettingRequest;
 use App\Models\Settings\Config;
-use App\Values\Settings\ConfigCategory;
+use App\Values\Settings\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,7 +19,7 @@ class SettingsSystemConfigController extends AbstractSettingsConfigController
     public function __construct()
     {
         parent::__construct(
-            ConfigCategory::SYSTEM,
+            Category::SYSTEM,
             '系统配置',
             'system-configs.index',
         );
