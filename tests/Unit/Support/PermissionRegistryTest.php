@@ -8,18 +8,13 @@ use App\Http\Controllers\Settings\SettingsPrecognitionController;
 use App\Http\Controllers\Settings\SettingsVeeValidateController;
 use App\Http\Controllers\Users\UserController;
 use App\Support\PermissionRegistry;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Lang;
 use Tests\TestCase;
 
 class PermissionRegistryTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        PermissionRegistry::flushCache();
-
-        parent::tearDown();
-    }
-
-    public function test_it_discovers_permissions_from_controller_attributes(): void
+    public function test_it_loads_permissions_from_runtime_discovery(): void
     {
         $groups = collect(PermissionRegistry::definitions())->keyBy('module');
 
@@ -46,6 +41,34 @@ class PermissionRegistryTest extends TestCase
         $this->assertSame('读取', $userGroup['permissions'][0]['action_label']);
         $this->assertSame('写入', $userGroup['permissions'][1]['action_label']);
         $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+    }
+
+    public function test_it_translates_permission_labels_for_the_current_locale_without_rebuilding_permissions(): void
+    {
+        App::setLocale('en');
+
+        $groups = collect(PermissionRegistry::definitions())->keyBy('module');
+
+        $this->assertSame('Dashboard', $groups['dashboard']['label']);
+        $this->assertSame('Read', $groups['user']['permissions'][0]['action_label']);
+        $this->assertSame('Dashboard · Read', PermissionRegistry::permissionLabels()['dashboard.read']);
+
+        App::setLocale('zh_CN');
+
+        $this->assertSame('仪表盘', collect(PermissionRegistry::definitions())->keyBy('module')['dashboard']['label']);
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+    }
+
+    public function test_updating_permission_translations_does_not_require_rebuilding_permissions(): void
+    {
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+
+        Lang::addLines([
+            'permissions.groups.dashboard' => '仪表盘新文案',
+            'permissions.actions.read' => '查看',
+        ], 'zh_CN');
+
+        $this->assertSame('仪表盘新文案 · 查看', PermissionRegistry::permissionLabels()['dashboard.read']);
     }
 
     public function test_it_resolves_permission_names_for_controller_actions(): void

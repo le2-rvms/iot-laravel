@@ -7,17 +7,18 @@ use App\Models\Auth\User;
 use App\Models\Settings\NotificationChannel;
 use App\Models\Settings\NotificationRule;
 use Illuminate\Support\Arr;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\App;
+use Tests\TestCase;
 
-class ResolvesAttributeLabelsFromDocBlocksTest extends TestCase
+class HasTranslatedAttributeLabelsTest extends TestCase
 {
-    public function test_it_reads_labels_from_model_doc_blocks(): void
+    public function test_it_reads_labels_from_model_translations(): void
     {
         $this->assertSame('邮箱', User::attributeLabels()['email']);
         $this->assertSame('角色名称', Role::attributeLabels()['name']);
     }
 
-    public function test_it_reads_labels_from_multiple_model_doc_blocks(): void
+    public function test_it_reads_labels_from_multiple_model_translations(): void
     {
         $labels = NotificationRule::attributeLabels();
 
@@ -40,5 +41,16 @@ class ResolvesAttributeLabelsFromDocBlocksTest extends TestCase
 
         $this->assertSame('通知渠道', $labels['channels']);
         $this->assertSame('渠道目标', $labels['channels.*.target']);
+    }
+
+    public function test_it_switches_locales_without_reusing_stale_model_labels(): void
+    {
+        App::setLocale('en');
+        $this->assertSame('Email', User::attributeLabels()['email']);
+        $this->assertSame('Channel Target', NotificationChannel::attributeLabels()['target']);
+
+        App::setLocale('zh_CN');
+        $this->assertSame('邮箱', User::attributeLabels()['email']);
+        $this->assertSame('渠道目标', NotificationChannel::attributeLabels()['target']);
     }
 }

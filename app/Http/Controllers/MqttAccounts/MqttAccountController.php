@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('MQTT账号管理')]
+#[PermissionGroup]
 class MqttAccountController extends Controller
 {
     #[PermissionAction('read')]
@@ -31,7 +31,7 @@ class MqttAccountController extends Controller
             ->addSelect(DB::raw(Enabled::toCaseSQL()))
             ->orderByDesc('act_id');
 
-        $filters = (new ListQueryFilters(
+        $filters = new ListQueryFilters(
             request: $request,
             fieldDefinitions: [
                 // 只有显式声明的字段可以暴露给列表查询 DSL。
@@ -59,7 +59,7 @@ class MqttAccountController extends Controller
                     });
                 },
             ],
-        ))->apply($query);
+        )->apply($query);
 
         $accounts = $query
             ->paginate(10)
@@ -93,7 +93,7 @@ class MqttAccountController extends Controller
         // 后台只接收明文输入，真正入库时统一转成 salt + hash，避免模型层外泄保存细节。
         MqttAccount::query()->create($validated + MqttAccount::buildPasswordFields($password));
 
-        return to_route('mqtt-accounts.index')->with('success', 'MQTT账号已创建。');
+        return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已创建。');
     }
 
     #[PermissionAction('write')]
@@ -118,7 +118,7 @@ class MqttAccountController extends Controller
 
         $mqttAccount->update($validated);
 
-        return to_route('mqtt-accounts.edit', $mqttAccount)->with('success', 'MQTT账号已更新。');
+        return redirect()->action([self::class, 'edit'], $mqttAccount)->with('success', 'MQTT账号已更新。');
     }
 
     #[PermissionAction('write')]
@@ -126,6 +126,6 @@ class MqttAccountController extends Controller
     {
         $mqttAccount->delete();
 
-        return to_route('mqtt-accounts.index')->with('success', 'MQTT账号已删除。');
+        return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已删除。');
     }
 }

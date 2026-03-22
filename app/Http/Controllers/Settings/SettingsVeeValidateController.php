@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('复杂表单实验室')]
+#[PermissionGroup]
 class SettingsVeeValidateController extends Controller
 {
     #[PermissionAction('read')]
@@ -32,7 +32,7 @@ class SettingsVeeValidateController extends Controller
     {
         Log::info('settings.form_lab.submitted', $request->validated());
 
-        return to_route('vee-validate.index')->with('success', '规则内容已提交。');
+        return redirect()->action([self::class, 'index'])->with('success', '规则内容已提交。');
     }
 
     /**

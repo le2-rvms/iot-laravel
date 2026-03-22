@@ -12,9 +12,12 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 Route::get('/', function () {
-    return Auth::check() ? to_route('dashboard') : to_route('login');
+    return Auth::check()
+        ? redirect()->action(DashboardController::class)
+        : redirect()->action([AuthenticatedSessionController::class, 'create']);
 });
 
 Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
@@ -22,7 +25,7 @@ Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->g
     Route::singleton('account/security-password', AccountPasswordController::class)
         ->only(['edit', 'update']);
 
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/dashboard', DashboardController::class);
 
     Route::resource('users', UserController::class)
         ->except(['show']);

@@ -2,7 +2,7 @@
 
 namespace App\Models\Settings;
 
-use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
+use App\Concerns\HasTranslatedAttributeLabels;
 
 /**
  * @property string $name 规则名称
@@ -17,5 +17,5 @@ use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
  */
 class NotificationRule
 {
-    use ResolvesAttributeLabelsFromDocBlocks;
+    use HasTranslatedAttributeLabels;
 }

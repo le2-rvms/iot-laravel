@@ -2,7 +2,7 @@
 
 namespace App\Models\Settings;
 
-use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
+use App\Concerns\HasTranslatedAttributeLabels;
 
 /**
  * @property string $type 渠道类型
@@ -12,5 +12,5 @@ use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
  */
 class NotificationChannel
 {
-    use ResolvesAttributeLabelsFromDocBlocks;
+    use HasTranslatedAttributeLabels;
 }

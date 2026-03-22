@@ -2,8 +2,7 @@
 
 namespace App\Models\Iot;
 
-use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
-use App\Concerns\TracksUpdatedBy;
+use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
 use App\Values\Iot\Enabled;
 use App\Values\Iot\IsSuperuser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +28,7 @@ use Illuminate\Support\Str;
  */
 class MqttAccount extends Model
 {
-    use HasFactory, ResolvesAttributeLabelsFromDocBlocks, TracksUpdatedBy;
+    use HasFactory, HasTranslatedAttributesAndUpdatedBy;
 
     // 列表、表单和 Inertia 响应都不应暴露真实哈希与盐值。
     protected $hidden = [

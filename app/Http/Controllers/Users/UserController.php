@@ -17,7 +17,7 @@ use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('用户管理')]
+#[PermissionGroup]
 class UserController extends Controller
 {
     #[PermissionAction('read')]
@@ -85,7 +85,7 @@ class UserController extends Controller
 
         $user->sendEmailVerificationNotification();
 
-        return to_route('users.index')->with('success', '用户已创建，并已发送验证邮件。');
+        return redirect()->action([self::class, 'index'])->with('success', '用户已创建，并已发送验证邮件。');
     }
 
     #[PermissionAction('write')]
@@ -132,7 +132,7 @@ class UserController extends Controller
             $user->sendEmailVerificationNotification();
         }
 
-        return to_route('users.edit', $user)->with('success', '用户信息已更新。');
+        return redirect()->action([self::class, 'edit'], $user)->with('success', '用户信息已更新。');
     }
 
     #[PermissionAction('write')]
@@ -140,7 +140,7 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return to_route('users.index')->with('success', '用户已删除。');
+        return redirect()->action([self::class, 'index'])->with('success', '用户已删除。');
     }
 
     /**

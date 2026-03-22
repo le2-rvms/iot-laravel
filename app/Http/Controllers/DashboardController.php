@@ -9,7 +9,7 @@ use App\Support\NavigationRegistry;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('仪表盘')]
+#[PermissionGroup]
 class DashboardController extends Controller
 {
     #[PermissionAction('read')]

@@ -13,7 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('角色权限')]
+#[PermissionGroup]
 class RoleController extends Controller
 {
     #[PermissionAction('read')]
@@ -67,7 +67,7 @@ class RoleController extends Controller
 
         $role->syncPermissions($validated['permissions'] ?? []);
 
-        return to_route('roles.index')->with('success', '角色已创建。');
+        return redirect()->action([self::class, 'index'])->with('success', '角色已创建。');
     }
 
     #[PermissionAction('write')]
@@ -102,22 +102,22 @@ class RoleController extends Controller
                 : ($validated['permissions'] ?? []),
         );
 
-        return to_route('roles.edit', $role)->with('success', '角色已更新。');
+        return redirect()->action([self::class, 'edit'], $role)->with('success', '角色已更新。');
     }
 
     #[PermissionAction('write')]
     public function destroy(Role $role): RedirectResponse
     {
         if ($role->name === PermissionRegistry::SUPER_ADMIN_ROLE) {
-            return to_route('roles.index')->with('error', 'Super Admin 角色不可删除。');
+            return redirect()->action([self::class, 'index'])->with('error', 'Super Admin 角色不可删除。');
         }
 
         if ($role->users()->exists()) {
-            return to_route('roles.index')->with('error', '该角色仍有用户绑定，无法删除。');
+            return redirect()->action([self::class, 'index'])->with('error', '该角色仍有用户绑定，无法删除。');
         }
 
         $role->delete();
 
-        return to_route('roles.index')->with('success', '角色已删除。');
+        return redirect()->action([self::class, 'index'])->with('success', '角色已删除。');
     }
 }

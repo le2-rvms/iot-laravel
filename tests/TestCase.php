@@ -8,9 +8,19 @@ use App\Support\PermissionRegistry;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Str;
+use Tests\Concerns\ResetsPermissionRegistryCache;
 
 abstract class TestCase extends BaseTestCase
 {
+    use ResetsPermissionRegistryCache;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->resetPermissionRegistryCache();
+    }
+
     protected function seedPermissions(): void
     {
         $this->seed(RolePermissionSeeder::class);

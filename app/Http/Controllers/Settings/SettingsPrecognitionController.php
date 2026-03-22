@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('Precognition 表单实验室')]
+#[PermissionGroup]
 class SettingsPrecognitionController extends Controller
 {
     #[PermissionAction('read')]
@@ -27,7 +27,7 @@ class SettingsPrecognitionController extends Controller
     {
         Log::info('settings.form_lab.precognition_submitted', $request->validated());
 
-        return to_route('precognition.index')->with('success', '规则内容已提交。');
+        return redirect()->action([self::class, 'index'])->with('success', '规则内容已提交。');
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace App\Models\Settings;
 
-use App\Concerns\ResolvesAttributeLabelsFromDocBlocks;
-use App\Concerns\TracksUpdatedBy;
+use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
 use App\Values\Settings\Category;
 use App\Values\Settings\IsMasked;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +20,7 @@ use Illuminate\Support\Carbon;
  */
 class Config extends Model
 {
-    use ResolvesAttributeLabelsFromDocBlocks, TracksUpdatedBy;
+    use HasTranslatedAttributesAndUpdatedBy;
 
     protected $guarded = ['id'];
 

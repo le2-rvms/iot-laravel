@@ -18,7 +18,7 @@ abstract class AbstractSettingsConfigController extends Controller
     public function __construct(
         private readonly string $category,
         private readonly string $categoryLabel,
-        private readonly string $indexRouteName,
+        private readonly array $indexAction,
     ) {}
 
     protected function indexConfigs(Request $request): Response
@@ -83,7 +83,7 @@ abstract class AbstractSettingsConfigController extends Controller
 
         Config::query()->create($validated);
 
-        return to_route($this->indexRouteName)->with('success', "{$this->categoryLabel}已创建。");
+        return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已创建。");
     }
 
     protected function editConfig(Config $config): Response
@@ -107,7 +107,7 @@ abstract class AbstractSettingsConfigController extends Controller
 
         $config->update($validated);
 
-        return to_route($this->indexRouteName)->with('success', "{$this->categoryLabel}已更新。");
+        return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已更新。");
     }
 
     protected function destroyConfig(Config $config): RedirectResponse
@@ -116,7 +116,7 @@ abstract class AbstractSettingsConfigController extends Controller
 
         $config->delete();
 
-        return to_route($this->indexRouteName)->with('success', "{$this->categoryLabel}已删除。");
+        return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已删除。");
     }
 
     protected function ensureCategoryMatches(Config $config): void

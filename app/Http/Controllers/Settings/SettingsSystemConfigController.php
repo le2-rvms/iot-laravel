@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-#[PermissionGroup('系统配置')]
+#[PermissionGroup]
 class SettingsSystemConfigController extends AbstractSettingsConfigController
 {
     public function __construct()
@@ -21,7 +21,7 @@ class SettingsSystemConfigController extends AbstractSettingsConfigController
         parent::__construct(
             Category::SYSTEM,
             '系统配置',
-            'system-configs.index',
+            [self::class, 'index'],
         );
     }
 
