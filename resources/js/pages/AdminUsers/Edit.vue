@@ -13,9 +13,9 @@ const props = defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
-    { label: '用户管理', href: '/users' },
-    { label: '编辑用户' },
+    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '管理员用户', href: '/admin/admin-users' },
+    { label: '编辑管理员用户' },
 ];
 </script>
 
@@ -23,7 +23,7 @@ const breadcrumbs = [
     <Head :title="`编辑 ${props.user.name}`" />
 
     <AppLayout
-        title="编辑用户"
+        title="编辑管理员用户"
         description="编辑基础资料；若修改邮箱，系统会重置验证状态并重新发送验证邮件。"
         :breadcrumbs="breadcrumbs"
     >

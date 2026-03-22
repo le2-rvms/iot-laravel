@@ -20,7 +20,7 @@ const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '
 
 // 列表页 breadcrumb 固定收口到 MQTT 账号管理，保持新建/编辑/返回路径一致。
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
+    { label: '仪表盘', href: '/admin/dashboard' },
     { label: 'MQTT账号管理' },
 ];
 </script>
@@ -37,7 +37,7 @@ const breadcrumbs = [
             <AppPageToolbar title="账号列表" description="支持按账号名、客户端标识或设备信息查找。">
                 <template #actions v-if="canWrite">
                     <UiButton as-child class="rounded-xl">
-                        <Link href="/mqtt-accounts/create">新建MQTT账号</Link>
+                        <Link href="/admin/mqtt-accounts/create">新建MQTT账号</Link>
                     </UiButton>
                 </template>
             </AppPageToolbar>
@@ -52,7 +52,7 @@ const breadcrumbs = [
                     :title="hasSearch ? '未找到匹配的MQTT账号' : '还没有MQTT账号'"
                     :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部账号。' : '创建第一个 MQTT 账号后，可在这里集中维护连接信息。'"
                     :action-label="!hasSearch && canWrite ? '创建MQTT账号' : ''"
-                    :action-href="!hasSearch && canWrite ? '/mqtt-accounts/create' : ''"
+                    :action-href="!hasSearch && canWrite ? '/admin/mqtt-accounts/create' : ''"
                 />
 
                 <template v-if="accounts.data.length" #footer>

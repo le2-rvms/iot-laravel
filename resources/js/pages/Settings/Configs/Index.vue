@@ -23,7 +23,7 @@ const resource = computed(() => resolveConfigResource(props.category));
 const canWrite = computed(() => page.props.auth?.access?.[resource.value.write_permission] ?? false);
 const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
 const breadcrumbs = computed(() => [
-    { label: '仪表盘', href: '/dashboard' },
+    { label: '仪表盘', href: '/admin/dashboard' },
     { label: resource.value.title },
 ]);
 </script>

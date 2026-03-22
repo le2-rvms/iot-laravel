@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\AdminUsers;
 
-use App\Models\Auth\Role;
-use App\Models\Auth\User;
+use App\Models\Auth\AdminRole;
+use App\Models\Auth\AdminUser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class StoreUserRequest extends FormRequest
+class StoreAdminUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
             'roles.*' => [
                 'string',
                 'distinct',
-                Rule::exists(Role::class, 'name')->where('guard_name', 'web'),
+                Rule::exists(AdminRole::class, 'name')->where('guard_name', 'web'),
             ],
         ];
     }
@@ -38,9 +38,9 @@ class StoreUserRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return array_merge(User::attributeLabels(), [
-            'roles' => User::attributeLabels()['roles'],
-            'roles.*' => User::attributeLabels()['roles'],
+        return array_merge(AdminUser::attributeLabels(), [
+            'roles' => AdminUser::attributeLabels()['roles'],
+            'roles.*' => AdminUser::attributeLabels()['roles'],
         ]);
     }
 }

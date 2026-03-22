@@ -29,7 +29,7 @@ const form = useForm({
 
 function submit() {
     if (isEdit.value) {
-        form.put(`/mqtt-accounts/${props.account.act_id}`, {
+        form.put(`/admin/mqtt-accounts/${props.account.act_id}`, {
             // 提交后只清理密码字段，其他输入保持原状，方便用户继续修正或重复保存。
             onFinish: () => form.reset('password'),
         });
@@ -37,7 +37,7 @@ function submit() {
         return;
     }
 
-    form.post('/mqtt-accounts', {
+    form.post('/admin/mqtt-accounts', {
         // 创建失败时保留其余输入，只清理密码，避免回填明文密码到页面。
         onFinish: () => form.reset('password'),
     });
@@ -130,7 +130,7 @@ function submit() {
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/mqtt-accounts">返回列表</Link>
+                    <Link href="/admin/mqtt-accounts">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-32 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建账号' }}

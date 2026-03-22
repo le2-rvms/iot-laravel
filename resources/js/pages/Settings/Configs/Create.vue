@@ -17,7 +17,7 @@ const props = defineProps({
 const resource = computed(() => resolveConfigResource(props.category));
 
 const breadcrumbs = computed(() => [
-    { label: '仪表盘', href: '/dashboard' },
+    { label: '仪表盘', href: '/admin/dashboard' },
     { label: resource.value.title, href: resource.value.index_href },
     { label: '新建配置项' },
 ]);

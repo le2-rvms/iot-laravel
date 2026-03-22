@@ -9,17 +9,17 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
-    { label: '用户管理', href: '/users' },
-    { label: '新建用户' },
+    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '管理员用户', href: '/admin/admin-users' },
+    { label: '新建管理员用户' },
 ];
 </script>
 
 <template>
-    <Head title="新建用户" />
+    <Head title="新建管理员用户" />
 
     <AppLayout
-        title="新建用户"
+        title="新建管理员用户"
         description="创建成功后立即发送验证邮件，保持首版邮箱验证链路闭合。"
         :breadcrumbs="breadcrumbs"
     >

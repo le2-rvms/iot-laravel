@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Models\Auth\User;
+use App\Http\Controllers\Controller;
+use App\Models\Auth\AdminUser;
 use App\Support\NavigationRegistry;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,15 +20,15 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'stats' => [
-                'usersCount' => User::count(),
+                'usersCount' => AdminUser::count(),
             ],
             'quickLinks' => NavigationRegistry::dashboardQuickLinksFor($user),
-            'recentUsers' => Inertia::defer(fn () => User::query()
+            'recentUsers' => Inertia::defer(fn () => AdminUser::query()
                 ->with('roles:id,name')
                 ->latest()
                 ->take(5)
                 ->get(['id', 'name', 'email', 'email_verified_at', 'created_at'])
-                ->map(fn (User $user) => [
+                ->map(fn (AdminUser $user) => [
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
@@ -39,7 +40,7 @@ class DashboardController extends Controller
             'systemCards' => Inertia::defer(fn () => [
                 [
                     'title' => '权限设置',
-                    'description' => '已支持按角色分配查看和维护权限。',
+                    'description' => '已支持按管理员角色分配查看和维护权限。',
                     'status' => '可用',
                 ],
                 [

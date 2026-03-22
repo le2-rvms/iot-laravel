@@ -26,7 +26,7 @@ const navigationIcons = {
 };
 
 function isActive(href) {
-    if (href === "/dashboard") {
+    if (href === "/admin/dashboard") {
         return page.url === href;
     }
 

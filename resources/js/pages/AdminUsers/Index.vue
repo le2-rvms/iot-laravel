@@ -14,27 +14,27 @@ defineProps({
 });
 
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['user.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['admin-user.write'] ?? false);
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
-    { label: '用户管理' },
+    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '管理员用户' },
 ];
 </script>
 
 <template>
-    <Head title="用户管理" />
+    <Head title="管理员用户" />
 
     <AppLayout
-        title="用户管理"
-        description="查看、筛选并维护后台用户资料。"
+        title="管理员用户"
+        description="查看、筛选并维护后台管理员用户资料。"
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="用户列表" description="支持按姓名或邮箱筛选，并可继续新增用户。">
+            <AppPageToolbar title="管理员用户列表" description="支持按姓名或邮箱筛选，并可继续新增用户。">
                 <template #actions v-if="canWrite">
                     <UiButton as-child class="rounded-xl">
-                        <Link href="/users/create">新建用户</Link>
+                        <Link href="/admin/admin-users/create">新建管理员用户</Link>
                     </UiButton>
                 </template>
             </AppPageToolbar>
@@ -49,10 +49,10 @@ const breadcrumbs = [
 
             <AppEmptyState
                 v-else
-                title="还没有用户数据"
-                description="创建第一个后台用户后，可在这里查看和维护账号信息。"
-                :action-label="canWrite ? '创建用户' : ''"
-                :action-href="canWrite ? '/users/create' : ''"
+                title="还没有管理员用户数据"
+                description="创建第一个后台管理员用户后，可在这里查看和维护账号信息。"
+                :action-label="canWrite ? '创建管理员用户' : ''"
+                :action-href="canWrite ? '/admin/admin-users/create' : ''"
             />
         </div>
     </AppLayout>

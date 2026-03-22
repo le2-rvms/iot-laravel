@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
@@ -28,7 +28,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewHorizon', function (?User $user = null) {
+        Gate::define('viewHorizon', function (?AdminUser $user = null) {
             return $user?->can('settings-system-config.read') ?? false;
         });
     }

@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use App\Models\Auth\Role;
-use App\Models\Auth\User;
+use App\Models\Auth\AdminRole;
+use App\Models\Auth\AdminUser;
 use App\Support\PermissionRegistry;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -26,11 +26,11 @@ abstract class TestCase extends BaseTestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    protected function createSuperAdmin(array $attributes = []): User
+    protected function createSuperAdmin(array $attributes = []): AdminUser
     {
         $this->seedPermissions();
 
-        $user = User::factory()->create($attributes);
+        $user = AdminUser::factory()->create($attributes);
         $user->assignRole(PermissionRegistry::SUPER_ADMIN_ROLE);
 
         return $user;
@@ -39,12 +39,12 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param  array<int, string>  $permissions
      */
-    protected function createUserWithPermissions(array $permissions, array $attributes = []): User
+    protected function createUserWithPermissions(array $permissions, array $attributes = []): AdminUser
     {
         $this->seedPermissions();
 
-        $user = User::factory()->create($attributes);
-        $role = Role::create([
+        $user = AdminUser::factory()->create($attributes);
+        $role = AdminRole::create([
             'name' => 'Role '.Str::uuid(),
             'guard_name' => 'web',
         ]);

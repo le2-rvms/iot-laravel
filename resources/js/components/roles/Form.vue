@@ -39,12 +39,12 @@ function togglePermission(permissionName, checked) {
 
 function submit() {
     if (isEdit.value) {
-        form.put(`/roles/${props.role.id}`);
+        form.put(`/admin/admin-roles/${props.role.id}`);
 
         return;
     }
 
-    form.post('/roles');
+    form.post('/admin/admin-roles');
 }
 </script>
 
@@ -52,7 +52,7 @@ function submit() {
     <form class="space-y-6" @submit.prevent="submit">
         <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardHeader>
-                <UiCardTitle>{{ isEdit ? '编辑角色' : '创建角色' }}</UiCardTitle>
+                <UiCardTitle>{{ isEdit ? '编辑管理员角色' : '创建管理员角色' }}</UiCardTitle>
                 <UiCardDescription>
                     为不同岗位配置可访问的功能范围。
                 </UiCardDescription>
@@ -60,7 +60,7 @@ function submit() {
 
             <UiCardContent class="space-y-6">
                 <div class="space-y-2">
-                    <UiLabel for="role-name">角色名称</UiLabel>
+                    <UiLabel for="role-name">管理员角色名称</UiLabel>
                     <UiInput
                         id="role-name"
                         v-model="form.name"
@@ -96,10 +96,10 @@ function submit() {
 
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/roles">返回列表</Link>
+                    <Link href="/admin/admin-roles">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
-                    {{ form.processing ? '保存中' : isEdit ? '保存角色' : '创建角色' }}
+                    {{ form.processing ? '保存中' : isEdit ? '保存管理员角色' : '创建管理员角色' }}
                 </UiButton>
             </UiCardFooter>
         </UiCard>

@@ -27,6 +27,6 @@ class PasswordController extends Controller
         ]);
 
         // 修改成功后回到同一页面，交由全局 flash/toast 给出结果提示。
-        return redirect('/account/security-password/edit')->with('success', '密码已更新。');
+        return redirect()->action([self::class, 'edit'])->with('success', '密码已更新。');
     }
 }

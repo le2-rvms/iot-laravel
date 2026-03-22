@@ -18,10 +18,10 @@ class NavigationRegistryTest extends TestCase
 
         $this->assertCount(2, $sections);
         $this->assertSame('工作台', $sections[0]['title']);
-        $this->assertSame('/dashboard', $sections[0]['items'][0]['href']);
+        $this->assertSame('/admin/dashboard', $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/users', '/roles', '/mqtt-accounts', '/settings/application-configs', '/settings/system-configs'],
+            ['/admin/admin-users', '/admin/admin-roles', '/admin/mqtt-accounts', '/admin/settings/application-configs', '/admin/settings/system-configs'],
             array_column($sections[1]['items'], 'href'),
         );
     }
@@ -39,7 +39,7 @@ class NavigationRegistryTest extends TestCase
                     [
                         'title' => '仪表盘',
                         'description' => '查看系统入口与首屏统计。',
-                        'href' => '/dashboard',
+                        'href' => '/admin/dashboard',
                         'icon' => 'LayoutGrid',
                     ],
                 ],
@@ -54,30 +54,30 @@ class NavigationRegistryTest extends TestCase
 
     public function test_dashboard_quick_links_only_include_allowed_items_marked_for_dashboard(): void
     {
-        $user = $this->createUserWithPermissions(['user.read', 'mqtt-account.read', 'settings-system-config.read', 'settings-vee-validate.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read', 'mqtt-account.read', 'settings-system-config.read', 'settings-vee-validate.read']);
 
         $links = NavigationRegistry::dashboardQuickLinksFor($user);
 
         $this->assertSame([
             [
-                'title' => '用户管理',
-                'description' => '维护后台用户、邮箱验证状态与基础资料。',
-                'href' => '/users',
+                'title' => '管理员用户',
+                'description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
+                'href' => '/admin/admin-users',
             ],
             [
                 'title' => 'MQTT账号管理',
                 'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
-                'href' => '/mqtt-accounts',
+                'href' => '/admin/mqtt-accounts',
             ],
             [
                 'title' => '系统配置',
                 'description' => '维护系统层的公共设定、展示策略与后台说明。',
-                'href' => '/settings/system-configs',
+                'href' => '/admin/settings/system-configs',
             ],
             [
                 'title' => 'VeeValidate 实验室',
                 'description' => '用于演练通知规则的填写流程。',
-                'href' => '/settings/vee-validate',
+                'href' => '/admin/settings/vee-validate',
             ],
         ], $links);
     }

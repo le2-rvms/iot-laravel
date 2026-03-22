@@ -137,7 +137,7 @@ function removeChannel(index) {
 const submit = handleSubmit((formValues) => {
     bridge.submitWithInertia({
         method: 'post',
-        url: '/settings/vee-validate',
+        url: '/admin/settings/vee-validate',
         data: formValues,
     });
 });

@@ -13,17 +13,17 @@ defineProps({
 
 const confirmDialog = useConfirmDialog();
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['role.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['admin-role.write'] ?? false);
 
 function confirmDelete(role) {
     confirmDialog.open({
-        title: '删除角色',
-        description: `确定删除角色 ${role.name} 吗？`,
+        title: '删除管理员角色',
+        description: `确定删除管理员角色 ${role.name} 吗？`,
         confirmLabel: '确认删除',
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/roles/${role.id}`, {
+            router.delete(`/admin/admin-roles/${role.id}`, {
                 preserveScroll: true,
             });
         },
@@ -35,9 +35,9 @@ function confirmDelete(role) {
     <UiTable>
         <UiTableHeader>
             <UiTableRow>
-                <UiTableHead>角色名称</UiTableHead>
+                <UiTableHead>管理员角色名称</UiTableHead>
                 <UiTableHead>权限数</UiTableHead>
-                <UiTableHead>绑定用户</UiTableHead>
+                <UiTableHead>绑定管理员用户</UiTableHead>
                 <UiTableHead>已选权限</UiTableHead>
                 <UiTableHead>创建时间</UiTableHead>
                 <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
@@ -67,7 +67,7 @@ function confirmDelete(role) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/roles/${role.id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="`/admin/admin-roles/${role.id}/edit`" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

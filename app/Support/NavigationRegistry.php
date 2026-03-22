@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 
 class NavigationRegistry
 {
@@ -18,7 +18,7 @@ class NavigationRegistry
                     [
                         'title' => '仪表盘',
                         'description' => '查看系统入口与首屏统计。',
-                        'href' => '/dashboard',
+                        'href' => '/admin/dashboard',
                         'icon' => 'LayoutGrid',
                         'permission' => 'dashboard.read',
                         'show_in_dashboard' => false,
@@ -29,29 +29,28 @@ class NavigationRegistry
                 'title' => '系统管理',
                 'items' => [
                     [
-                        'title' => '用户管理',
-                        'description' => '维护后台用户、邮箱验证状态与基础资料。',
-                        'dashboard_description' => '维护后台用户、邮箱验证状态与基础资料。',
-                        'href' => '/users',
+                        'title' => '管理员用户',
+                        'description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
+                        'dashboard_description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
+                        'href' => '/admin/admin-users',
                         'icon' => 'Users',
-                        'permission' => 'user.read',
+                        'permission' => 'admin-user.read',
                         'show_in_dashboard' => true,
                     ],
                     [
-                        'title' => '角色权限',
-                        'description' => '维护角色与读写权限集合。',
-                        'dashboard_description' => '维护角色与模块读写权限的映射关系。',
-                        'href' => '/roles',
+                        'title' => '管理员角色',
+                        'description' => '维护管理员角色与读写权限集合。',
+                        'dashboard_description' => '维护管理员角色与模块读写权限的映射关系。',
+                        'href' => '/admin/admin-roles',
                         'icon' => 'ShieldCheck',
-                        'permission' => 'role.read',
+                        'permission' => 'admin-role.read',
                         'show_in_dashboard' => true,
                     ],
                     [
                         'title' => 'MQTT账号管理',
                         'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
                         'dashboard_description' => '维护 MQTT 连接账号、设备标识与启用状态。',
-                        // 归到系统管理，强调它是后台接入能力，而不是单独的业务模块入口。
-                        'href' => '/mqtt-accounts',
+                        'href' => '/admin/mqtt-accounts',
                         'icon' => 'Waypoints',
                         'permission' => 'mqtt-account.read',
                         'show_in_dashboard' => true,
@@ -60,7 +59,7 @@ class NavigationRegistry
                         'title' => '应用配置',
                         'description' => '维护应用层的可配置键值、打码策略与备注说明。',
                         'dashboard_description' => '维护应用层的可配置键值、打码策略与备注说明。',
-                        'href' => '/settings/application-configs',
+                        'href' => '/admin/settings/application-configs',
                         'icon' => 'SlidersHorizontal',
                         'permission' => 'settings-application-config.read',
                         'show_in_dashboard' => true,
@@ -69,7 +68,7 @@ class NavigationRegistry
                         'title' => '系统配置',
                         'description' => '维护系统层的公共设定、展示策略与后台说明。',
                         'dashboard_description' => '维护系统层的公共设定、展示策略与后台说明。',
-                        'href' => '/settings/system-configs',
+                        'href' => '/admin/settings/system-configs',
                         'icon' => 'SlidersVertical',
                         'permission' => 'settings-system-config.read',
                         'show_in_dashboard' => true,
@@ -78,7 +77,7 @@ class NavigationRegistry
                         'title' => 'VeeValidate 实验室',
                         'description' => '用于演练通知规则的填写流程。',
                         'dashboard_description' => '用于演练通知规则的填写流程。',
-                        'href' => '/settings/vee-validate',
+                        'href' => '/admin/settings/vee-validate',
                         'icon' => 'FileCheck2',
                         'permission' => 'settings-vee-validate.read',
                         'show_in_sidebar' => false,
@@ -88,7 +87,7 @@ class NavigationRegistry
                         'title' => 'Precognition 实验室',
                         'description' => '用于体验填写过程中的实时校验反馈。',
                         'dashboard_description' => '用于体验填写过程中的实时校验反馈。',
-                        'href' => '/settings/precognition',
+                        'href' => '/admin/settings/precognition',
                         'icon' => 'ScanSearch',
                         'permission' => 'settings-precognition.read',
                         'show_in_sidebar' => false,
@@ -102,7 +101,7 @@ class NavigationRegistry
     /**
      * @return array<int, array{title: string, items: array<int, array{title: string, description: string, href: string, icon: string}>}>
      */
-    public static function sidebarFor(?User $user): array
+    public static function sidebarFor(?AdminUser $user): array
     {
         return collect(self::definitions())
             ->map(function (array $section) use ($user): array {
@@ -128,7 +127,7 @@ class NavigationRegistry
     /**
      * @return array<int, array{title: string, description: string, href: string}>
      */
-    public static function dashboardQuickLinksFor(?User $user): array
+    public static function dashboardQuickLinksFor(?AdminUser $user): array
     {
         return collect(self::definitions())
             ->flatMap(fn (array $section) => $section['items'])
@@ -145,7 +144,7 @@ class NavigationRegistry
     /**
      * @param  array{permission?: string}  $item
      */
-    protected static function canAccess(array $item, ?User $user): bool
+    protected static function canAccess(array $item, ?AdminUser $user): bool
     {
         if (! isset($item['permission'])) {
             return true;

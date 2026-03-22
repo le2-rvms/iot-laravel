@@ -13,7 +13,7 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
+    { label: '仪表盘', href: '/admin/dashboard' },
     { label: '复杂表单实验室' },
 ];
 </script>

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\Auth\Permission;
+use App\Models\Auth\AdminPermission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,17 +12,17 @@ class ControllerPermissionMiddlewareTest extends TestCase
 
     public function test_controller_permission_middleware_authorizes_using_runtime_permission_discovery(): void
     {
-        Permission::findOrCreate('user.read', 'web');
+        AdminPermission::findOrCreate('admin-user.read', 'web');
 
-        $authorizedUser = $this->createUserWithPermissions(['user.read']);
-        $forbiddenUser = $this->createUserWithPermissions(['role.read']);
+        $authorizedUser = $this->createUserWithPermissions(['admin-user.read']);
+        $forbiddenUser = $this->createUserWithPermissions(['admin-role.read']);
 
         $this->actingAs($authorizedUser)
-            ->get('/users')
+            ->get('/admin/admin-users')
             ->assertOk();
 
         $this->actingAs($forbiddenUser)
-            ->get('/users')
+            ->get('/admin/admin-users')
             ->assertForbidden();
     }
 }

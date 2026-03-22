@@ -15,7 +15,7 @@ const form = useForm({
     target: '',
     daily_limit: 5,
     notes: '',
-}).withPrecognition('post', '/settings/precognition');
+}).withPrecognition('post', '/admin/settings/precognition');
 
 form.setValidationTimeout(350);
 
@@ -32,7 +32,7 @@ function handleChannelChange() {
 }
 
 function submit() {
-    form.post('/settings/precognition');
+    form.post('/admin/settings/precognition');
 }
 </script>
 

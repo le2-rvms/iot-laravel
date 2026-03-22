@@ -28,7 +28,7 @@ const form = useFilterForm(() => props.filters);
 
 function submit() {
     router.get(
-        "/mqtt-accounts",
+        "/admin/mqtt-accounts",
         // form 只维护查询条件，直接透传给 router.get 即可。
         form,
         {

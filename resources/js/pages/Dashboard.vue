@@ -44,7 +44,7 @@ const breadcrumbs = [
                     </UiCardHeader>
                     <UiCardContent class="grid gap-6 lg:grid-cols-[200px_1fr]">
                         <div class="rounded-xl border border-app-subtle-border bg-app-subtle/70 p-5">
-                            <p class="text-sm text-app-subtle-foreground">当前用户总数</p>
+                            <p class="text-sm text-app-subtle-foreground">当前管理员用户总数</p>
                             <p class="mt-3 text-4xl font-semibold">{{ stats.usersCount }}</p>
                         </div>
                         <div class="grid gap-3">
@@ -98,8 +98,8 @@ const breadcrumbs = [
 
                     <AppDataTableShell v-if="recentUsers?.length">
                         <div class="border-b border-app-panel-border/80 px-5 py-5">
-                            <h2 class="text-lg font-semibold text-app-panel-foreground">最近创建的用户</h2>
-                            <p class="mt-1 text-sm text-app-subtle-foreground">这里显示最近创建的账号记录。</p>
+                            <h2 class="text-lg font-semibold text-app-panel-foreground">最近创建的管理员用户</h2>
+                            <p class="mt-1 text-sm text-app-subtle-foreground">这里显示最近创建的后台账号记录。</p>
                         </div>
                         <UiTable>
                             <UiTableHeader>
@@ -127,10 +127,10 @@ const breadcrumbs = [
 
                     <AppEmptyState
                         v-else
-                        title="暂无用户数据"
-                        description="创建第一个后台用户后，这里会显示最近的入库记录。"
-                        action-label="前往用户管理"
-                        action-href="/users"
+                        title="暂无管理员用户数据"
+                        description="创建第一个后台管理员用户后，这里会显示最近的入库记录。"
+                        action-label="前往管理员用户"
+                        action-href="/admin/admin-users"
                     />
                 </Deferred>
             </section>

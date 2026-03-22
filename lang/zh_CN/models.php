@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 return [
     'auth' => [
-        'permission' => [
+        'admin_permission' => [
             'attributes' => [
-                'id' => '权限ID',
-                'name' => '权限名称',
+                'id' => '管理员权限ID',
+                'name' => '管理员权限名称',
                 'guard_name' => 'Guard名称',
                 'created_at' => '创建时间',
                 'updated_at' => '更新时间',
                 'roles' => '绑定角色集合',
             ],
         ],
-        'role' => [
+        'admin_role' => [
             'attributes' => [
-                'id' => '角色ID',
-                'name' => '角色名称',
+                'id' => '管理员角色ID',
+                'name' => '管理员角色名称',
                 'guard_name' => 'Guard名称',
                 'created_at' => '创建时间',
                 'updated_at' => '更新时间',
                 'permissions' => '权限集合',
-                'users' => '绑定用户集合',
+                'users' => '绑定管理员用户集合',
             ],
         ],
-        'user' => [
+        'admin_user' => [
             'attributes' => [
-                'id' => '用户ID',
+                'id' => '管理员用户ID',
                 'name' => '名称',
                 'email' => '邮箱',
                 'email_verified_at' => '邮箱验证时间',
@@ -35,7 +35,7 @@ return [
                 'remember_token' => '记住登录令牌',
                 'created_at' => '创建时间',
                 'updated_at' => '更新时间',
-                'roles' => '角色',
+                'roles' => '管理员角色',
                 'permissions' => '权限集合',
             ],
         ],

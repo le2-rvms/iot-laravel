@@ -8,7 +8,7 @@ const form = useForm({
 });
 
 function submit() {
-    form.put('/account/security-password', {
+    form.put('/admin/account/security-password', {
         preserveScroll: true,
         onFinish: () => form.reset('current_password', 'password', 'password_confirmation'),
     });
@@ -70,7 +70,7 @@ function submit() {
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/dashboard">返回仪表盘</Link>
+                    <Link href="/admin/dashboard">返回仪表盘</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : '保存新密码' }}

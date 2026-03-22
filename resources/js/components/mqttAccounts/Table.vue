@@ -23,7 +23,7 @@ function confirmDelete(account) {
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/mqtt-accounts/${account.act_id}`, {
+            router.delete(`/admin/mqtt-accounts/${account.act_id}`, {
                 preserveScroll: true,
                 // 删除后只回拉列表、筛选和提示，避免整页重新加载打断当前操作上下文。
                 only: ['accounts', 'filters', 'flash'],
@@ -76,7 +76,7 @@ function confirmDelete(account) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/mqtt-accounts/${account.act_id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="`/admin/mqtt-accounts/${account.act_id}/edit`" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

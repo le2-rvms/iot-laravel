@@ -2,7 +2,7 @@
 
 return [
     'auth' => [
-        'permission' => [
+        'admin_permission' => [
             'attributes' => [
                 'id' => 'Permission ID',
                 'name' => 'Permission Name',
@@ -12,7 +12,7 @@ return [
                 'roles' => 'Assigned Roles',
             ],
         ],
-        'role' => [
+        'admin_role' => [
             'attributes' => [
                 'id' => 'Role ID',
                 'name' => 'Role Name',
@@ -20,10 +20,10 @@ return [
                 'created_at' => 'Created At',
                 'updated_at' => 'Updated At',
                 'permissions' => 'Permissions',
-                'users' => 'Assigned Users',
+                'users' => 'Assigned Admin Users',
             ],
         ],
-        'user' => [
+        'admin_user' => [
             'attributes' => [
                 'id' => 'User ID',
                 'name' => 'Name',
@@ -33,7 +33,7 @@ return [
                 'remember_token' => 'Remember Token',
                 'created_at' => 'Created At',
                 'updated_at' => 'Updated At',
-                'roles' => 'Roles',
+                'roles' => 'Admin Roles',
                 'permissions' => 'Permissions',
             ],
         ],

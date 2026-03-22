@@ -1,14 +1,14 @@
 <?php
 
 use App\Http\Controllers\Account\PasswordController as AccountPasswordController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MqttAccounts\MqttAccountController;
-use App\Http\Controllers\Roles\RoleController;
-use App\Http\Controllers\Settings\SettingsApplicationConfigController;
-use App\Http\Controllers\Settings\SettingsPrecognitionController;
-use App\Http\Controllers\Settings\SettingsSystemConfigController;
-use App\Http\Controllers\Settings\SettingsVeeValidateController;
-use App\Http\Controllers\Users\UserController;
+use App\Http\Controllers\Admin\Admin\AdminRoleController;
+use App\Http\Controllers\Admin\Admin\AdminUserController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MqttAccounts\MqttAccountController;
+use App\Http\Controllers\Admin\Settings\SettingsApplicationConfigController;
+use App\Http\Controllers\Admin\Settings\SettingsPrecognitionController;
+use App\Http\Controllers\Admin\Settings\SettingsSystemConfigController;
+use App\Http\Controllers\Admin\Settings\SettingsVeeValidateController;
 use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,17 +20,17 @@ Route::get('/', function () {
         : redirect()->action([AuthenticatedSessionController::class, 'create']);
 });
 
-Route::middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
     // 避免与 Fortify 已存在的 password.update 路由名冲突。
     Route::singleton('account/security-password', AccountPasswordController::class)
         ->only(['edit', 'update']);
 
-    Route::get('/dashboard', DashboardController::class);
+    Route::get('dashboard', DashboardController::class);
 
-    Route::resource('users', UserController::class)
+    Route::resource('admin-users', AdminUserController::class)
         ->except(['show']);
 
-    Route::resource('roles', RoleController::class)
+    Route::resource('admin-roles', AdminRoleController::class)
         ->except(['show']);
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。

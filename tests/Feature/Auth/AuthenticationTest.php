@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,7 +31,7 @@ class AuthenticationTest extends TestCase
         $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',
-        ])->assertRedirect('/dashboard');
+        ])->assertRedirect('/admin/dashboard');
 
         $this->assertAuthenticatedAs($user);
     }
@@ -54,7 +54,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_cannot_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create([
+        $user = AdminUser::factory()->create([
             'password' => 'password',
         ]);
 
@@ -93,7 +93,7 @@ class AuthenticationTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = AdminUser::factory()->create();
 
         $this->post('/forgot-password', [
             'email' => $user->email,
@@ -116,7 +116,7 @@ class AuthenticationTest extends TestCase
 
     public function test_reset_password_screen_renders(): void
     {
-        $user = User::factory()->create();
+        $user = AdminUser::factory()->create();
         $token = Password::broker()->createToken($user);
 
         $this->get("/reset-password/{$token}?email={$user->email}")
@@ -129,7 +129,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_reset_their_password_with_a_valid_token(): void
     {
-        $user = User::factory()->create();
+        $user = AdminUser::factory()->create();
         $token = Password::broker()->createToken($user);
 
         $this->post('/reset-password', [
@@ -143,7 +143,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_cannot_reset_their_password_with_an_invalid_token(): void
     {
-        $user = User::factory()->create();
+        $user = AdminUser::factory()->create();
 
         $this->from('/reset-password/invalid')->post('/reset-password', [
             'token' => 'invalid-token',
@@ -174,16 +174,16 @@ class AuthenticationTest extends TestCase
 
     public function test_unverified_users_are_redirected_to_the_verification_notice(): void
     {
-        $user = User::factory()->unverified()->create();
+        $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
-            ->get('/dashboard')
+            ->get('/admin/dashboard')
             ->assertRedirect('/email/verify');
     }
 
     public function test_verification_notice_renders_for_unverified_users(): void
     {
-        $user = User::factory()->unverified()->create();
+        $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->get('/email/verify')
@@ -195,7 +195,7 @@ class AuthenticationTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->unverified()->create();
+        $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
             ->post('/email/verification-notification')

@@ -10,8 +10,8 @@ const props = defineProps({
 
 // 编辑页和新建页共用同一份表单数据结构，减少前端对两套 payload 的分支判断。
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
-    { label: 'MQTT账号管理', href: '/mqtt-accounts' },
+    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: 'MQTT账号管理', href: '/admin/mqtt-accounts' },
     { label: '编辑MQTT账号' },
 ];
 </script>

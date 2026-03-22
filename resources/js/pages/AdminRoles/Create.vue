@@ -9,17 +9,17 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/dashboard' },
-    { label: '角色权限', href: '/roles' },
-    { label: '新建角色' },
+    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '管理员角色', href: '/admin/admin-roles' },
+    { label: '新建管理员角色' },
 ];
 </script>
 
 <template>
-    <Head title="新建角色" />
+    <Head title="新建管理员角色" />
 
     <AppLayout
-        title="新建角色"
+        title="新建管理员角色"
         description="角色决定模块的读写权限，用户通过角色获得后台访问能力。"
         :breadcrumbs="breadcrumbs"
     >

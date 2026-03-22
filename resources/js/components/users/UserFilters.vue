@@ -12,12 +12,12 @@ const props = defineProps({
     },
 });
 
-// 用户列表的搜索输入和服务端 filters 保持同一份表单结构。
+// 管理员用户列表的搜索输入和服务端 filters 保持同一份表单结构。
 const form = useFilterForm(() => props.filters);
 
 function submit() {
     // form 只包含查询字段，可以直接作为 query 参数提交。
-    router.get("/users", form, {
+    router.get("/admin/admin-users", form, {
         preserveState: true,
         preserveScroll: true,
         replace: true,

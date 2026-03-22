@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->updateOrCreate([
+        AdminUser::query()->updateOrCreate([
             'email' => 'admin@example.com',
         ], [
             'name' => 'Admin',

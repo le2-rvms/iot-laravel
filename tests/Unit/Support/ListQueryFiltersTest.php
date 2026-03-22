@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Support;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,23 +16,23 @@ class ListQueryFiltersTest extends TestCase
 
     public function test_it_applies_eq_gt_like_and_in_filters(): void
     {
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Alice Cooper',
             'email' => 'alice@example.com',
         ]);
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Bob Smith',
             'email' => 'bob@example.com',
         ]);
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Boris Stone',
             'email' => 'boris@example.com',
         ]);
 
-        $query = User::query()->orderBy('id');
+        $query = AdminUser::query()->orderBy('id');
 
         $filters = (new ListQueryFilters(
-            Request::create('/users', 'GET', [
+            Request::create('/admin/admin-users', 'GET', [
                 'id__gt' => '1',
                 'name__like' => 'o',
                 'email__in' => 'bob@example.com,boris@example.com',
@@ -54,19 +54,19 @@ class ListQueryFiltersTest extends TestCase
 
     public function test_it_applies_registered_func_filters(): void
     {
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Alpha',
             'email' => 'alpha@example.com',
         ]);
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Beta',
             'email' => 'beta@example.com',
         ]);
 
-        $query = User::query()->orderBy('id');
+        $query = AdminUser::query()->orderBy('id');
 
         (new ListQueryFilters(
-            Request::create('/users', 'GET', [
+            Request::create('/admin/admin-users', 'GET', [
                 'search__func' => 'alpha',
             ]),
             ['name', 'email'],
@@ -82,19 +82,19 @@ class ListQueryFiltersTest extends TestCase
 
     public function test_page_is_treated_as_passthrough_and_empty_values_are_skipped(): void
     {
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Alpha',
             'email' => 'alpha@example.com',
         ]);
-        User::factory()->create([
+        AdminUser::factory()->create([
             'name' => 'Beta',
             'email' => 'beta@example.com',
         ]);
 
-        $query = User::query()->orderBy('id');
+        $query = AdminUser::query()->orderBy('id');
 
         $filters = (new ListQueryFilters(
-            Request::create('/users', 'GET', [
+            Request::create('/admin/admin-users', 'GET', [
                 'page' => '2',
                 'name__eq' => '',
             ]),
@@ -111,13 +111,13 @@ class ListQueryFiltersTest extends TestCase
 
         try {
             (new ListQueryFilters(
-                Request::create('/users', 'GET', [
+                Request::create('/admin/admin-users', 'GET', [
                     'unknown__eq' => 'alpha',
                     'name__foo' => 'beta',
                     'search__func' => 'gamma',
                 ]),
                 ['name'],
-            ))->apply(User::query());
+            ))->apply(AdminUser::query());
         } catch (HttpResponseException $exception) {
             $response = $exception->getResponse();
 
@@ -142,7 +142,7 @@ class ListQueryFiltersTest extends TestCase
                 [
                     'is_masked' => ['boolean'],
                 ],
-            ))->apply(User::query());
+            ))->apply(AdminUser::query());
         } catch (HttpResponseException $exception) {
             $response = $exception->getResponse();
 

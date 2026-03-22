@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Concerns;
 
-use App\Models\Auth\Role;
-use App\Models\Auth\User;
+use App\Models\Auth\AdminRole;
+use App\Models\Auth\AdminUser;
 use App\Models\Settings\NotificationChannel;
 use App\Models\Settings\NotificationRule;
 use Illuminate\Support\Arr;
@@ -14,8 +14,8 @@ class HasTranslatedAttributeLabelsTest extends TestCase
 {
     public function test_it_reads_labels_from_model_translations(): void
     {
-        $this->assertSame('邮箱', User::attributeLabels()['email']);
-        $this->assertSame('角色名称', Role::attributeLabels()['name']);
+        $this->assertSame('邮箱', AdminUser::attributeLabels()['email']);
+        $this->assertSame('管理员角色名称', AdminRole::attributeLabels()['name']);
     }
 
     public function test_it_reads_labels_from_multiple_model_translations(): void
@@ -46,11 +46,11 @@ class HasTranslatedAttributeLabelsTest extends TestCase
     public function test_it_switches_locales_without_reusing_stale_model_labels(): void
     {
         App::setLocale('en');
-        $this->assertSame('Email', User::attributeLabels()['email']);
+        $this->assertSame('Email', AdminUser::attributeLabels()['email']);
         $this->assertSame('Channel Target', NotificationChannel::attributeLabels()['target']);
 
         App::setLocale('zh_CN');
-        $this->assertSame('邮箱', User::attributeLabels()['email']);
+        $this->assertSame('邮箱', AdminUser::attributeLabels()['email']);
         $this->assertSame('渠道目标', NotificationChannel::attributeLabels()['target']);
     }
 }

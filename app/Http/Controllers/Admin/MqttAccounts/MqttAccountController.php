@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MqttAccounts;
+namespace App\Http\Controllers\Admin\MqttAccounts;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;

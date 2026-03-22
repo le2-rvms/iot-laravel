@@ -3,7 +3,6 @@
 namespace App\Models\Auth;
 
 use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
-use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -15,7 +14,7 @@ use Illuminate\Support\Carbon;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property int $id 用户ID
+ * @property int $id 管理员用户ID
  * @property string $name 名称
  * @property string $email 邮箱
  * @property Carbon|null $email_verified_at 邮箱验证时间
@@ -23,22 +22,18 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token 记住登录令牌
  * @property Carbon|null $created_at 创建时间
  * @property Carbon|null $updated_at 更新时间
- * @property-read Collection<int, Role> $roles 角色
- * @property-read Collection<int, Permission> $permissions 权限集合
+ * @property-read Collection<int, AdminRole> $roles 角色
+ * @property-read Collection<int, AdminPermission> $permissions 权限集合
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail
+class AdminUser extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable, HasTranslatedAttributesAndUpdatedBy;
 
-    protected string $guard_name = 'web';
+    protected $table = 'users';
 
-    protected static function newFactory(): UserFactory
-    {
-        return UserFactory::new();
-    }
+    protected string $guard_name = 'web';
 
     /**
      * Get the attributes that should be cast.

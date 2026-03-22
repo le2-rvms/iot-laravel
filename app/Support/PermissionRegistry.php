@@ -4,7 +4,7 @@ namespace App\Support;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use Illuminate\Support\Str;
 use LogicException;
 use ReflectionClass;
@@ -62,7 +62,7 @@ class PermissionRegistry
     /**
      * @return array<string, bool>
      */
-    public static function accessMap(?User $user): array
+    public static function accessMap(?AdminUser $user): array
     {
         if (! $user) {
             return [];

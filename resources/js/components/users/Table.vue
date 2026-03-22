@@ -14,17 +14,17 @@ defineProps({
 
 const confirmDialog = useConfirmDialog();
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['user.write'] ?? false);
+const canWrite = computed(() => page.props.auth?.access?.['admin-user.write'] ?? false);
 
 function confirmDelete(user) {
     confirmDialog.open({
-        title: '删除用户',
+        title: '删除管理员用户',
         description: `确定删除 ${user.name} 吗？此操作不可撤销。`,
         confirmLabel: '确认删除',
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/users/${user.id}`, {
+            router.delete(`/admin/admin-users/${user.id}`, {
                 preserveScroll: true,
                 only: ['users', 'filters', 'flash'],
             });
@@ -37,9 +37,9 @@ function confirmDelete(user) {
     <UiTable>
         <UiTableHeader>
             <UiTableRow>
-                <UiTableHead class="w-[28%]">用户</UiTableHead>
+                <UiTableHead class="w-[28%]">管理员用户</UiTableHead>
                 <UiTableHead>邮箱</UiTableHead>
-                <UiTableHead>角色</UiTableHead>
+                <UiTableHead>管理员角色</UiTableHead>
                 <UiTableHead class="w-[18%]">验证状态</UiTableHead>
                 <UiTableHead class="w-[20%]">创建时间</UiTableHead>
                 <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
@@ -64,7 +64,7 @@ function confirmDelete(user) {
                         >
                             {{ role }}
                         </UiBadge>
-                        <span v-if="!user.roles.length" class="app-copy-muted-soft text-xs">未分配角色</span>
+                        <span v-if="!user.roles.length" class="app-copy-muted-soft text-xs">未分配管理员角色</span>
                     </div>
                 </UiTableCell>
                 <UiTableCell>
@@ -78,7 +78,7 @@ function confirmDelete(user) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/users/${user.id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="`/admin/admin-users/${user.id}/edit`" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

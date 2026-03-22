@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Auth;
 
-use App\Models\Auth\User;
+use App\Models\Auth\AdminUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<User>
+ * @extends Factory<AdminUser>
  */
-class UserFactory extends Factory
+class AdminUserFactory extends Factory
 {
-    protected $model = User::class;
+    protected $model = AdminUser::class;
 
     /**
      * The current password being used by the factory.

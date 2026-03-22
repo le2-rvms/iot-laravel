@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
-use App\Models\Auth\User;
+use App\Models\Auth\AdminPermission;
+use App\Models\Auth\AdminRole;
+use App\Models\Auth\AdminUser;
 use App\Support\PermissionRegistry;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
@@ -18,15 +18,15 @@ class RolePermissionSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         foreach ($permissionNames as $permissionName) {
-            Permission::findOrCreate($permissionName, 'web');
+            AdminPermission::findOrCreate($permissionName, 'web');
         }
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $superAdmin = Role::findOrCreate(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
+        $superAdmin = AdminRole::findOrCreate(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
         $superAdmin->syncPermissions($permissionNames);
 
-        $admin = User::query()->where('email', 'admin@example.com')->first();
+        $admin = AdminUser::query()->where('email', 'admin@example.com')->first();
 
         if ($admin) {
             $admin->syncRoles([$superAdmin->name]);

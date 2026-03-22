@@ -17,7 +17,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.read']);
 
         $this->actingAs($user)
-            ->get('/settings/vee-validate')
+            ->get('/admin/settings/vee-validate')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Settings/FormLab')
@@ -39,16 +39,16 @@ class SettingsPageTest extends TestCase
 
     public function test_users_without_form_lab_read_permission_cannot_view_form_lab_page(): void
     {
-        $user = $this->createUserWithPermissions(['user.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
-            ->get('/settings/vee-validate')
+            ->get('/admin/settings/vee-validate')
             ->assertForbidden();
     }
 
     public function test_users_without_form_lab_read_permission_cannot_view_precognition_form_lab_page(): void
     {
-        $user = $this->createUserWithPermissions(['user.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
             ->get(route('precognition.index'))
@@ -60,8 +60,8 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->from('/settings/vee-validate')
-            ->post('/settings/vee-validate', [
+            ->from('/admin/settings/vee-validate')
+            ->post('/admin/settings/vee-validate', [
                 'name' => '',
                 'enabled' => true,
                 'description' => '',
@@ -72,7 +72,7 @@ class SettingsPageTest extends TestCase
                 'quiet_hours_end' => '',
                 'channels' => [],
             ])
-            ->assertRedirect('/settings/vee-validate')
+            ->assertRedirect('/admin/settings/vee-validate')
             ->assertSessionHasErrors(['name', 'threshold', 'quiet_hours_start', 'channels']);
 
         $errors = session('errors')->getBag('default');
@@ -86,8 +86,8 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->from('/settings/vee-validate')
-            ->post('/settings/vee-validate', [
+            ->from('/admin/settings/vee-validate')
+            ->post('/admin/settings/vee-validate', [
                 'name' => '规则A',
                 'enabled' => true,
                 'description' => '',
@@ -105,7 +105,7 @@ class SettingsPageTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect('/settings/vee-validate')
+            ->assertRedirect('/admin/settings/vee-validate')
             ->assertSessionHasErrors(['channels.0.target']);
 
         $errors = session('errors')->getBag('default');
@@ -118,7 +118,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->post('/settings/vee-validate', [
+            ->post('/admin/settings/vee-validate', [
                 'name' => 'Critical Alerts',
                 'enabled' => true,
                 'description' => '复杂表单提交流程验证',
@@ -142,7 +142,7 @@ class SettingsPageTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect('/settings/vee-validate')
+            ->assertRedirect('/admin/settings/vee-validate')
             ->assertSessionHas('success', '规则内容已提交。');
     }
 
@@ -245,7 +245,7 @@ class SettingsPageTest extends TestCase
 
         $this->actingAs($user)
             ->withPrecognition()
-            ->postJson('/settings/precognition', [
+            ->postJson('/admin/settings/precognition', [
                 'name' => 'Precognition Demo',
                 'email' => 'ops@example.com',
                 'channel' => 'webhook',
@@ -298,7 +298,7 @@ class SettingsPageTest extends TestCase
 
     public function test_users_without_settings_permission_cannot_view_horizon(): void
     {
-        $user = $this->createUserWithPermissions(['user.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
             ->get('/horizon')
@@ -356,7 +356,7 @@ class SettingsPageTest extends TestCase
 
     public function test_users_without_application_config_permission_cannot_view_the_application_config_index(): void
     {
-        $user = $this->createUserWithPermissions(['user.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
             ->get(route('application-configs.index'))
@@ -365,7 +365,7 @@ class SettingsPageTest extends TestCase
 
     public function test_users_without_system_config_permission_cannot_view_the_system_config_index(): void
     {
-        $user = $this->createUserWithPermissions(['user.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
             ->get(route('system-configs.index'))

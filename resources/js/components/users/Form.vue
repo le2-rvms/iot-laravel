@@ -40,14 +40,14 @@ function toggleRole(roleName, checked) {
 
 function submit() {
     if (isEdit.value) {
-        form.put(`/users/${props.user.id}`, {
+        form.put(`/admin/admin-users/${props.user.id}`, {
             onFinish: () => form.reset('password'),
         });
 
         return;
     }
 
-    form.post('/users', {
+    form.post('/admin/admin-users', {
         onFinish: () => form.reset('password'),
     });
 }
@@ -57,9 +57,9 @@ function submit() {
     <form class="space-y-6" @submit.prevent="submit">
         <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
             <UiCardHeader>
-                <UiCardTitle>{{ isEdit ? '编辑用户' : '创建用户' }}</UiCardTitle>
+                <UiCardTitle>{{ isEdit ? '编辑管理员用户' : '创建管理员用户' }}</UiCardTitle>
                 <UiCardDescription>
-                    填写用户资料，并为账号分配可用角色。
+                    填写管理员用户资料，并为账号分配可用角色。
                 </UiCardDescription>
             </UiCardHeader>
             <UiCardContent class="space-y-5">
@@ -97,9 +97,9 @@ function submit() {
 
                 <div class="space-y-3">
                     <div class="space-y-1">
-                        <UiLabel>角色分配</UiLabel>
+                        <UiLabel>管理员角色分配</UiLabel>
                         <p class="app-copy-muted text-sm">
-                            首版用户支持多角色，权限全部来源于角色，不直接赋权给用户。
+                            当前管理员用户支持多角色，权限全部来源于角色，不直接赋权给用户。
                         </p>
                     </div>
 
@@ -120,7 +120,7 @@ function submit() {
                     <UiAlert v-else>
                         <UiAlertTitle>暂无可分配角色</UiAlertTitle>
                         <UiAlertDescription>
-                            请先在角色权限模块中创建角色，再为用户分配访问权限。
+                            请先在管理员角色模块中创建管理员角色，再为管理员用户分配访问权限。
                         </UiAlertDescription>
                     </UiAlert>
 
@@ -130,10 +130,10 @@ function submit() {
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/users">返回列表</Link>
+                    <Link href="/admin/admin-users">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
-                    {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建用户' }}
+                    {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建管理员用户' }}
                 </UiButton>
             </UiCardFooter>
         </UiCard>

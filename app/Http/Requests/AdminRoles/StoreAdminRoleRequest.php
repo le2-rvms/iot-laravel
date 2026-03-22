@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Roles;
+namespace App\Http\Requests\AdminRoles;
 
-use App\Models\Auth\Permission;
-use App\Models\Auth\Role;
+use App\Models\Auth\AdminPermission;
+use App\Models\Auth\AdminRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateRoleRequest extends FormRequest
+class StoreAdminRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -24,15 +24,13 @@ class UpdateRoleRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique(Role::class, 'name')
-                    ->ignore($this->route('role'))
-                    ->where('guard_name', 'web'),
+                Rule::unique(AdminRole::class, 'name')->where('guard_name', 'web'),
             ],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => [
                 'string',
                 'distinct',
-                Rule::exists(Permission::class, 'name')->where('guard_name', 'web'),
+                Rule::exists(AdminPermission::class, 'name')->where('guard_name', 'web'),
             ],
         ];
     }
@@ -42,9 +40,9 @@ class UpdateRoleRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return array_merge(Role::attributeLabels(), [
-            'permissions' => Permission::attributeLabels()['name'],
-            'permissions.*' => Permission::attributeLabels()['name'],
+        return array_merge(AdminRole::attributeLabels(), [
+            'permissions' => AdminPermission::attributeLabels()['name'],
+            'permissions.*' => AdminPermission::attributeLabels()['name'],
         ]);
     }
 }
