@@ -19,7 +19,34 @@ class AuthenticationTest extends TestCase
     {
         $this->get('/login')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Auth/Login'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/Login')
+                ->missing('devQuickLogins'));
+    }
+
+    public function test_dev_login_screen_exposes_dev_quick_logins(): void
+    {
+        $this->app['env'] = 'dev';
+
+        $alpha = AdminUser::factory()->create([
+            'name' => 'Alpha Admin',
+            'email' => 'alpha@example.com',
+        ]);
+        $bravo = AdminUser::factory()->unverified()->create([
+            'name' => 'Bravo Admin',
+            'email' => 'bravo@example.com',
+        ]);
+
+        $this->get('/login')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/Login')
+                ->has('devQuickLogins', 2)
+                ->where('devQuickLogins.0.id', $alpha->id)
+                ->where('devQuickLogins.0.email', 'alpha@example.com')
+                ->where('devQuickLogins.1.id', $bravo->id)
+                ->where('devQuickLogins.1.email', 'bravo@example.com')
+                ->where('devQuickLogins.1.email_verified_at', null));
     }
 
     public function test_users_can_authenticate_using_the_login_form(): void
@@ -50,6 +77,50 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $this->assertNotNull($this->app['auth']->guard()->viaRemember());
+    }
+
+    public function test_dev_environment_can_quick_login_as_an_existing_admin_user(): void
+    {
+        $this->app['env'] = 'dev';
+        $user = $this->createSuperAdmin();
+        $csrfToken = 'test-token';
+
+        $this->withSession(['_token' => $csrfToken])->post("/login/dev-users/{$user->id}", [
+            '_token' => $csrfToken,
+        ])
+            ->assertRedirect('/admin/dashboard');
+
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_quick_login_does_not_verify_unverified_users(): void
+    {
+        $this->app['env'] = 'dev';
+        $user = $this->createSuperAdmin([
+            'email_verified_at' => null,
+        ]);
+        $csrfToken = 'test-token';
+
+        $this->withSession(['_token' => $csrfToken])->post("/login/dev-users/{$user->id}", [
+            '_token' => $csrfToken,
+        ])
+            ->assertRedirect('/admin/dashboard');
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertNull($user->refresh()->email_verified_at);
+
+        $this->get('/admin/dashboard')
+            ->assertRedirect('/email/verify');
+    }
+
+    public function test_non_dev_environment_cannot_use_dev_quick_login(): void
+    {
+        $user = AdminUser::factory()->create();
+
+        $this->post("/login/dev-users/{$user->id}")
+            ->assertNotFound();
+
+        $this->assertGuest();
     }
 
     public function test_users_cannot_authenticate_with_invalid_password(): void

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\Auth\EmailVerificationNotificationSentResponse;
+use App\Models\Auth\AdminUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -32,7 +33,25 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
-        Fortify::loginView(fn () => Inertia::render('Auth/Login'));
+        Fortify::loginView(function () {
+            $props = [];
+
+            if (app()->environment('dev')) {
+                $props['devQuickLogins'] = AdminUser::query()
+                    ->orderBy('name')
+                    ->orderBy('email')
+                    ->get(['id', 'name', 'email', 'email_verified_at'])
+                    ->map(fn (AdminUser $adminUser) => [
+                        'id' => $adminUser->id,
+                        'name' => $adminUser->name,
+                        'email' => $adminUser->email,
+                        'email_verified_at' => $adminUser->email_verified_at?->toDateTimeString(),
+                    ])
+                    ->all();
+            }
+
+            return Inertia::render('Auth/Login', $props);
+        });
         Fortify::requestPasswordResetLinkView(fn () => Inertia::render('Auth/ForgotPassword'));
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('Auth/ResetPassword', [
             'email' => $request->email,

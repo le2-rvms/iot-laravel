@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Settings\SettingsApplicationConfigController;
 use App\Http\Controllers\Admin\Settings\SettingsPrecognitionController;
 use App\Http\Controllers\Admin\Settings\SettingsSystemConfigController;
 use App\Http\Controllers\Admin\Settings\SettingsVeeValidateController;
+use App\Http\Controllers\Auth\DevQuickLoginController;
 use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,10 @@ Route::get('/', function () {
         ? redirect()->action(DashboardController::class)
         : redirect()->action([AuthenticatedSessionController::class, 'create']);
 });
+
+if (app()->environment(['dev', 'testing'])) {
+    Route::middleware('guest')->post('login/dev-users/{adminUser}', DevQuickLoginController::class);
+}
 
 Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
     // 避免与 Fortify 已存在的 password.update 路由名冲突。
