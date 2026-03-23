@@ -34,10 +34,15 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::loginView(function () {
-            $props = [];
+            // 登录页始终拿到同一份对象结构，只有 enabled 会随环境变化。
+            $devQuickLogin = [
+                'enabled' => app()->environment('dev'),
+                'users' => [],
+            ];
 
-            if (app()->environment('dev')) {
-                $props['devQuickLogins'] = AdminUser::query()
+            if ($devQuickLogin['enabled']) {
+                // 开发快捷登录只暴露最小用户字段，并预先给出 POST 目标地址。
+                $devQuickLogin['users'] = AdminUser::query()
                     ->orderBy('name')
                     ->orderBy('email')
                     ->get(['id', 'name', 'email', 'email_verified_at'])
@@ -46,11 +51,15 @@ class FortifyServiceProvider extends ServiceProvider
                         'name' => $adminUser->name,
                         'email' => $adminUser->email,
                         'email_verified_at' => $adminUser->email_verified_at?->toDateTimeString(),
+                        'login_url' => url("/login/dev-users/{$adminUser->id}"),
                     ])
                     ->all();
             }
 
-            return Inertia::render('Auth/Login', $props);
+            // 始终返回同一 prop 结构，避免登录页再按“字段是否存在”分支。
+            return Inertia::render('Auth/Login', [
+                'devQuickLogin' => $devQuickLogin,
+            ]);
         });
         Fortify::requestPasswordResetLinkView(fn () => Inertia::render('Auth/ForgotPassword'));
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('Auth/ResetPassword', [
@@ -60,6 +69,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::verifyEmailView(fn () => Inertia::render('Auth/VerifyEmail'));
 
         RateLimiter::for('login', function (Request $request) {
+            // 按 Fortify 的用户名字段和 IP 组合限流，保证基于邮箱的限流行为稳定。
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);

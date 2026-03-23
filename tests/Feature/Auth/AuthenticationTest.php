@@ -21,7 +21,8 @@ class AuthenticationTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/Login')
-                ->missing('devQuickLogins'));
+                ->where('devQuickLogin.enabled', false)
+                ->has('devQuickLogin.users', 0));
     }
 
     public function test_dev_login_screen_exposes_dev_quick_logins(): void
@@ -41,12 +42,15 @@ class AuthenticationTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/Login')
-                ->has('devQuickLogins', 2)
-                ->where('devQuickLogins.0.id', $alpha->id)
-                ->where('devQuickLogins.0.email', 'alpha@example.com')
-                ->where('devQuickLogins.1.id', $bravo->id)
-                ->where('devQuickLogins.1.email', 'bravo@example.com')
-                ->where('devQuickLogins.1.email_verified_at', null));
+                ->where('devQuickLogin.enabled', true)
+                ->has('devQuickLogin.users', 2)
+                ->where('devQuickLogin.users.0.id', $alpha->id)
+                ->where('devQuickLogin.users.0.email', 'alpha@example.com')
+                ->where('devQuickLogin.users.0.login_url', url("/login/dev-users/{$alpha->id}"))
+                ->where('devQuickLogin.users.1.id', $bravo->id)
+                ->where('devQuickLogin.users.1.email', 'bravo@example.com')
+                ->where('devQuickLogin.users.1.email_verified_at', null)
+                ->where('devQuickLogin.users.1.login_url', url("/login/dev-users/{$bravo->id}")));
     }
 
     public function test_users_can_authenticate_using_the_login_form(): void

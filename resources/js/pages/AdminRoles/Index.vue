@@ -7,6 +7,10 @@ defineProps({
         type: Object,
         required: true,
     },
+    permissionDisplayNames: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const page = usePage();
@@ -36,7 +40,7 @@ const breadcrumbs = [
             </AppPageToolbar>
 
             <AppDataTableShell v-if="roles.data.length">
-                <RolesTable :roles="roles" />
+                <RolesTable :roles="roles" :permission-display-names="permissionDisplayNames" />
                 <template #footer>
                     <AppPaginationBar :links="roles.links" />
                 </template>

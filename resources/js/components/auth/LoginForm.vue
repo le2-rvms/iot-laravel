@@ -3,9 +3,12 @@ import { computed } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-    devQuickLogins: {
-        type: Array,
-        default: null,
+    devQuickLogin: {
+        type: Object,
+        default: () => ({
+            enabled: false,
+            users: [],
+        }),
     },
 });
 
@@ -16,7 +19,7 @@ const form = useForm({
 });
 
 const hasErrors = computed(() => Object.keys(form.errors).length > 0);
-const hasDevQuickLogins = computed(() => props.devQuickLogins !== null);
+const showDevQuickLogin = computed(() => props.devQuickLogin.enabled);
 
 function submit() {
     form.post('/login', {
@@ -24,8 +27,8 @@ function submit() {
     });
 }
 
-function loginAs(adminUserId) {
-    router.post(`/login/dev-users/${adminUserId}`);
+function loginAs(loginUrl) {
+    router.post(loginUrl);
 }
 </script>
 
@@ -79,24 +82,24 @@ function loginAs(adminUserId) {
             </UiButton>
         </form>
 
-        <section v-if="hasDevQuickLogins" class="space-y-4 rounded-[1.5rem] border border-dashed border-app-panel-border bg-app-panel/40 p-5">
+        <section v-if="showDevQuickLogin" class="space-y-4 rounded-[1.5rem] border border-dashed border-app-panel-border bg-app-panel/40 p-5">
             <div class="space-y-1">
                 <h2 class="app-copy-strong text-base">开发环境快捷登录</h2>
                 <p class="text-sm text-app-subtle-foreground">仅在 dev 环境显示，直接选择现有管理员进入后台。</p>
             </div>
 
-            <UiAlert v-if="devQuickLogins.length === 0">
+            <UiAlert v-if="devQuickLogin.users.length === 0">
                 <UiAlertTitle>暂无管理员账号</UiAlertTitle>
                 <UiAlertDescription>当前没有可用于快捷登录的管理员账号。</UiAlertDescription>
             </UiAlert>
 
             <div v-else class="space-y-3">
                 <button
-                    v-for="adminUser in devQuickLogins"
+                    v-for="adminUser in devQuickLogin.users"
                     :key="adminUser.id"
                     type="button"
                     class="app-option-card flex w-full items-start justify-between gap-4 rounded-2xl border px-4 py-4 text-left"
-                    @click="loginAs(adminUser.id)"
+                    @click="loginAs(adminUser.login_url)"
                 >
                     <div class="space-y-1">
                         <p class="app-copy-strong text-sm">{{ adminUser.name }}</p>

@@ -13,7 +13,6 @@ use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,6 +23,7 @@ class AdminUserController extends Controller
     public function index(Request $request): Response
     {
         $query = AdminUser::query()
+            // 列表页直接从关系序列化结果里展示角色名。
             ->with('roles:id,name')
             ->latest();
 
@@ -38,6 +38,7 @@ class AdminUserController extends Controller
                 'search' => function (Builder $query, mixed $value): void {
                     $search = trim((string) $value);
 
+                    // 搜索体验保持简单：一个关键字同时匹配名称和邮箱。
                     $query->where(function (Builder $nestedQuery) use ($search): void {
                         $nestedQuery
                             ->where('name', 'like', "%{$search}%")
@@ -49,17 +50,10 @@ class AdminUserController extends Controller
 
         $adminUsers = $query
             ->paginate(10)
-            ->withQueryString()
-            ->through(fn (AdminUser $adminUser) => [
-                'id' => $adminUser->id,
-                'name' => $adminUser->name,
-                'email' => $adminUser->email,
-                'email_verified_at' => $adminUser->email_verified_at?->toDateTimeString(),
-                'roles' => $adminUser->roles->pluck('name')->sort()->values()->all(),
-                'created_at' => $adminUser->created_at?->toDateTimeString(),
-            ]);
+            ->withQueryString();
 
         return Inertia::render('AdminUsers/Index', [
+            // filters 和 rows 一起返回，方便 partial reload 时同步更新。
             'filters' => $filters,
             'users' => $adminUsers,
         ]);
@@ -69,7 +63,8 @@ class AdminUserController extends Controller
     public function create(): Response
     {
         return Inertia::render('AdminUsers/Create', [
-            'availableRoles' => $this->availableRoles(),
+            // 用户表单只需要角色名列表，更丰富的角色信息仍留在角色管理流里。
+            'availableRoles' => AdminRole::availableNames(),
         ]);
     }
 
@@ -77,9 +72,14 @@ class AdminUserController extends Controller
     public function store(StoreAdminUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $adminUser = AdminUser::create(Arr::except($validated, ['roles']));
 
-        $adminUser->syncRoles($validated['roles'] ?? []);
+        // 模型创建只负责持久化和角色绑定，通知发送时机明确留在控制器层。
+        $adminUser = AdminUser::createWithRoles(
+            attributes: $request->safe()->except('roles'),
+            roles: $validated['roles'] ?? [],
+        );
+
+        // 发邮件属于 HTTP 侧副作用，模型只负责用户状态变更。
         $adminUser->sendEmailVerificationNotification();
 
         return redirect()->action([self::class, 'index'])->with('success', '管理员用户已创建，并已发送验证邮件。');
@@ -88,44 +88,33 @@ class AdminUserController extends Controller
     #[PermissionAction('write')]
     public function edit(AdminUser $adminUser): Response
     {
+        // 编辑页直接消费用户模型和角色关系的序列化结果。
         $adminUser->loadMissing('roles:id,name');
 
         return Inertia::render('AdminUsers/Edit', [
-            'user' => [
-                'id' => $adminUser->id,
-                'name' => $adminUser->name,
-                'email' => $adminUser->email,
-                'email_verified_at' => $adminUser->email_verified_at?->toDateTimeString(),
-                'roles' => $adminUser->roles->pluck('name')->sort()->values()->all(),
-            ],
-            'availableRoles' => $this->availableRoles(),
+            'user' => $adminUser,
+            'availableRoles' => AdminRole::availableNames(),
         ]);
     }
 
     #[PermissionAction('write')]
     public function update(UpdateAdminUserRequest $request, AdminUser $adminUser): RedirectResponse
     {
-        $validated = $request->validated();
-        $emailChanged = array_key_exists('email', $validated) && $validated['email'] !== $adminUser->email;
+        $validated = $request->safe();
 
-        if (blank($validated['password'] ?? null)) {
-            $validated = Arr::except($validated, ['password']);
-        }
+        // 空密码表示“不修改密码”，而不是把密码改成空字符串。
+        $attributes = blank($validated['password'] ?? null)
+            ? $validated->except(['password', 'roles'])
+            : $validated->except('roles');
+        $emailChanged = $adminUser->emailWillChange($attributes);
 
-        $roles = $validated['roles'] ?? [];
-        $validated = Arr::except($validated, ['roles']);
-
-        if ($emailChanged) {
-            $adminUser->forceFill([
-                'email_verified_at' => null,
-            ]);
-        }
-
-        $adminUser->update($validated);
-        $adminUser->syncRoles($roles);
+        $adminUser->updateProfile(
+            attributes: $attributes,
+            roles: $validated['roles'] ?? [],
+        );
 
         if ($emailChanged) {
-            $adminUser->save();
+            // 资料持久化和通知发送是刻意解耦的两步。
             $adminUser->sendEmailVerificationNotification();
         }
 
@@ -138,19 +127,5 @@ class AdminUserController extends Controller
         $adminUser->delete();
 
         return redirect()->action([self::class, 'index'])->with('success', '管理员用户已删除。');
-    }
-
-    /**
-     * @return array<int, array{name: string}>
-     */
-    protected function availableRoles(): array
-    {
-        return AdminRole::query()
-            ->orderBy('name')
-            ->get(['name'])
-            ->map(fn (AdminRole $adminRole) => [
-                'name' => $adminRole->name,
-            ])
-            ->all();
     }
 }

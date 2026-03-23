@@ -18,12 +18,13 @@ const props = defineProps({
 });
 
 const isEdit = computed(() => props.mode === 'edit');
+const initialRoles = props.user?.roles?.map((role) => role.name).sort() ?? [];
 
 const form = useForm({
     name: props.user?.name ?? '',
     email: props.user?.email ?? '',
     password: '',
-    roles: props.user?.roles ?? [],
+    roles: initialRoles,
 });
 
 function toggleRole(roleName, checked) {
@@ -106,14 +107,14 @@ function submit() {
                     <div v-if="availableRoles.length" class="grid gap-3 rounded-xl border border-app-subtle-border bg-app-subtle/28 p-4 md:grid-cols-2">
                         <label
                             v-for="role in availableRoles"
-                            :key="role.name"
+                            :key="role"
                             class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3"
                         >
                             <UiCheckbox
-                                :model-value="form.roles.includes(role.name)"
-                                @update:model-value="(checked) => toggleRole(role.name, checked)"
+                                :model-value="form.roles.includes(role)"
+                                @update:model-value="(checked) => toggleRole(role, checked)"
                             />
-                            <span class="app-copy-strong text-sm font-medium">{{ role.name }}</span>
+                            <span class="app-copy-strong text-sm font-medium">{{ role }}</span>
                         </label>
                     </div>
 

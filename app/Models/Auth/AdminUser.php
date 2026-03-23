@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -46,5 +47,93 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @param  array{name: string, email: string, password: string}  $attributes
+     */
+    public function saveAsSuperAdmin(array $attributes): self
+    {
+        $this->fill([
+            'name' => $attributes['name'],
+            'email' => $attributes['email'],
+            'password' => $attributes['password'],
+        ]);
+        $this->forceFill([
+            'email_verified_at' => Carbon::now(),
+        ])->save();
+
+        // 超级管理员属于运维账号，创建后应立即可用。
+        $this->assignSuperAdminRole();
+
+        return $this->fresh();
+    }
+
+    public function assignSuperAdminRole(): void
+    {
+        // 角色同步前会顺带保证底层权限记录已经就位。
+        $superAdmin = AdminRole::syncPermissionsAndSuperAdminRole();
+
+        if ($this->hasRole($superAdmin->name)) {
+            return;
+        }
+
+        $this->syncRoles([$superAdmin->name]);
+
+        $this->refreshAuthorizationState();
+    }
+
+    /**
+     * @param  array{name: string, email: string, password: string}  $attributes
+     * @param  array<int, string>  $roles
+     */
+    public static function createWithRoles(array $attributes, array $roles = []): self
+    {
+        $adminUser = self::create($attributes);
+
+        // 用户 CRUD 与通知发送解耦，这里只处理持久化和角色关系。
+        $adminUser->syncRoles($roles);
+        $adminUser->refreshAuthorizationState();
+
+        return $adminUser->fresh();
+    }
+
+    /**
+     * @param  array{name?: string, email?: string, password?: string}  $attributes
+     * @param  array<int, string>  $roles
+     */
+    public function updateProfile(array $attributes, array $roles = []): self
+    {
+        if ($this->emailWillChange($attributes)) {
+            // email_verified_at 不在 fillable 里，所以要在主更新前单独重置。
+            $this->forceFill([
+                'email_verified_at' => null,
+            ])->save();
+        }
+
+        $this->update($attributes);
+
+        // 角色同步放在同一条写路径里，避免调用方自己编排两段操作。
+        $this->syncRoles($roles);
+        $this->refreshAuthorizationState();
+
+        return $this->fresh();
+    }
+
+    /**
+     * @param  array{name?: string, email?: string, password?: string}  $attributes
+     */
+    public function emailWillChange(array $attributes): bool
+    {
+        return array_key_exists('email', $attributes) && $attributes['email'] !== $this->email;
+    }
+
+    private function refreshAuthorizationState(): void
+    {
+        // Spatie 会按用户/角色关系缓存权限，因此关系和缓存都要一起刷新。
+        $this->unsetRelation('roles');
+        $this->unsetRelation('permissions');
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

@@ -4,10 +4,14 @@ import { Link, router, usePage } from '@inertiajs/vue3';
 import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 
-defineProps({
+const props = defineProps({
     roles: {
         type: Object,
         required: true,
+    },
+    permissionDisplayNames: {
+        type: Object,
+        default: () => ({}),
     },
 });
 
@@ -58,8 +62,8 @@ function confirmDelete(role) {
                 <UiTableCell>{{ role.users_count }}</UiTableCell>
                 <UiTableCell>
                     <div class="flex flex-wrap gap-2">
-                        <UiBadge v-for="permission in role.permissions" :key="permission" variant="secondary">
-                            {{ permission }}
+                        <UiBadge v-for="permission in role.permissions" :key="permission.name" variant="secondary">
+                            {{ props.permissionDisplayNames[permission.name] ?? permission.name }}
                         </UiBadge>
                     </div>
                 </UiTableCell>

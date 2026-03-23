@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Roles;
 
+use App\Models\Auth\AdminPermission;
 use App\Models\Auth\AdminRole;
 use App\Support\PermissionRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,7 +23,8 @@ class RoleManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRoles/Index')
                 ->has('roles.data')
-                ->where('roles.data.0.permissions', fn ($permissions): bool => collect($permissions)->contains('仪表盘 · 读取'))
+                ->where('roles.data.0.permissions', fn ($permissions): bool => collect($permissions)->pluck('name')->contains('dashboard.read'))
+                ->where('permissionDisplayNames', fn ($labels): bool => ($labels['dashboard.read'] ?? null) === '仪表盘 · 读取')
                 ->where('auth.access', fn ($access) => ($access['admin-role.read'] ?? false) === true));
     }
 
@@ -164,6 +166,27 @@ class RoleManagementTest extends TestCase
 
         $this->assertDatabaseHas($rolesTable, [
             'name' => 'Bound Role',
+        ]);
+    }
+
+    public function test_sync_permissions_and_super_admin_role_removes_stale_permissions(): void
+    {
+        $permissionsTable = config('permission.table_names.permissions');
+
+        AdminPermission::query()->create([
+            'name' => 'legacy.permission',
+            'guard_name' => 'web',
+        ]);
+
+        AdminRole::syncPermissionsAndSuperAdminRole();
+
+        $this->assertDatabaseMissing($permissionsTable, [
+            'name' => 'legacy.permission',
+            'guard_name' => 'web',
+        ]);
+        $this->assertDatabaseHas($permissionsTable, [
+            'name' => 'admin-user.read',
+            'guard_name' => 'web',
         ]);
     }
 }

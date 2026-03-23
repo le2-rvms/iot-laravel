@@ -30,9 +30,10 @@ class PermissionRegistry
      *     permissions: array<int, array{name: string, action: string, action_label: string}>
      * }>
      */
-    public static function definitions(): array
+    public static function groups(): array
     {
-        return app(PermissionLocalizer::class)->definitions(self::structure()['definitions']);
+        // 运行时结构保持与语言无关，只有展示给 UI 时才补上文案。
+        return app(PermissionLocalizer::class)->groups(self::structure()['definitions']);
     }
 
     /**
@@ -42,6 +43,7 @@ class PermissionRegistry
     {
         $names = [];
 
+        // 持久化和授权都依赖稳定权限名，因此要把分组结构拍平成名称列表。
         foreach (self::structure()['definitions'] as $definition) {
             foreach ($definition['permissions'] as $permission) {
                 $names[] = $permission['name'];
@@ -54,9 +56,14 @@ class PermissionRegistry
     /**
      * @return array<string, string>
      */
-    public static function permissionLabels(): array
+    public static function displayNames(array $permissionNames): array
     {
-        return app(PermissionLocalizer::class)->permissionLabels(self::structure()['definitions']);
+        return app(PermissionLocalizer::class)->displayNames($permissionNames);
+    }
+
+    public static function displayName(string $permissionName): string
+    {
+        return app(PermissionLocalizer::class)->displayName($permissionName);
     }
 
     /**
@@ -70,6 +77,7 @@ class PermissionRegistry
 
         $access = [];
 
+        // 前端访问控制始终以稳定权限名为 key，而不是本地化文案。
         foreach (self::permissionNames() as $permission) {
             $access[$permission] = $user->can($permission);
         }
@@ -101,6 +109,7 @@ class PermissionRegistry
             ->kebab()
             ->value();
 
+        // 中间件鉴权只按当前 action 即时推导权限，不再扫描所有控制器。
         return "{$module}.{$actionAttribute->newInstance()->action}";
     }
 
@@ -118,6 +127,7 @@ class PermissionRegistry
             return self::$cache;
         }
 
+        // 权限定义只会随代码变化，因此按进程做缓存就足够了。
         return self::$cache = app(PermissionStructureBuilder::class)->build();
     }
 }

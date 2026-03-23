@@ -16,7 +16,7 @@ class PermissionRegistryTest extends TestCase
 {
     public function test_it_loads_permissions_from_runtime_discovery(): void
     {
-        $groups = collect(PermissionRegistry::definitions())->keyBy('module');
+        $groups = collect(PermissionRegistry::groups())->keyBy('module');
 
         $this->assertSame('仪表盘', $groups['dashboard']['label']);
         $this->assertSame('账户密码', $groups['password']['label']);
@@ -34,41 +34,41 @@ class PermissionRegistryTest extends TestCase
 
     public function test_it_returns_frontend_permission_groups_with_action_labels(): void
     {
-        $groups = PermissionRegistry::definitions();
+        $groups = PermissionRegistry::groups();
         $userGroup = collect($groups)->firstWhere('module', 'admin-user');
 
         $this->assertSame('管理员用户', $userGroup['label']);
         $this->assertSame('读取', $userGroup['permissions'][0]['action_label']);
         $this->assertSame('写入', $userGroup['permissions'][1]['action_label']);
-        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::displayName('dashboard.read'));
     }
 
     public function test_it_translates_permission_labels_for_the_current_locale_without_rebuilding_permissions(): void
     {
         App::setLocale('en');
 
-        $groups = collect(PermissionRegistry::definitions())->keyBy('module');
+        $groups = collect(PermissionRegistry::groups())->keyBy('module');
 
         $this->assertSame('Dashboard', $groups['dashboard']['label']);
         $this->assertSame('Read', $groups['admin-user']['permissions'][0]['action_label']);
-        $this->assertSame('Dashboard · Read', PermissionRegistry::permissionLabels()['dashboard.read']);
+        $this->assertSame('Dashboard · Read', PermissionRegistry::displayName('dashboard.read'));
 
         App::setLocale('zh_CN');
 
-        $this->assertSame('仪表盘', collect(PermissionRegistry::definitions())->keyBy('module')['dashboard']['label']);
-        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+        $this->assertSame('仪表盘', collect(PermissionRegistry::groups())->keyBy('module')['dashboard']['label']);
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::displayName('dashboard.read'));
     }
 
     public function test_updating_permission_translations_does_not_require_rebuilding_permissions(): void
     {
-        $this->assertSame('仪表盘 · 读取', PermissionRegistry::permissionLabels()['dashboard.read']);
+        $this->assertSame('仪表盘 · 读取', PermissionRegistry::displayName('dashboard.read'));
 
         Lang::addLines([
             'permissions.groups.dashboard' => '仪表盘新文案',
             'permissions.actions.read' => '查看',
         ], 'zh_CN');
 
-        $this->assertSame('仪表盘新文案 · 查看', PermissionRegistry::permissionLabels()['dashboard.read']);
+        $this->assertSame('仪表盘新文案 · 查看', PermissionRegistry::displayName('dashboard.read'));
     }
 
     public function test_it_resolves_permission_names_for_controller_actions(): void

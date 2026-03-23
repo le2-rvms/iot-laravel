@@ -19,10 +19,11 @@ const props = defineProps({
 
 const isEdit = computed(() => props.mode === 'edit');
 const isProtected = computed(() => props.role?.is_protected ?? false);
+const initialPermissions = props.role?.permissions?.map((permission) => permission.name).sort() ?? [];
 
 const form = useForm({
     name: props.role?.name ?? '',
-    permissions: props.role?.permissions ?? [],
+    permissions: initialPermissions,
 });
 
 function togglePermission(permissionName, checked) {

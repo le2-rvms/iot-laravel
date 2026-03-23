@@ -59,10 +59,10 @@ function confirmDelete(user) {
                     <div class="flex flex-wrap gap-2">
                         <UiBadge
                             v-for="role in user.roles"
-                            :key="role"
+                            :key="role.name"
                             variant="outline"
                         >
-                            {{ role }}
+                            {{ role.name }}
                         </UiBadge>
                         <span v-if="!user.roles.length" class="app-copy-muted-soft text-xs">未分配管理员角色</span>
                     </div>

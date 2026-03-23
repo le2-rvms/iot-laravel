@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Auth\AdminRole;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,14 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        AdminUser::query()->updateOrCreate([
-            'email' => 'admin@example.com',
-        ], [
-            'name' => 'Admin',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
-
-        $this->call(RolePermissionSeeder::class);
+        AdminRole::syncPermissionsAndSuperAdminRole();
     }
 }

@@ -2,36 +2,30 @@
 
 namespace Tests;
 
-use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
-use App\Support\PermissionRegistry;
-use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Str;
+use Tests\Concerns\AssignsPermissionScopedRoles;
 use Tests\Concerns\ResetsPermissionRegistryCache;
 
 abstract class TestCase extends BaseTestCase
 {
-    use ResetsPermissionRegistryCache;
+    // 权限相关测试辅助统一收口在这里，保证各类 Feature 用例都从同一套授权原语出发。
+    use AssignsPermissionScopedRoles, ResetsPermissionRegistryCache;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        // 权限发现结果按 PHP 进程做静态缓存，因此每个测试开始前都要清掉。
         $this->resetPermissionRegistryCache();
-    }
-
-    protected function seedPermissions(): void
-    {
-        $this->seed(RolePermissionSeeder::class);
     }
 
     protected function createSuperAdmin(array $attributes = []): AdminUser
     {
-        $this->seedPermissions();
-
         $user = AdminUser::factory()->create($attributes);
-        $user->assignRole(PermissionRegistry::SUPER_ADMIN_ROLE);
+
+        // 测试里的超级管理员也走和生产代码一致的模型方法。
+        $user->assignSuperAdminRole();
 
         return $user;
     }
@@ -41,16 +35,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function createUserWithPermissions(array $permissions, array $attributes = []): AdminUser
     {
-        $this->seedPermissions();
-
         $user = AdminUser::factory()->create($attributes);
-        $role = AdminRole::create([
-            'name' => 'Role '.Str::uuid(),
-            'guard_name' => 'web',
-        ]);
 
-        $role->syncPermissions($permissions);
-        $user->assignRole($role);
+        // 带权限的测试用户通过一次性角色组装，确保授权链路仍然接近真实运行时。
+        $this->assignPermissionsToUser($user, $permissions);
 
         return $user;
     }

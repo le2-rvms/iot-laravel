@@ -12,6 +12,7 @@ use App\Support\PermissionRegistry;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use LogicException;
 
 #[PermissionGroup]
 class AdminRoleController extends Controller
@@ -19,31 +20,18 @@ class AdminRoleController extends Controller
     #[PermissionAction('read')]
     public function index(): Response
     {
-        $permissionLabels = PermissionRegistry::permissionLabels();
-
         $adminRoles = AdminRole::query()
-            ->withCount('users')
+            // 列表页会直接消费用户数量和权限标签，因此在分页结果里一次带齐。
+            ->withCount(['users', 'permissions'])
             ->with('permissions:id,name')
             ->orderBy('name')
             ->paginate(10)
-            ->withQueryString()
-            ->through(fn (AdminRole $adminRole) => [
-                'id' => $adminRole->id,
-                'name' => $adminRole->name,
-                'users_count' => $adminRole->users_count,
-                'permissions_count' => $adminRole->permissions->count(),
-                'permissions' => $adminRole->permissions
-                    ->pluck('name')
-                    ->sort()
-                    ->map(fn (string $permission) => $permissionLabels[$permission] ?? $permission)
-                    ->values()
-                    ->all(),
-                'is_protected' => $adminRole->name === PermissionRegistry::SUPER_ADMIN_ROLE,
-                'created_at' => $adminRole->created_at?->toDateTimeString(),
-            ]);
+            ->withQueryString();
 
         return Inertia::render('AdminRoles/Index', [
             'roles' => $adminRoles,
+            // 页面拿原始权限名，再通过独立的显示文案映射转成中文。
+            'permissionDisplayNames' => PermissionRegistry::displayNames(PermissionRegistry::permissionNames()),
         ]);
     }
 
@@ -51,21 +39,18 @@ class AdminRoleController extends Controller
     public function create(): Response
     {
         return Inertia::render('AdminRoles/Create', [
-            'permissionGroups' => PermissionRegistry::definitions(),
+            // 角色表单消费的是分组权限元数据，文案在读取阶段再本地化。
+            'permissionGroups' => PermissionRegistry::groups(),
         ]);
     }
 
     #[PermissionAction('write')]
     public function store(StoreAdminRoleRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $adminRole = AdminRole::create([
-            'name' => $validated['name'],
-            'guard_name' => 'web',
-        ]);
-
-        $adminRole->syncPermissions($validated['permissions'] ?? []);
+        AdminRole::createWithPermissions(
+            attributes: $request->safe()->only('name'),
+            permissions: $request->validated('permissions') ?? [],
+        );
 
         return redirect()->action([self::class, 'index'])->with('success', '管理员角色已创建。');
     }
@@ -73,33 +58,22 @@ class AdminRoleController extends Controller
     #[PermissionAction('write')]
     public function edit(AdminRole $adminRole): Response
     {
+        // 编辑页直接消费模型和关系序列化结果，不再额外组装 DTO。
         $adminRole->loadMissing('permissions:id,name');
 
         return Inertia::render('AdminRoles/Edit', [
-            'permissionGroups' => PermissionRegistry::definitions(),
-            'role' => [
-                'id' => $adminRole->id,
-                'name' => $adminRole->name,
-                'permissions' => $adminRole->permissions->pluck('name')->sort()->values()->all(),
-                'is_protected' => $adminRole->name === PermissionRegistry::SUPER_ADMIN_ROLE,
-            ],
+            'permissionGroups' => PermissionRegistry::groups(),
+            'role' => $adminRole,
         ]);
     }
 
     #[PermissionAction('write')]
     public function update(UpdateAdminRoleRequest $request, AdminRole $adminRole): RedirectResponse
     {
-        $validated = $request->validated();
-        $isProtected = $adminRole->name === PermissionRegistry::SUPER_ADMIN_ROLE;
-
-        $adminRole->update([
-            'name' => $isProtected ? $adminRole->name : $validated['name'],
-        ]);
-
-        $adminRole->syncPermissions(
-            $isProtected
-                ? PermissionRegistry::permissionNames()
-                : ($validated['permissions'] ?? []),
+        // 受保护角色等领域规则放在模型里，控制器只负责协调请求。
+        $adminRole->updateWithPermissions(
+            attributes: $request->safe()->only('name'),
+            permissions: $request->validated('permissions') ?? [],
         );
 
         return redirect()->action([self::class, 'edit'], $adminRole)->with('success', '管理员角色已更新。');
@@ -108,15 +82,12 @@ class AdminRoleController extends Controller
     #[PermissionAction('write')]
     public function destroy(AdminRole $adminRole): RedirectResponse
     {
-        if ($adminRole->name === PermissionRegistry::SUPER_ADMIN_ROLE) {
-            return redirect()->action([self::class, 'index'])->with('error', 'Super Admin 管理员角色不可删除。');
+        try {
+            $adminRole->deleteIfAllowed();
+        } catch (LogicException $exception) {
+            // 领域失败统一转成 flash，前端可以继续停留在列表页。
+            return redirect()->action([self::class, 'index'])->with('error', $exception->getMessage());
         }
-
-        if ($adminRole->users()->exists()) {
-            return redirect()->action([self::class, 'index'])->with('error', '该管理员角色仍有用户绑定，无法删除。');
-        }
-
-        $adminRole->delete();
 
         return redirect()->action([self::class, 'index'])->with('success', '管理员角色已删除。');
     }
