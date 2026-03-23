@@ -91,7 +91,7 @@ class MqttAccountController extends Controller
         unset($validated['password']);
 
         // 后台只接收明文输入，真正入库时统一转成 salt + hash，避免模型层外泄保存细节。
-        MqttAccount::query()->create($validated + MqttAccount::buildPasswordFields($password));
+        MqttAccount::createAccount($validated, $password);
 
         return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已创建。');
     }
@@ -111,12 +111,8 @@ class MqttAccountController extends Controller
         $password = $validated['password'] ?? null;
         unset($validated['password']);
 
-        if (filled($password)) {
-            // 编辑页留空表示不改密码；只有明确填写时才刷新 salt 和 hash。
-            $validated += MqttAccount::buildPasswordFields($password);
-        }
-
-        $mqttAccount->update($validated);
+        // 编辑页留空表示不改密码；只有明确填写时才刷新 salt 和 hash。
+        $mqttAccount = $mqttAccount->updateAccount($validated, $password);
 
         return redirect()->action([self::class, 'edit'], $mqttAccount)->with('success', 'MQTT账号已更新。');
     }
@@ -124,7 +120,7 @@ class MqttAccountController extends Controller
     #[PermissionAction('write')]
     public function destroy(MqttAccount $mqttAccount): RedirectResponse
     {
-        $mqttAccount->delete();
+        $mqttAccount->deleteAccount();
 
         return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已删除。');
     }

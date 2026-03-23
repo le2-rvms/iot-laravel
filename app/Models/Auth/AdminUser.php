@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -30,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden(['password', 'remember_token'])]
 class AdminUser extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, HasRoles, Notifiable, HasTranslatedAttributesAndUpdatedBy;
+    use HasFactory, HasRoles, HasTranslatedAttributesAndUpdatedBy, Notifiable;
 
     protected $table = 'users';
 
@@ -87,37 +88,41 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
      * @param  array{name: string, email: string, password: string}  $attributes
      * @param  array<int, string>  $roles
      */
-    public static function createWithRoles(array $attributes, array $roles = []): self
+    public static function createUserWithRoles(array $attributes, array $roles = []): self
     {
-        $adminUser = self::create($attributes);
+        return DB::transaction(function () use ($attributes, $roles): self {
+            $adminUser = (new self)->fill($attributes);
 
-        // 用户 CRUD 与通知发送解耦，这里只处理持久化和角色关系。
-        $adminUser->syncRoles($roles);
-        $adminUser->refreshAuthorizationState();
+            $adminUser->save();
 
-        return $adminUser->fresh();
+            // 用户 CRUD 与通知发送解耦，这里只处理持久化和角色关系。
+            $adminUser->syncRoles($roles);
+            $adminUser->refreshAuthorizationState();
+
+            return $adminUser->fresh();
+        });
     }
 
     /**
      * @param  array{name?: string, email?: string, password?: string}  $attributes
      * @param  array<int, string>  $roles
      */
-    public function updateProfile(array $attributes, array $roles = []): self
+    public function updateUser(array $attributes, array $roles = []): self
     {
-        if ($this->emailWillChange($attributes)) {
-            // email_verified_at 不在 fillable 里，所以要在主更新前单独重置。
-            $this->forceFill([
-                'email_verified_at' => null,
-            ])->save();
-        }
+        return DB::transaction(function () use ($attributes, $roles): self {
+            if ($this->emailWillChange($attributes)) {
+                // email_verified_at 不在 fillable 里，所以合并进 forceFill 一次落库。
+                $attributes['email_verified_at'] = null;
+            }
 
-        $this->update($attributes);
+            $this->forceFill($attributes)->save();
 
-        // 角色同步放在同一条写路径里，避免调用方自己编排两段操作。
-        $this->syncRoles($roles);
-        $this->refreshAuthorizationState();
+            // 角色同步放在同一条写路径里，避免调用方自己编排两段操作。
+            $this->syncRoles($roles);
+            $this->refreshAuthorizationState();
 
-        return $this->fresh();
+            return $this->fresh();
+        });
     }
 
     /**
@@ -126,6 +131,13 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
     public function emailWillChange(array $attributes): bool
     {
         return array_key_exists('email', $attributes) && $attributes['email'] !== $this->email;
+    }
+
+    public function deleteUser(): void
+    {
+        DB::transaction(function (): void {
+            $this->delete();
+        });
     }
 
     private function refreshAuthorizationState(): void

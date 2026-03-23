@@ -8,6 +8,7 @@ use App\Values\Iot\IsSuperuser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -37,7 +38,9 @@ class MqttAccount extends Model
     ];
 
     public const CREATED_AT = 'act_created_at';
+
     public const UPDATED_AT = 'act_updated_at';
+
     public const UPDATED_BY = 'act_updated_by';
 
     protected $table = 'mqtt_accounts';
@@ -45,6 +48,7 @@ class MqttAccount extends Model
     protected $primaryKey = 'act_id';
 
     protected $guarded = ['act_id'];
+
     /**
      * @return array<string, string>
      */
@@ -86,5 +90,42 @@ class MqttAccount extends Model
             'salt' => $salt,
             'password_hash' => static::makePasswordHash($password, $salt),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public static function createAccount(array $attributes, string $password): self
+    {
+        return DB::transaction(function () use ($attributes, $password): self {
+            $mqttAccount = (new self)->fill($attributes + self::buildPasswordFields($password));
+
+            $mqttAccount->save();
+
+            return $mqttAccount;
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function updateAccount(array $attributes, ?string $password = null): self
+    {
+        return DB::transaction(function () use ($attributes, $password): self {
+            if (filled($password)) {
+                $attributes += self::buildPasswordFields($password);
+            }
+
+            $this->update($attributes);
+
+            return $this->fresh();
+        });
+    }
+
+    public function deleteAccount(): void
+    {
+        DB::transaction(function (): void {
+            $this->delete();
+        });
     }
 }

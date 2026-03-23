@@ -7,9 +7,10 @@ use App\Support\PermissionRegistry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use LogicException;
-use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * @property int $id 管理员角色ID
@@ -68,53 +69,61 @@ class AdminRole extends SpatieRole
      * @param  array{name: string, guard_name?: string}  $attributes
      * @param  array<int, string>  $permissions
      */
-    public static function createWithPermissions(array $attributes, array $permissions = []): self
+    public static function createRoleWithPermissions(array $attributes, array $permissions = []): self
     {
-        $adminRole = self::create([
-            ...$attributes,
-            'guard_name' => $attributes['guard_name'] ?? 'web',
-        ]);
+        return DB::transaction(function () use ($attributes, $permissions): self {
+            $payload = $attributes;
+            $payload['guard_name'] = $attributes['guard_name'] ?? 'web';
 
-        // 角色保存与权限绑定被视为同一个领域操作。
-        $adminRole->syncPermissions($permissions);
+            $adminRole = new self($payload);
 
-        return $adminRole->fresh();
+            $adminRole->save();
+
+            // 角色保存与权限绑定被视为同一个领域操作。
+            $adminRole->syncPermissions($permissions);
+
+            return $adminRole->fresh();
+        });
     }
 
     /**
      * @param  array{name?: string}  $attributes
      * @param  array<int, string>  $permissions
      */
-    public function updateWithPermissions(array $attributes, array $permissions = []): self
+    public function updateRole(array $attributes, array $permissions = []): self
     {
-        // 即使请求里尝试改名，受保护角色也必须保留它的规范名称。
-        $this->update([
-            'name' => $this->protectedFlag() ? $this->name : ($attributes['name'] ?? $this->name),
-        ]);
+        return DB::transaction(function () use ($attributes, $permissions): self {
+            // 即使请求里尝试改名，受保护角色也必须保留它的规范名称。
+            $this->update([
+                'name' => $this->protectedFlag() ? $this->name : ($attributes['name'] ?? $this->name),
+            ]);
 
-        // 受保护角色永远拥有控制器发现出来的完整权限集。
-        $this->syncPermissions(
-            $this->protectedFlag()
-                ? PermissionRegistry::permissionNames()
-                : $permissions,
-        );
+            // 受保护角色永远拥有控制器发现出来的完整权限集。
+            $this->syncPermissions(
+                $this->protectedFlag()
+                    ? PermissionRegistry::permissionNames()
+                    : $permissions,
+            );
 
-        return $this->fresh();
+            return $this->fresh();
+        });
     }
 
-    public function deleteIfAllowed(): void
+    public function deleteRole(): void
     {
-        // 这个保留角色必须始终存在，因为其它初始化路径会依赖它。
-        if ($this->protectedFlag()) {
-            throw new LogicException('Super Admin 管理员角色不可删除。');
-        }
+        DB::transaction(function (): void {
+            // 这个保留角色必须始终存在，因为其它初始化路径会依赖它。
+            if ($this->protectedFlag()) {
+                throw new LogicException('Super Admin 管理员角色不可删除。');
+            }
 
-        // 删除已绑定用户的角色会悄悄剥夺现有管理员权限，因此要显式阻止。
-        if ($this->users()->exists()) {
-            throw new LogicException('该管理员角色仍有用户绑定，无法删除。');
-        }
+            // 删除已绑定用户的角色会悄悄剥夺现有管理员权限，因此要显式阻止。
+            if ($this->users()->exists()) {
+                throw new LogicException('该管理员角色仍有用户绑定，无法删除。');
+            }
 
-        $this->delete();
+            $this->delete();
+        });
     }
 
     public function protectedFlag(): bool

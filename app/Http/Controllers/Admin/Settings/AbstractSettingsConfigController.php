@@ -76,12 +76,10 @@ abstract class AbstractSettingsConfigController extends Controller
 
     protected function storeConfig(StoreSettingRequest $request): RedirectResponse
     {
-        $validated = [
-            ...$request->validated(),
-            'category' => $this->category,
-        ];
+        $validated = $request->validated();
+        $validated['category'] = $this->category;
 
-        Config::query()->create($validated);
+        Config::createConfig($validated);
 
         return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已创建。");
     }
@@ -100,12 +98,10 @@ abstract class AbstractSettingsConfigController extends Controller
     {
         $this->ensureCategoryMatches($config);
 
-        $validated = [
-            ...$request->validated(),
-            'category' => $this->category,
-        ];
+        $validated = $request->validated();
+        $validated['category'] = $this->category;
 
-        $config->update($validated);
+        $config->updateConfig($validated);
 
         return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已更新。");
     }
@@ -114,7 +110,7 @@ abstract class AbstractSettingsConfigController extends Controller
     {
         $this->ensureCategoryMatches($config);
 
-        $config->delete();
+        $config->deleteConfig();
 
         return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已删除。");
     }

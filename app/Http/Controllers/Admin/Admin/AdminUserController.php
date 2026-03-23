@@ -72,9 +72,7 @@ class AdminUserController extends Controller
     public function store(StoreAdminUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-
-        // 模型创建只负责持久化和角色绑定，通知发送时机明确留在控制器层。
-        $adminUser = AdminUser::createWithRoles(
+        $adminUser = AdminUser::createUserWithRoles(
             attributes: $request->safe()->except('roles'),
             roles: $validated['roles'] ?? [],
         );
@@ -108,7 +106,7 @@ class AdminUserController extends Controller
             : $validated->except('roles');
         $emailChanged = $adminUser->emailWillChange($attributes);
 
-        $adminUser->updateProfile(
+        $adminUser = $adminUser->updateUser(
             attributes: $attributes,
             roles: $validated['roles'] ?? [],
         );
@@ -124,7 +122,7 @@ class AdminUserController extends Controller
     #[PermissionAction('write')]
     public function destroy(AdminUser $adminUser): RedirectResponse
     {
-        $adminUser->delete();
+        $adminUser->deleteUser();
 
         return redirect()->action([self::class, 'index'])->with('success', '管理员用户已删除。');
     }

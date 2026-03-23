@@ -7,6 +7,7 @@ use App\Values\Settings\Category;
 use App\Values\Settings\IsMasked;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id 配置ID
@@ -60,5 +61,38 @@ class Config extends Model
         $isMasked = $this->is_masked;
 
         return $isMasked?->label ?? '';
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public static function createConfig(array $attributes): self
+    {
+        return DB::transaction(function () use ($attributes): self {
+            $config = (new self)->fill($attributes);
+
+            $config->save();
+
+            return $config;
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function updateConfig(array $attributes): self
+    {
+        return DB::transaction(function () use ($attributes): self {
+            $this->update($attributes);
+
+            return $this->fresh();
+        });
+    }
+
+    public function deleteConfig(): void
+    {
+        DB::transaction(function (): void {
+            $this->delete();
+        });
     }
 }

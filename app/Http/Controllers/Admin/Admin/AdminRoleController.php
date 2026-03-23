@@ -47,7 +47,7 @@ class AdminRoleController extends Controller
     #[PermissionAction('write')]
     public function store(StoreAdminRoleRequest $request): RedirectResponse
     {
-        AdminRole::createWithPermissions(
+        AdminRole::createRoleWithPermissions(
             attributes: $request->safe()->only('name'),
             permissions: $request->validated('permissions') ?? [],
         );
@@ -71,7 +71,7 @@ class AdminRoleController extends Controller
     public function update(UpdateAdminRoleRequest $request, AdminRole $adminRole): RedirectResponse
     {
         // 受保护角色等领域规则放在模型里，控制器只负责协调请求。
-        $adminRole->updateWithPermissions(
+        $adminRole = $adminRole->updateRole(
             attributes: $request->safe()->only('name'),
             permissions: $request->validated('permissions') ?? [],
         );
@@ -83,7 +83,7 @@ class AdminRoleController extends Controller
     public function destroy(AdminRole $adminRole): RedirectResponse
     {
         try {
-            $adminRole->deleteIfAllowed();
+            $adminRole->deleteRole();
         } catch (LogicException $exception) {
             // 领域失败统一转成 flash，前端可以继续停留在列表页。
             return redirect()->action([self::class, 'index'])->with('error', $exception->getMessage());

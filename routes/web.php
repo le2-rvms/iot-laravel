@@ -31,7 +31,6 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
         ->only(['edit', 'update']);
 
     Route::get('dashboard', DashboardController::class);
-
     Route::resource('admin-users', AdminUserController::class)
         ->except(['show']);
 
