@@ -80,8 +80,9 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRoles/Create')
-                ->has('permissionGroups', 9)
+                ->has('permissionGroups', 10)
                 ->where('permissionGroups', function ($groups): bool {
+                    $auditGroup = collect($groups)->firstWhere('module', 'audit');
                     $passwordGroup = collect($groups)->firstWhere('module', 'password');
                     $mqttAccountGroup = collect($groups)->firstWhere('module', 'mqtt-account');
                     $applicationGroup = collect($groups)->firstWhere('module', 'settings-application-config');
@@ -90,11 +91,14 @@ class RoleManagementTest extends TestCase
                     $precognitionGroup = collect($groups)->firstWhere('module', 'settings-precognition');
 
                     return $passwordGroup !== null
+                        && $auditGroup !== null
                         && $mqttAccountGroup !== null
                         && $applicationGroup !== null
                         && $systemGroup !== null
                         && $veeValidateGroup !== null
                         && $precognitionGroup !== null
+                        && $auditGroup['label'] === '审计日志'
+                        && $auditGroup['permissions'][0]['name'] === 'audit.read'
                         && $passwordGroup['label'] === '账户密码'
                         && $passwordGroup['permissions'][0]['name'] === 'password.write'
                         && $mqttAccountGroup['label'] === 'MQTT账号管理'

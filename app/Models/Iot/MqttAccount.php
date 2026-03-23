@@ -2,7 +2,7 @@
 
 namespace App\Models\Iot;
 
-use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
+use App\Models\Concerns\ModelSupport;
 use App\Values\Iot\Enabled;
 use App\Values\Iot\IsSuperuser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +29,8 @@ use Illuminate\Support\Str;
  */
 class MqttAccount extends Model
 {
-    use HasFactory, HasTranslatedAttributesAndUpdatedBy;
+    use HasFactory;
+    use ModelSupport;
 
     // 列表、表单和 Inertia 响应都不应暴露真实哈希与盐值。
     protected $hidden = [
@@ -48,6 +49,23 @@ class MqttAccount extends Model
     protected $primaryKey = 'act_id';
 
     protected $guarded = ['act_id'];
+
+    /**
+     * @return array<int, string>
+     */
+    public function auditExcept(): array
+    {
+        return array_values(array_unique([
+            $this->getKeyName(),
+            'password',
+            'remember_token',
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'password_hash',
+            'salt',
+            'certificate',
+        ]));
+    }
 
     /**
      * @return array<string, string>

@@ -2,7 +2,7 @@
 
 namespace App\Models\Auth;
 
-use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
+use App\Models\Concerns\ModelSupport;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Permission as SpatiePermission;
@@ -17,5 +17,5 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  */
 class AdminPermission extends SpatiePermission
 {
-    use HasTranslatedAttributesAndUpdatedBy;
+    use ModelSupport;
 }

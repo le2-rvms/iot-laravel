@@ -2,7 +2,7 @@
 
 namespace App\Models\Auth;
 
-use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
+use App\Models\Concerns\ModelSupport;
 use App\Support\PermissionRegistry;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +23,7 @@ use Spatie\Permission\PermissionRegistrar;
  */
 class AdminRole extends SpatieRole
 {
-    use HasTranslatedAttributesAndUpdatedBy;
+    use ModelSupport;
 
     protected $appends = ['is_protected'];
 

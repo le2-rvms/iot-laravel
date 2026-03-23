@@ -5,8 +5,9 @@ namespace App\Models\Concerns;
 use App\Concerns\HasTranslatedAttributeLabels;
 use App\Concerns\TracksUpdatedBy;
 
-trait HasTranslatedAttributesAndUpdatedBy
+trait ModelSupport
 {
+    use Auditable;
     use HasTranslatedAttributeLabels;
     use TracksUpdatedBy;
 }

@@ -21,7 +21,7 @@ class NavigationRegistryTest extends TestCase
         $this->assertSame('/admin/dashboard', $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/admin/admin-users', '/admin/admin-roles', '/admin/mqtt-accounts', '/admin/settings/application-configs', '/admin/settings/system-configs'],
+            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/settings/application-configs', '/admin/settings/system-configs'],
             array_column($sections[1]['items'], 'href'),
         );
     }
@@ -78,6 +78,26 @@ class NavigationRegistryTest extends TestCase
                 'title' => 'VeeValidate 实验室',
                 'description' => '用于演练通知规则的填写流程。',
                 'href' => '/admin/settings/vee-validate',
+            ],
+        ], $links);
+    }
+
+    public function test_audit_navigation_is_visible_to_users_with_audit_read_permission(): void
+    {
+        $user = $this->createUserWithPermissions(['audit.read']);
+
+        $sections = NavigationRegistry::sidebarFor($user);
+        $links = NavigationRegistry::dashboardQuickLinksFor($user);
+        $systemManagement = collect($sections)->firstWhere('title', '系统管理');
+
+        $this->assertNotNull($systemManagement);
+        $this->assertSame('/admin/audits', $systemManagement['items'][0]['href']);
+        $this->assertSame('审计日志', $systemManagement['items'][0]['title']);
+        $this->assertSame([
+            [
+                'title' => '审计日志',
+                'description' => '查看后台资源的创建、更新、删除与业务事件记录。',
+                'href' => '/admin/audits',
             ],
         ], $links);
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Account\PasswordController as AccountPasswordController;
 use App\Http\Controllers\Admin\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\Admin\AdminUserController;
+use App\Http\Controllers\Admin\Audits\AuditController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MqttAccounts\MqttAccountController;
 use App\Http\Controllers\Admin\Settings\SettingsApplicationConfigController;
@@ -36,6 +37,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
 
     Route::resource('admin-roles', AdminRoleController::class)
         ->except(['show']);
+
+    Route::resource('audits', AuditController::class)
+        ->only(['index']);
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
     Route::resource('mqtt-accounts', MqttAccountController::class)

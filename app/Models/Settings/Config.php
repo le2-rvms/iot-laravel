@@ -2,7 +2,7 @@
 
 namespace App\Models\Settings;
 
-use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
+use App\Models\Concerns\ModelSupport;
 use App\Values\Settings\Category;
 use App\Values\Settings\IsMasked;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Config extends Model
 {
-    use HasTranslatedAttributesAndUpdatedBy;
+    use ModelSupport;
 
     protected $guarded = ['id'];
 

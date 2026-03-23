@@ -47,6 +47,15 @@ class NavigationRegistry
                         'show_in_dashboard' => true,
                     ],
                     [
+                        'title' => '审计日志',
+                        'description' => '查看后台资源的创建、更新、删除与业务事件记录。',
+                        'dashboard_description' => '查看后台资源的创建、更新、删除与业务事件记录。',
+                        'href' => '/admin/audits',
+                        'icon' => 'History',
+                        'permission' => 'audit.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
                         'title' => 'MQTT账号管理',
                         'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
                         'dashboard_description' => '维护 MQTT 连接账号、设备标识与启用状态。',

@@ -2,7 +2,7 @@
 
 namespace App\Models\Auth;
 
-use App\Models\Concerns\HasTranslatedAttributesAndUpdatedBy;
+use App\Models\Concerns\ModelSupport;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -31,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden(['password', 'remember_token'])]
 class AdminUser extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, HasRoles, HasTranslatedAttributesAndUpdatedBy, Notifiable;
+    use HasFactory, HasRoles, ModelSupport, Notifiable;
 
     protected $table = 'users';
 

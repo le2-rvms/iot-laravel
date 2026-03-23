@@ -169,6 +169,10 @@ class ListQueryFilters
 
     private function isSkippableValue(mixed $value): bool
     {
+        if ($value === null) {
+            return true;
+        }
+
         if (is_string($value)) {
             // 空白字符串视为“未传”，保持和前端清空搜索框后的行为一致。
             return trim($value) === '';
