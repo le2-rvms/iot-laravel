@@ -4,6 +4,7 @@ return [
     'groups' => [
         'dashboard' => 'Dashboard',
         'mqtt-account' => 'MQTT Accounts',
+        'config' => 'Config',
         'password' => 'Account Password',
         'admin-role' => 'Admin Roles',
         'audit' => 'Audit Logs',
@@ -16,5 +17,12 @@ return [
     'actions' => [
         'read' => 'Read',
         'write' => 'Write',
+    ],
+    'events' => [
+        'created' => 'Created',
+        'updated' => 'Updated',
+        'deleted' => 'Deleted',
+        'restored' => 'Restored',
+        'force_deleted' => 'Force Deleted',
     ],
 ];

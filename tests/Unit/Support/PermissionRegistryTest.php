@@ -66,8 +66,8 @@ class PermissionRegistryTest extends TestCase
         $this->assertSame('仪表盘 · 读取', PermissionRegistry::displayName('dashboard.read'));
 
         Lang::addLines([
-            'permissions.groups.dashboard' => '仪表盘新文案',
-            'permissions.actions.read' => '查看',
+            'controllers.groups.dashboard' => '仪表盘新文案',
+            'controllers.actions.read' => '查看',
         ], 'zh_CN');
 
         $this->assertSame('仪表盘新文案 · 查看', PermissionRegistry::displayName('dashboard.read'));

@@ -19,12 +19,6 @@ trait HasTranslatedAttributeLabels
 
     protected static function attributeLabelsTranslationKey(): string
     {
-        $class = Str::after(static::class, 'App\\Models\\');
-        $segments = array_map(
-            static fn (string $segment): string => Str::snake($segment),
-            explode('\\', $class),
-        );
-
-        return 'models.'.implode('.', $segments).'.attributes';
+        return 'models.'.Str::snake(class_basename(static::class));
     }
 }

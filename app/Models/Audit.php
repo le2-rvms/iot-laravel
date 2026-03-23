@@ -111,22 +111,22 @@ class Audit extends Model
 
     public function getEventLabelAttribute(): string
     {
-        return Lang::has('audit.events.'.$this->event)
-            ? __('audit.events.'.$this->event)
+        return Lang::has('controllers.events.'.$this->event)
+            ? __('controllers.events.'.$this->event)
             : (string) $this->event;
     }
 
     public function getResourceTypeLabelAttribute(): string
     {
-        $resourceKey = [
-            AdminUser::class => 'admin_user',
-            AdminRole::class => 'admin_role',
-            MqttAccount::class => 'mqtt_account',
+        $groupKey = [
+            AdminUser::class => 'admin-user',
+            AdminRole::class => 'admin-role',
+            MqttAccount::class => 'mqtt-account',
             Config::class => 'config',
         ][(string) $this->auditable_type] ?? null;
 
-        return $resourceKey !== null && Lang::has('audit.resources.'.$resourceKey)
-            ? __('audit.resources.'.$resourceKey)
+        return $groupKey !== null && Lang::has('controllers.groups.'.$groupKey)
+            ? __('controllers.groups.'.$groupKey)
             : Str::headline(class_basename((string) $this->auditable_type));
     }
 

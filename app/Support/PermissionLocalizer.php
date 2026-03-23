@@ -81,13 +81,13 @@ class PermissionLocalizer
     private function groupLabel(string $module): string
     {
         // 模块文案来自语言包，而不是权限表里的持久化元数据。
-        return Lang::get("permissions.groups.{$module}");
+        return Lang::get("controllers.groups.{$module}");
     }
 
     private function actionLabel(string $action): string
     {
         // 动作文案在所有模块间复用。
-        return Lang::get("permissions.actions.{$action}");
+        return Lang::get("controllers.actions.{$action}");
     }
 
     /**
