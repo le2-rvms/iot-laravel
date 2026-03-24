@@ -194,7 +194,7 @@ class CsvExportTest extends TestCase
         $this->assertSame('更新', $rows[1][2]);
         $this->assertSame('管理员用户', $rows[1][3]);
         $this->assertSame('审计人', $rows[1][5]);
-        $this->assertStringContainsString('"name":{"old":"旧名","new":"新名"}', $rows[1][10]);
+        $this->assertStringContainsString('"名称":"旧名 → 新名"', $rows[1][10]);
     }
 
     public function test_permission_registry_still_contains_read_permissions_for_exported_modules(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enum\EnumLikeBase;
 use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
 use App\Models\Iot\MqttAccount;
@@ -14,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 
@@ -32,6 +32,10 @@ use Illuminate\Support\Str;
 class Audit extends Model
 {
     public $timestamps = false;
+
+    protected bool $hasResolvedAuditableModel = false;
+
+    protected ?Model $auditableModelInstance = null;
 
     protected $guarded = ['id'];
 
@@ -193,10 +197,10 @@ class Audit extends Model
         $oldValues = is_array($this->old_values) ? array_keys($this->old_values) : [];
         $newValues = is_array($this->new_values) ? array_keys($this->new_values) : [];
 
-        return Collection::make(array_merge($oldValues, $newValues))
-            ->unique()
-            ->values()
-            ->all();
+        return array_values(array_unique(array_map(
+            fn (string $field): string => $this->displayField($field),
+            array_merge($oldValues, $newValues),
+        )));
     }
 
     public function getChangesCountAttribute(): int
@@ -206,31 +210,206 @@ class Audit extends Model
 
     public function getChangeSummaryAttribute(): string
     {
+        $changes = $this->displaySummaryChanges();
+
+        if ($changes === []) {
+            return '';
+        }
+
+        return $this->encodeAuditJson($changes);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function displaySummaryChanges(): array
+    {
         $oldValues = is_array($this->old_values) ? $this->old_values : [];
         $newValues = is_array($this->new_values) ? $this->new_values : [];
 
         if ($oldValues === [] && $newValues === []) {
-            return '';
+            return [];
         }
 
         if ($oldValues === []) {
-            return $this->encodeAuditJson($newValues);
+            return $this->translateSummaryFields($this->displaySingleSideSummary($newValues, '[已设置]'));
         }
 
         if ($newValues === []) {
-            return $this->encodeAuditJson($oldValues);
+            return $this->translateSummaryFields($this->displaySingleSideSummary($oldValues, '[已隐藏]'));
         }
 
-        $changes = collect($this->changed_fields)
-            ->mapWithKeys(fn (string $field): array => [
-                $field => [
-                    'old' => $oldValues[$field] ?? null,
-                    'new' => $newValues[$field] ?? null,
-                ],
-            ])
-            ->all();
+        $changes = [];
 
-        return $this->encodeAuditJson($changes);
+        foreach (array_unique(array_merge(array_keys($oldValues), array_keys($newValues))) as $field) {
+            $displayField = $this->displayField((string) $field);
+            $oldValue = $oldValues[$field] ?? null;
+            $newValue = $newValues[$field] ?? null;
+
+            if ($oldValue === '[已隐藏]' && $newValue === '[已隐藏]') {
+                $changes[$displayField] = '[已修改]';
+
+                continue;
+            }
+
+            if (! array_key_exists($displayField, $changes)) {
+                $changes[$displayField] = $this->displayTransition((string) $field, $oldValue, $newValue);
+            }
+        }
+
+        return $this->translateSummaryFields($changes);
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     * @return array<string, mixed>
+     */
+    protected function displaySingleSideSummary(array $values, string $maskedValue): array
+    {
+        $changes = [];
+
+        foreach ($values as $field => $value) {
+            $displayField = $this->displayField((string) $field);
+
+            if ($value === '[已隐藏]') {
+                $changes[$displayField] = $maskedValue;
+
+                continue;
+            }
+
+            if (! array_key_exists($displayField, $changes)) {
+                $changes[$displayField] = $value;
+            }
+        }
+
+        return $changes;
+    }
+
+    protected function displayField(string $field): string
+    {
+        if ($this->auditable_type === MqttAccount::class && in_array($field, ['password_hash', 'salt'], true)) {
+            return 'password';
+        }
+
+        return $field;
+    }
+
+    /**
+     * @param  array<string, mixed>  $changes
+     * @return array<string, mixed>
+     */
+    protected function translateSummaryFields(array $changes): array
+    {
+        $translated = [];
+
+        foreach ($changes as $field => $value) {
+            $translated[$this->summaryFieldLabel($field)] = $value;
+        }
+
+        return $translated;
+    }
+
+    protected function summaryFieldLabel(string $field): string
+    {
+        $model = $this->auditableModel();
+
+        if ($model !== null && method_exists($model, 'attributeLabels')) {
+            $labels = $model::attributeLabels();
+
+            if (isset($labels[$field]) && is_string($labels[$field])) {
+                return $labels[$field];
+            }
+        }
+
+        return $field;
+    }
+
+    protected function displayTransition(string $field, mixed $oldValue, mixed $newValue): string
+    {
+        return $this->displayValue($field, $oldValue).' → '.$this->displayValue($field, $newValue);
+    }
+
+    protected function displayValue(string $field, mixed $value): string
+    {
+        if ($value === null) {
+            return '空';
+        }
+
+        $labeledValue = $this->displayLabeledValue($field, $value);
+
+        if ($labeledValue !== null) {
+            return $labeledValue;
+        }
+
+        if (is_bool($value)) {
+            return $value ? '是' : '否';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
+    }
+
+    protected function displayLabeledValue(string $field, mixed $value): ?string
+    {
+        if (! is_scalar($value)) {
+            return null;
+        }
+
+        $labels = $this->fieldValueLabels($field);
+
+        if (! is_array($labels)) {
+            return null;
+        }
+
+        return $labels[(int) $value] ?? null;
+    }
+
+    /**
+     * @return array<int|string, string>|null
+     */
+    protected function fieldValueLabels(string $field): ?array
+    {
+        $model = $this->auditableModel();
+
+        if ($model === null) {
+            return null;
+        }
+
+        $casts = $model->getCasts();
+        $castClass = $casts[$field] ?? null;
+
+        if (! is_string($castClass) || ! class_exists($castClass)) {
+            return null;
+        }
+
+        if (! is_subclass_of($castClass, EnumLikeBase::class)) {
+            return null;
+        }
+
+        /** @var class-string<EnumLikeBase> $castClass */
+        return $castClass::LABELS;
+    }
+
+    protected function auditableModel(): ?Model
+    {
+        if ($this->hasResolvedAuditableModel) {
+            return $this->auditableModelInstance;
+        }
+
+        $this->hasResolvedAuditableModel = true;
+
+        $auditableType = (string) $this->auditable_type;
+
+        if (! class_exists($auditableType)) {
+            return null;
+        }
+
+        $this->auditableModelInstance = new $auditableType;
+
+        return $this->auditableModelInstance;
     }
 
     /**

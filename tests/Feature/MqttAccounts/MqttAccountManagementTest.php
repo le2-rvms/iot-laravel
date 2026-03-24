@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\MqttAccounts;
 
+use App\Models\Audit;
 use App\Models\Iot\MqttAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -109,6 +110,46 @@ class MqttAccountManagementTest extends TestCase
         $this->assertDatabaseMissing('mqtt_accounts', [
             'act_id' => $account->act_id,
         ]);
+    }
+
+    public function test_updating_mqtt_account_password_writes_a_password_changed_audit_marker(): void
+    {
+        $user = $this->createUserWithPermissions(['mqtt-account.write']);
+
+        $account = MqttAccount::factory()->create([
+            'user_name' => 'device-gateway',
+            'clientid' => 'client-001',
+            'is_superuser' => false,
+            'enabled' => true,
+        ]);
+
+        Audit::query()->delete();
+
+        $this->actingAs($user)
+            ->put("/admin/mqtt-accounts/{$account->act_id}", [
+                'user_name' => 'device-gateway',
+                'password' => 'new-secret-pass',
+                'clientid' => 'client-001',
+                'product_key' => $account->product_key,
+                'device_name' => $account->device_name,
+                'certificate' => $account->certificate,
+                'is_superuser' => true,
+                'enabled' => true,
+            ])
+            ->assertRedirect("/admin/mqtt-accounts/{$account->act_id}/edit");
+
+        $audit = Audit::query()->latest('id')->firstOrFail();
+
+        $this->assertSame('updated', $audit->event);
+        $this->assertSame('[已隐藏]', $audit->old_values['password_hash']);
+        $this->assertSame('[已隐藏]', $audit->new_values['password_hash']);
+        $this->assertSame('[已隐藏]', $audit->old_values['salt']);
+        $this->assertSame('[已隐藏]', $audit->new_values['salt']);
+        $this->assertSame(0, $audit->old_values['is_superuser']);
+        $this->assertSame(1, $audit->new_values['is_superuser']);
+        $this->assertContains('password', $audit->changed_fields);
+        $this->assertStringContainsString('"密码":"[已修改]"', $audit->change_summary);
+        $this->assertStringContainsString('"是否超级用户":"否 → 是"', $audit->change_summary);
     }
 
     public function test_updating_an_account_refreshes_the_updated_by_user(): void

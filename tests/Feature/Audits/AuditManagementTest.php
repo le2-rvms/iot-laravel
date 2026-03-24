@@ -64,7 +64,7 @@ class AuditManagementTest extends TestCase
                 ->where('audits.data.0.route', 'admin.admin-users.update')
                 ->where('audits.data.0.changed_fields', ['name', 'email'])
                 ->where('audits.data.0.changes_count', 2)
-                ->where('audits.data.0.change_summary', '{"name":{"old":"旧名称","new":"新名称"},"email":{"old":null,"new":"new@example.com"}}'));
+                ->where('audits.data.0.change_summary', '{"名称":"旧名称 → 新名称","邮箱":"空 → new@example.com"}'));
     }
 
     public function test_users_without_audit_read_permission_cannot_view_the_audits_index(): void

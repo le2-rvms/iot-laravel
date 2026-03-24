@@ -167,6 +167,8 @@ class AuditLogSystemTest extends TestCase
         $this->assertSame([
             'name' => 'Alice',
             'email' => 'alice@example.com',
+            'password' => '[已隐藏]',
+            'remember_token' => '[已隐藏]',
         ], $createAudit->new_values);
 
         Audit::query()->delete();
@@ -179,6 +181,8 @@ class AuditLogSystemTest extends TestCase
         $this->assertSame([
             'name' => 'Alice',
             'email' => 'alice@example.com',
+            'password' => '[已隐藏]',
+            'remember_token' => '[已隐藏]',
         ], $deleteAudit->old_values);
         $this->assertNull($deleteAudit->new_values);
     }
@@ -230,8 +234,6 @@ class AuditTestUser extends Model
     {
         $fields = [
             $this->getKeyName(),
-            'password',
-            'remember_token',
             'status',
         ];
 

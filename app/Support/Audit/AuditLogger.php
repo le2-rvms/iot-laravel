@@ -20,7 +20,7 @@ class AuditLogger
 
     public static function updated(Model $model): void
     {
-        $changes = self::filter($model, $model->getChanges());
+        $changes = $model->getChanges();
 
         if ($changes === []) {
             return;
@@ -31,8 +31,16 @@ class AuditLogger
             ? $model->getPrevious()
             : Arr::only($model->getOriginal(), $fieldNames);
 
-        $old = self::filter($model, Arr::only($previous, $fieldNames));
-        $new = Arr::only($changes, array_keys($old + $changes));
+        $oldModel = $model->newInstance([], $model->exists);
+        $oldModel->setHidden([]);
+        $oldModel->setRawAttributes(Arr::only($previous, $fieldNames), true);
+
+        $newModel = $model->newInstance([], $model->exists);
+        $newModel->setHidden([]);
+        $newModel->setRawAttributes(Arr::only($changes, $fieldNames), true);
+
+        $old = self::filter($model, Arr::only($oldModel->attributesToArray(), $fieldNames));
+        $new = self::filter($model, Arr::only($newModel->attributesToArray(), $fieldNames));
 
         if ($old === [] && $new === []) {
             return;
@@ -116,7 +124,10 @@ class AuditLogger
      */
     public static function snapshot(Model $model): array
     {
-        return self::filter($model, $model->attributesToArray());
+        $serializableModel = clone $model;
+        $serializableModel->setHidden([]);
+
+        return self::filter($model, $serializableModel->attributesToArray());
     }
 
     /**
@@ -159,9 +170,16 @@ class AuditLogger
     protected static function filter(Model $model, array $data): array
     {
         $except = method_exists($model, 'auditExcept') ? $model->auditExcept() : [];
+        $mask = method_exists($model, 'auditMask') ? $model->auditMask() : [];
 
         if ($except !== []) {
             $data = Arr::except($data, $except);
+        }
+
+        foreach ($mask as $field) {
+            if (array_key_exists($field, $data)) {
+                $data[$field] = '[已隐藏]';
+            }
         }
 
         return $data;

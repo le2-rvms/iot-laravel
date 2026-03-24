@@ -100,14 +100,23 @@ class MqttAccount extends Model
     {
         return array_values(array_unique([
             $this->getKeyName(),
-            'password',
-            'remember_token',
             $this->getCreatedAtColumn(),
             $this->getUpdatedAtColumn(),
+        ]));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function auditMask(): array
+    {
+        return [
+            'password',
+            'remember_token',
             'password_hash',
             'salt',
             'certificate',
-        ]));
+        ];
     }
 
     /**

@@ -48,13 +48,10 @@ defineProps({
                     <span v-else class="app-copy-muted-soft text-xs">系统</span>
                 </UiTableCell>
                 <UiTableCell>
-                    <div v-if="audit.change_summary" class="space-y-2">
-                        <div class="app-copy-muted break-all rounded-lg bg-app-panel/70 px-3 py-2 font-mono text-xs">
+                    <div v-if="audit.change_summary">
+                        <div class="app-copy-muted whitespace-pre-wrap break-words rounded-lg bg-app-panel/70 px-3 py-2 font-mono text-xs leading-6">
                             {{ audit.change_summary }}
                         </div>
-                        <UiBadge v-if="audit.changes_count" variant="outline">
-                            {{ audit.changes_count }} 项字段变化
-                        </UiBadge>
                     </div>
                     <span v-else class="app-copy-muted-soft text-xs">无字段变化</span>
                 </UiTableCell>

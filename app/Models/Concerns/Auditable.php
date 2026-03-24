@@ -27,8 +27,6 @@ trait Auditable
     {
         $fields = [
             $this->getKeyName(),
-            'password',
-            'remember_token',
         ];
 
         $createdAtColumn = $this->getCreatedAtColumn();
@@ -52,6 +50,17 @@ trait Auditable
         }
 
         return array_values(array_unique($fields));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function auditMask(): array
+    {
+        return [
+            'password',
+            'remember_token',
+        ];
     }
 
     protected static function bootAuditable(): void
