@@ -25,12 +25,19 @@ const navigationIcons = {
     ScanSearch,
 };
 
+function normalizePath(url) {
+    return String(url).split("?")[0];
+}
+
 function isActive(href) {
+    const currentPath = normalizePath(page.url);
+    const targetPath = normalizePath(href);
+
     if (href === "/admin/dashboard") {
-        return page.url === href;
+        return currentPath === targetPath;
     }
 
-    return page.url === href || page.url.startsWith(`${href}/`);
+    return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
 }
 
 function resolveNavigationIcon(icon) {
