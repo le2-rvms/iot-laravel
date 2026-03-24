@@ -11,6 +11,7 @@ COPY config/ /tmp/
 
 RUN if [ "$DOCKER_ENV" = "production" ]; then \
     mv /tmp/php.ini-prod $PHP_INI_DIR/conf.d/php.ini; \
+    rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     else \
     mv /tmp/php.ini-dev $PHP_INI_DIR/conf.d/php.ini; \
     fi
