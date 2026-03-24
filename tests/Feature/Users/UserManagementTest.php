@@ -122,7 +122,7 @@ class UserManagementTest extends TestCase
             ->delete("/admin/admin-users/{$user->id}")
             ->assertRedirect('/admin/admin-users');
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing((new AdminUser)->getTable(), [
             'id' => $user->id,
         ]);
     }

@@ -39,7 +39,7 @@ class ConfigModelTest extends TestCase
     {
         $config = new Config();
         $config->setRawAttributes([
-            'category' => 'system',
+            'category' => '1',
             'is_masked' => '0',
             'value' => 'maintenance',
         ], true);

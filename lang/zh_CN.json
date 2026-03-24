@@ -1,8 +1,8 @@
 {
     "(and :count more error)": "(还有 :count 个错误)",
     "(and :count more errors)": "(还有 :count 个错误)",
-    "A new verification link has been sent to the email address you provided during registration.": "新的邮箱验证链接已发送到你注册时填写的邮箱。",
     "A decryption key is required.": "需要解密密钥。",
+    "A new verification link has been sent to the email address you provided during registration.": "新的邮箱验证链接已发送到你注册时填写的邮箱。",
     "All rights reserved.": "版权所有。",
     "Encrypted environment file already exists.": "加密环境配置文件已存在。",
     "Encrypted environment file not found.": "未找到加密环境配置文件。",

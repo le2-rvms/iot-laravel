@@ -22,7 +22,7 @@ class StoreAdminUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email:rfc', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'email:rfc', 'max:255',Rule::unique(AdminUser::class, 'email')],
             'password' => ['required', 'string', Password::defaults()],
             'roles' => ['nullable', 'array'],
             'roles.*' => [

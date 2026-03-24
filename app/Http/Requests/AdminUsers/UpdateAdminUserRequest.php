@@ -27,7 +27,7 @@ class UpdateAdminUserRequest extends FormRequest
                 'string',
                 'email:rfc',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($this->route('admin_user')),
+                Rule::unique(AdminUser::class, 'email')->ignore($this->route('admin_user')),
             ],
             'password' => ['nullable', 'string', Password::defaults()],
             'roles' => ['nullable', 'array'],

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Auth\AdminUser;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Testing\TestResponse;
 use Tests\Concerns\AssignsPermissionScopedRoles;
@@ -16,6 +17,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->withoutMiddleware(PreventRequestForgery::class);
 
         // 权限发现结果按 PHP 进程做静态缓存，因此每个测试开始前都要清掉。
         $this->resetPermissionRegistryCache();

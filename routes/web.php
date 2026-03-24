@@ -22,7 +22,7 @@ Route::get('/', function () {
         : redirect()->action([AuthenticatedSessionController::class, 'create']);
 });
 
-if (app()->environment(['dev', 'testing'])) {
+if (app()->environment(['local','dev'])) {
     Route::middleware('guest')->post('login/dev-users/{adminUser}', DevQuickLoginController::class);
 }
 

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 abstract class AbstractSettingsConfigController extends Controller
 {
     public function __construct(
-        private readonly string $category,
+        private readonly int $category,
         private readonly string $categoryLabel,
         private readonly array $indexAction,
     ) {}
@@ -113,6 +113,6 @@ abstract class AbstractSettingsConfigController extends Controller
 
     protected function ensureCategoryMatches(Config $config): void
     {
-        abort_unless((string) $config->category === $this->category, 404);
+        abort_unless((int) (string) $config->category === $this->category, 404);
     }
 }

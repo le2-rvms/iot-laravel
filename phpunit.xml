@@ -18,7 +18,7 @@
         </include>
     </source>
     <php>
-        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_ENV" value="local" force="true"/>
         <env name="APP_KEY" value="base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" force="true"/>
         <env name="APP_LOCALE" value="zh_CN" force="true"/>
         <env name="APP_FALLBACK_LOCALE" value="zh_CN" force="true"/>

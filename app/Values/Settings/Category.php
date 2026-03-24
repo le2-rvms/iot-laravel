@@ -6,9 +6,9 @@ use App\Enum\EnumLikeBase;
 
 class Category extends EnumLikeBase
 {
-    public const APPLICATION = 'application';
+    public const APPLICATION = 0;
 
-    public const SYSTEM = 'system';
+    public const SYSTEM = 1;
 
     /**
      * 保留英文 key，便于路由、查询和 toCaseSQL 这类内部约定稳定复用。

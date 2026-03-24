@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('auditable_id');
             $table->foreignId('actor_id')
                 ->nullable()
-                ->constrained('users')
+                ->constrained('acl_admins')
                 ->nullOnDelete();
             $table->string('event')->index();
             $table->json('old_values')->nullable();

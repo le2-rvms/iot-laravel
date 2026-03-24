@@ -35,7 +35,7 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, HasRoles, ModelSupport, Notifiable;
 
-    protected $table = 'users';
+    protected $table = 'acl_admins';
 
     protected string $guard_name = 'web';
 
@@ -97,6 +97,7 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
         $this->forceFill([
             'email_verified_at' => Carbon::now(),
         ])->save();
+
 
         // 超级管理员属于运维账号，创建后应立即可用。
         $this->assignSuperAdminRole();

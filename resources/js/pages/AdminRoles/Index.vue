@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from "vue";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 
 defineProps({
     roles: {
@@ -14,11 +14,13 @@ defineProps({
 });
 
 const page = usePage();
-const canWrite = computed(() => page.props.auth?.access?.['admin-role.write'] ?? false);
+const canWrite = computed(
+    () => page.props.auth?.access?.["admin-role.write"] ?? false,
+);
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '管理员角色' },
+    { label: "仪表盘", href: "/admin/dashboard" },
+    { label: "管理员角色" },
 ];
 </script>
 
@@ -31,19 +33,27 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="管理员角色列表" description="查看现有角色，并按职责调整可用功能范围。">
+            <AppPageToolbar
+                title="管理员角色列表"
+                description="查看现有角色，并按职责调整可用功能范围。"
+            >
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a href="/admin/admin-roles/export">导出 CSV</a>
                     </UiButton>
                     <UiButton v-if="canWrite" as-child class="rounded-xl">
-                        <Link href="/admin/admin-roles/create">新建管理员角色</Link>
+                        <Link href="/admin/admin-roles/create"
+                            >新建管理员角色</Link
+                        >
                     </UiButton>
                 </template>
             </AppPageToolbar>
 
             <AppDataTableShell v-if="roles.data.length">
-                <RolesTable :roles="roles" :permission-display-names="permissionDisplayNames" />
+                <RolesTable
+                    :roles="roles"
+                    :permission-display-names="permissionDisplayNames"
+                />
                 <template #footer>
                     <AppPaginationBar :links="roles.links" />
                 </template>
