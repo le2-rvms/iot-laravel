@@ -55,13 +55,14 @@ const breadcrumbs = computed(() => [
 
                 <SettingsConfigTable v-if="configs.data.length" :configs="configs" :resource="resource" />
 
-                <AppEmptyState
-                    v-else
-                    :title="hasSearch ? '未找到匹配的配置项' : `还没有${resource.title}`"
-                    :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部配置项。' : '创建第一个配置项后，可在这里集中查看和维护。'"
-                    :action-label="!hasSearch && canWrite ? '创建配置项' : ''"
-                    :action-href="!hasSearch && canWrite ? resource.create_href : ''"
-                />
+                <div v-else class="p-5">
+                    <AppEmptyState
+                        :title="hasSearch ? '未找到匹配的配置项' : `还没有${resource.title}`"
+                        :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部配置项。' : '创建第一个配置项后，可在这里集中查看和维护。'"
+                        :action-label="!hasSearch && canWrite ? '创建配置项' : ''"
+                        :action-href="!hasSearch && canWrite ? resource.create_href : ''"
+                    />
+                </div>
 
                 <template v-if="configs.data.length" #footer>
                     <AppPaginationBar :links="configs.links" />

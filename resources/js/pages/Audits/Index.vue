@@ -66,11 +66,12 @@ const hasFilters = computed(() => {
 
                 <AuditsTable v-if="audits.data.length" :audits="audits" />
 
-                <AppEmptyState
-                    v-else
-                    :title="hasFilters ? '未找到匹配的审计日志' : '还没有审计日志'"
-                    :description="hasFilters ? '调整搜索条件后再试，或清空筛选查看全部日志。' : '后台资源发生创建、更新、删除或业务事件后，会在这里留下记录。'"
-                />
+                <div v-else class="p-5">
+                    <AppEmptyState
+                        :title="hasFilters ? '未找到匹配的审计日志' : '还没有审计日志'"
+                        :description="hasFilters ? '调整搜索条件后再试，或清空筛选查看全部日志。' : '后台资源发生创建、更新、删除或业务事件后，会在这里留下记录。'"
+                    />
+                </div>
 
                 <template v-if="audits.data.length" #footer>
                     <AppPaginationBar :links="audits.links" />

@@ -52,13 +52,14 @@ const breadcrumbs = [
 
                 <MqttAccountsTable v-if="accounts.data.length" :accounts="accounts" />
 
-                <AppEmptyState
-                    v-else
-                    :title="hasSearch ? '未找到匹配的MQTT账号' : '还没有MQTT账号'"
-                    :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部账号。' : '创建第一个 MQTT 账号后，可在这里集中维护连接信息。'"
-                    :action-label="!hasSearch && canWrite ? '创建MQTT账号' : ''"
-                    :action-href="!hasSearch && canWrite ? '/admin/mqtt-accounts/create' : ''"
-                />
+                <div v-else class="p-5">
+                    <AppEmptyState
+                        :title="hasSearch ? '未找到匹配的MQTT账号' : '还没有MQTT账号'"
+                        :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部账号。' : '创建第一个 MQTT 账号后，可在这里集中维护连接信息。'"
+                        :action-label="!hasSearch && canWrite ? '创建MQTT账号' : ''"
+                        :action-href="!hasSearch && canWrite ? '/admin/mqtt-accounts/create' : ''"
+                    />
+                </div>
 
                 <template v-if="accounts.data.length" #footer>
                     <AppPaginationBar :links="accounts.links" />
