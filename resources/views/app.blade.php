@@ -22,7 +22,7 @@
                 root.classList.toggle('dark', mode === 'dark');
             })();
         </script>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite('resources/js/app.js')
         @inertiaHead
     </head>
     <body class="min-h-screen bg-background font-sans antialiased">
