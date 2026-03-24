@@ -5,7 +5,14 @@ import laravel from "laravel-vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import Components from "unplugin-vue-components/vite";
 
-export default defineConfig({
+export default defineConfig(({ command, mode }) => ({
+    define: {
+        __APP_BUILD_INFO__: JSON.stringify({
+            builtAt: new Date().toISOString(),
+            mode,
+            command,
+        }),
+    },
     plugins: [
         laravel({
             input: ["resources/js/app.js"],
@@ -32,4 +39,4 @@ export default defineConfig({
             ignored: ["**/storage/framework/views/**"],
         },
     },
-});
+}));

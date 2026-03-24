@@ -8,6 +8,9 @@ import { initializeTheme } from './theme';
 
 const appName = window.document.title;
 const pages = import.meta.glob('./pages/**/*.vue', { eager: true });
+const buildInfo = typeof __APP_BUILD_INFO__ === 'object' ? __APP_BUILD_INFO__ : null;
+
+window.__APP_BUILD_INFO__ = buildInfo;
 
 initializeTheme();
 

@@ -12,6 +12,7 @@ import {
 import { Link, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
+const buildInfo = window.__APP_BUILD_INFO__ ?? null;
 
 // 保持显式图标映射，避免再次回到整包动态导入导致打包体积放大。
 const navigationIcons = {
@@ -43,6 +44,28 @@ function isActive(href) {
 function resolveNavigationIcon(icon) {
     // 后端导航只传图标名，前端在这里统一落到具体组件并提供兜底图标。
     return navigationIcons[icon] ?? LayoutGrid;
+}
+
+function formatBuildTime(value) {
+    if (!value) {
+        return "";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return new Intl.DateTimeFormat("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    }).format(date);
 }
 </script>
 
@@ -126,26 +149,47 @@ function resolveNavigationIcon(icon) {
         </div>
 
         <div class="border-t border-sidebar-border px-6 py-5">
-            <div
-                class="rounded-xl border border-sidebar-border bg-sidebar-accent/65 px-4 py-4"
-            >
-                <p
-                    class="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60"
+            <div class="space-y-3">
+                <div
+                    class="rounded-xl border border-sidebar-border bg-sidebar-accent/65 px-4 py-4"
                 >
-                    认证状态
-                </p>
-                <p
-                    class="mt-2 text-sm font-medium text-sidebar-accent-foreground"
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60"
+                    >
+                        认证状态
+                    </p>
+                    <p
+                        class="mt-2 text-sm font-medium text-sidebar-accent-foreground"
+                    >
+                        {{ $page.props.auth.user?.name }}
+                    </p>
+                    <p class="mt-1 text-xs text-sidebar-foreground/60">
+                        邮箱{{
+                            $page.props.auth.user?.email_verified_at
+                                ? "已验证"
+                                : "待验证"
+                        }}
+                    </p>
+                </div>
+
+                <div
+                    v-if="buildInfo"
+                    class="rounded-xl border border-sidebar-border bg-sidebar-accent/65 px-4 py-4"
                 >
-                    {{ $page.props.auth.user?.name }}
-                </p>
-                <p class="mt-1 text-xs text-sidebar-foreground/60">
-                    邮箱{{
-                        $page.props.auth.user?.email_verified_at
-                            ? "已验证"
-                            : "待验证"
-                    }}
-                </p>
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/60"
+                    >
+                        前端产物
+                    </p>
+                    <p
+                        class="mt-2 text-sm font-medium text-sidebar-accent-foreground"
+                    >
+                        {{ formatBuildTime(buildInfo.builtAt) || buildInfo.builtAt }}
+                    </p>
+                    <p class="mt-1 text-xs text-sidebar-foreground/60">
+                        {{ buildInfo.command }} / {{ buildInfo.mode }}
+                    </p>
+                </div>
             </div>
         </div>
     </div>
