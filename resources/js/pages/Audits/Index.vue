@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { Head } from "@inertiajs/vue3";
+import { buildQueryHref } from "@/lib/utils";
 
 const props = defineProps({
     filters: {
@@ -25,6 +26,7 @@ const breadcrumbs = [
     { label: "仪表盘", href: "/admin/dashboard" },
     { label: "审计日志" },
 ];
+const exportHref = computed(() => buildQueryHref("/admin/audits/export", props.filters));
 
 const hasFilters = computed(() => {
     return Boolean(
@@ -47,7 +49,13 @@ const hasFilters = computed(() => {
             <AppPageToolbar
                 title="审计日志"
                 description="支持按操作者、事件类型和资源类型筛选后台写操作记录。"
-            />
+            >
+                <template #actions>
+                    <UiButton as-child variant="outline" class="rounded-xl">
+                        <a :href="exportHref">导出 CSV</a>
+                    </UiButton>
+                </template>
+            </AppPageToolbar>
 
             <AppDataTableShell>
                 <AuditsFilters

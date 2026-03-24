@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { buildQueryHref } from '@/lib/utils';
 
 const props = defineProps({
     filters: {
@@ -17,6 +18,7 @@ const page = usePage();
 // 页面级按钮仍按权限收口，避免只靠路由保护导致用户先看到再点进 403。
 const canWrite = computed(() => page.props.auth?.access?.['mqtt-account.write'] ?? false);
 const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
+const exportHref = computed(() => buildQueryHref('/admin/mqtt-accounts/export', props.filters));
 
 // 列表页 breadcrumb 固定收口到 MQTT 账号管理，保持新建/编辑/返回路径一致。
 const breadcrumbs = [
@@ -35,8 +37,11 @@ const breadcrumbs = [
     >
         <div class="space-y-6">
             <AppPageToolbar title="账号列表" description="支持按账号名、客户端标识或设备信息查找。">
-                <template #actions v-if="canWrite">
-                    <UiButton as-child class="rounded-xl">
+                <template #actions>
+                    <UiButton as-child variant="outline" class="rounded-xl">
+                        <a :href="exportHref">导出 CSV</a>
+                    </UiButton>
+                    <UiButton v-if="canWrite" as-child class="rounded-xl">
                         <Link href="/admin/mqtt-accounts/create">新建MQTT账号</Link>
                     </UiButton>
                 </template>

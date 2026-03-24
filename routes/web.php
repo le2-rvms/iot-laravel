@@ -32,23 +32,29 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
         ->only(['edit', 'update']);
 
     Route::get('dashboard', DashboardController::class);
+    Route::get('admin-users/export', [AdminUserController::class, 'export']);
     Route::resource('admin-users', AdminUserController::class)
         ->except(['show']);
 
+    Route::get('admin-roles/export', [AdminRoleController::class, 'export']);
     Route::resource('admin-roles', AdminRoleController::class)
         ->except(['show']);
 
+    Route::get('audits/export', [AuditController::class, 'export']);
     Route::resource('audits', AuditController::class)
         ->only(['index']);
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
+    Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export']);
     Route::resource('mqtt-accounts', MqttAccountController::class)
         ->except(['show']);
 
+    Route::get('settings/application-configs/export', [SettingsApplicationConfigController::class, 'export']);
     Route::resource('settings/application-configs', SettingsApplicationConfigController::class)
         ->parameters(['application-configs' => 'config'])
         ->except(['show']);
 
+    Route::get('settings/system-configs/export', [SettingsSystemConfigController::class, 'export']);
     Route::resource('settings/system-configs', SettingsSystemConfigController::class)
         ->parameters(['system-configs' => 'config'])
         ->except(['show']);

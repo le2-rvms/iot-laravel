@@ -5,7 +5,6 @@ namespace App\Support;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -32,7 +31,7 @@ class ListQueryFilters
     ];
 
     public function __construct(
-        private readonly Request $request,
+        private readonly array $query,
         private readonly array $fieldDefinitions,
         private readonly array $callbacks = [],
     ) {}
@@ -47,7 +46,7 @@ class ListQueryFilters
         $normalizedFields = $this->normalizedFields();
 
         // 只接受语义化 query key，所有非法条件先聚合，再一次性返回 422。
-        foreach ($this->request->query() as $key => $rawValue) {
+        foreach ($this->query as $key => $rawValue) {
             if (in_array($key, self::PASSTHROUGH_KEYS, true)) {
                 continue;
             }

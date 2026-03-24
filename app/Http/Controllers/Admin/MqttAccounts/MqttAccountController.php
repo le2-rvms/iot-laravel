@@ -8,15 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MqttAccounts\StoreMqttAccountRequest;
 use App\Http\Requests\MqttAccounts\UpdateMqttAccountRequest;
 use App\Models\Iot\MqttAccount;
-use App\Support\ListQueryFilters;
-use App\Values\Iot\Enabled;
-use App\Values\Iot\IsSuperuser;
-use Illuminate\Database\Eloquent\Builder;
+use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[PermissionGroup]
 class MqttAccountController extends Controller
@@ -24,42 +21,8 @@ class MqttAccountController extends Controller
     #[PermissionAction('read')]
     public function index(Request $request): Response
     {
-        $query = MqttAccount::query()
-            ->addSelect('mqtt_accounts.*')
-            // 列表直接带出 label 字段，前端表格无需再判断 0/1 到文案的映射。
-            ->addSelect(DB::raw(IsSuperuser::toCaseSQL()))
-            ->addSelect(DB::raw(Enabled::toCaseSQL()))
-            ->orderByDesc('act_id');
-
-        $filters = new ListQueryFilters(
-            request: $request,
-            fieldDefinitions: [
-                // 只有显式声明的字段可以暴露给列表查询 DSL。
-                'act_id' => ['integer'],
-                'user_name',
-                'clientid',
-                'product_key',
-                'device_name',
-                'enabled' => ['boolean'],
-                'is_superuser' => ['boolean'],
-            ],
-            callbacks: [
-                // search__func 保留 MQTT 列表原有的多字段模糊搜索入口。
-                'search' => function (Builder $query, mixed $value): void {
-                    $search = trim((string) $value);
-                    $likeSearch = "%{$search}%";
-
-                    $query->where(function (Builder $builder) use ($likeSearch): void {
-                        // 后续数据库目标是 PostgreSQL，这里统一用大小写不敏感搜索，避免 MQTT 列表前后行为分裂。
-                        $builder
-                            ->whereRaw('LOWER(user_name) LIKE LOWER(?)', [$likeSearch])
-                            ->orWhereRaw('LOWER(clientid) LIKE LOWER(?)', [$likeSearch])
-                            ->orWhereRaw('LOWER(product_key) LIKE LOWER(?)', [$likeSearch])
-                            ->orWhereRaw('LOWER(device_name) LIKE LOWER(?)', [$likeSearch]);
-                    });
-                },
-            ],
-        )->apply($query);
+        $query = MqttAccount::indexQuery($request->query());
+        $filters = $request->except('page');
 
         $accounts = $query
             ->paginate(10)
@@ -69,6 +32,28 @@ class MqttAccountController extends Controller
             'accounts' => $accounts,
             'filters' => $filters,
         ]);
+    }
+
+    #[PermissionAction('read')]
+    public function export(Request $request): StreamedResponse
+    {
+        $query = MqttAccount::indexQuery($request->query());
+
+        return CsvExporter::download(
+            query: $query,
+            columns: [
+                'models.mqtt_account.act_id' => static fn (MqttAccount $account): int => $account->act_id,
+                'models.mqtt_account.user_name' => static fn (MqttAccount $account): string => $account->user_name,
+                'models.mqtt_account.clientid' => static fn (MqttAccount $account): string => (string) ($account->clientid ?? ''),
+                'models.mqtt_account.product_key' => static fn (MqttAccount $account): string => (string) ($account->product_key ?? ''),
+                'models.mqtt_account.device_name' => static fn (MqttAccount $account): string => (string) ($account->device_name ?? ''),
+                'models.mqtt_account.is_superuser_label' => static fn (MqttAccount $account): string => $account->is_superuser_label ?? '',
+                'models.mqtt_account.enabled_label' => static fn (MqttAccount $account): string => $account->enabled_label ?? '',
+                'models.mqtt_account.act_updated_at' => static fn (MqttAccount $account): string => $account->act_updated_at?->format('Y-m-d H:i:s') ?? '',
+                'models.mqtt_account.act_updated_by' => static fn (MqttAccount $account): string => (string) ($account->act_updated_by ?? ''),
+            ],
+            fileName: 'mqtt-accounts-'.now()->format('Ymd-His').'.csv',
+        );
     }
 
     #[PermissionAction('write')]

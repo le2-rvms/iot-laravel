@@ -9,12 +9,12 @@ use App\Http\Requests\AdminUsers\StoreAdminUserRequest;
 use App\Http\Requests\AdminUsers\UpdateAdminUserRequest;
 use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
-use App\Support\ListQueryFilters;
-use Illuminate\Database\Eloquent\Builder;
+use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[PermissionGroup]
 class AdminUserController extends Controller
@@ -22,31 +22,8 @@ class AdminUserController extends Controller
     #[PermissionAction('read')]
     public function index(Request $request): Response
     {
-        $query = AdminUser::query()
-            // 列表页直接从关系序列化结果里展示角色名。
-            ->with('roles:id,name')
-            ->latest();
-
-        $filters = (new ListQueryFilters(
-            request: $request,
-            fieldDefinitions: [
-                'name',
-                'email',
-                'id' => ['integer'],
-            ],
-            callbacks: [
-                'search' => function (Builder $query, mixed $value): void {
-                    $search = trim((string) $value);
-
-                    // 搜索体验保持简单：一个关键字同时匹配名称和邮箱。
-                    $query->where(function (Builder $nestedQuery) use ($search): void {
-                        $nestedQuery
-                            ->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-                },
-            ],
-        ))->apply($query);
+        $query = AdminUser::indexQuery($request->query());
+        $filters = $request->except('page');
 
         $adminUsers = $query
             ->paginate(10)
@@ -57,6 +34,26 @@ class AdminUserController extends Controller
             'filters' => $filters,
             'users' => $adminUsers,
         ]);
+    }
+
+    #[PermissionAction('read')]
+    public function export(Request $request): StreamedResponse
+    {
+        $query = AdminUser::indexQuery($request->query());
+
+        return CsvExporter::download(
+            query: $query,
+            columns: [
+                'models.admin_user.id' => static fn (AdminUser $user): int => $user->id,
+                'models.admin_user.name' => static fn (AdminUser $user): string => $user->name,
+                'models.admin_user.email' => static fn (AdminUser $user): string => $user->email,
+                'models.admin_user.email_verified_label' => static fn (AdminUser $user): string => $user->email_verified_at ? '已验证' : '待验证',
+                'models.admin_user.email_verified_at' => static fn (AdminUser $user): string => $user->email_verified_at?->format('Y-m-d H:i:s') ?? '',
+                'models.admin_user.roles_display' => static fn (AdminUser $user): string => $user->roles->pluck('name')->implode(', '),
+                'models.admin_user.created_at' => static fn (AdminUser $user): string => $user->created_at?->format('Y-m-d H:i:s') ?? '',
+            ],
+            fileName: 'admin-users-'.now()->format('Ymd-His').'.csv',
+        );
     }
 
     #[PermissionAction('write')]

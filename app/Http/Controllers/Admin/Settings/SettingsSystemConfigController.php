@@ -10,8 +10,8 @@ use App\Models\Settings\Config;
 use App\Values\Settings\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[PermissionGroup]
 class SettingsSystemConfigController extends AbstractSettingsConfigController
@@ -29,6 +29,12 @@ class SettingsSystemConfigController extends AbstractSettingsConfigController
     public function index(Request $request): Response
     {
         return $this->indexConfigs($request);
+    }
+
+    #[PermissionAction('read')]
+    public function export(Request $request): StreamedResponse
+    {
+        return $this->exportConfigs($request);
     }
 
     #[PermissionAction('write')]

@@ -8,11 +8,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRoles\StoreAdminRoleRequest;
 use App\Http\Requests\AdminRoles\UpdateAdminRoleRequest;
 use App\Models\Auth\AdminRole;
+use App\Support\CsvExporter;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use LogicException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[PermissionGroup]
 class AdminRoleController extends Controller
@@ -20,11 +22,7 @@ class AdminRoleController extends Controller
     #[PermissionAction('read')]
     public function index(): Response
     {
-        $adminRoles = AdminRole::query()
-            // 列表页会直接消费用户数量和权限标签，因此在分页结果里一次带齐。
-            ->withCount(['users', 'permissions'])
-            ->with('permissions:id,name')
-            ->orderBy('name')
+        $adminRoles = AdminRole::indexQuery()
             ->paginate(10)
             ->withQueryString();
 
@@ -33,6 +31,27 @@ class AdminRoleController extends Controller
             // 页面拿原始权限名，再通过独立的显示文案映射转成中文。
             'permissionDisplayNames' => PermissionRegistry::displayNames(PermissionRegistry::permissionNames()),
         ]);
+    }
+
+    #[PermissionAction('read')]
+    public function export(): StreamedResponse
+    {
+        return CsvExporter::download(
+            query: AdminRole::indexQuery(),
+            columns: [
+                'models.admin_role.id' => static fn (AdminRole $role): int => $role->id,
+                'models.admin_role.name' => static fn (AdminRole $role): string => $role->name,
+                'models.admin_role.permissions_count' => static fn (AdminRole $role): int => (int) $role->permissions_count,
+                'models.admin_role.users_count' => static fn (AdminRole $role): int => (int) $role->users_count,
+                'models.admin_role.permissions_display' => static function (AdminRole $role): string {
+                    $names = $role->permissions->pluck('name')->all();
+
+                    return implode(', ', PermissionRegistry::displayNames($names));
+                },
+                'models.admin_role.created_at' => static fn (AdminRole $role): string => $role->created_at?->format('Y-m-d H:i:s') ?? '',
+            ],
+            fileName: 'admin-roles-'.now()->format('Ymd-His').'.csv',
+        );
     }
 
     #[PermissionAction('write')]

@@ -3,9 +3,11 @@
 namespace App\Models\Auth;
 
 use App\Models\Concerns\ModelSupport;
+use App\Support\ListQueryFilters;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,6 +50,38 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @return Builder<self>
+     */
+    public static function indexQuery(array $queryParameters): Builder
+    {
+        $query = self::query()
+            ->with('roles:id,name')
+            ->latest();
+
+        (new ListQueryFilters(
+            query: $queryParameters,
+            fieldDefinitions: [
+                'name',
+                'email',
+                'id' => ['integer'],
+            ],
+            callbacks: [
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+
+                    $query->where(function (Builder $nestedQuery) use ($search): void {
+                        $nestedQuery
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        return $query;
     }
 
     /**

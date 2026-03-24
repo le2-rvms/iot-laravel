@@ -1,8 +1,9 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { buildQueryHref } from '@/lib/utils';
 
-defineProps({
+const props = defineProps({
     filters: {
         type: Object,
         required: true,
@@ -15,6 +16,7 @@ defineProps({
 
 const page = usePage();
 const canWrite = computed(() => page.props.auth?.access?.['admin-user.write'] ?? false);
+const exportHref = computed(() => buildQueryHref('/admin/admin-users/export', props.filters));
 
 const breadcrumbs = [
     { label: '仪表盘', href: '/admin/dashboard' },
@@ -32,8 +34,11 @@ const breadcrumbs = [
     >
         <div class="space-y-6">
             <AppPageToolbar title="管理员用户列表" description="支持按姓名或邮箱筛选，并可继续新增用户。">
-                <template #actions v-if="canWrite">
-                    <UiButton as-child class="rounded-xl">
+                <template #actions>
+                    <UiButton as-child variant="outline" class="rounded-xl">
+                        <a :href="exportHref">导出 CSV</a>
+                    </UiButton>
+                    <UiButton v-if="canWrite" as-child class="rounded-xl">
                         <Link href="/admin/admin-users/create">新建管理员用户</Link>
                     </UiButton>
                 </template>

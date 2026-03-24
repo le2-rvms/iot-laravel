@@ -3,8 +3,10 @@
 namespace App\Models\Settings;
 
 use App\Models\Concerns\ModelSupport;
+use App\Support\ListQueryFilters;
 use App\Values\Settings\Category;
 use App\Values\Settings\IsMasked;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +38,38 @@ class Config extends Model
         'category' => Category::class,
         'is_masked' => IsMasked::class,
     ];
+
+    /**
+     * @return Builder<self>
+     */
+    public static function indexQuery(array $queryParameters): Builder
+    {
+        $query = self::query()
+            ->orderBy('key');
+
+        (new ListQueryFilters(
+            query: $queryParameters,
+            fieldDefinitions: [
+                'key',
+                'remark',
+                'is_masked' => ['boolean'],
+            ],
+            callbacks: [
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+                    $likeSearch = "%{$search}%";
+
+                    $query->where(function (Builder $nestedQuery) use ($likeSearch): void {
+                        $nestedQuery
+                            ->whereRaw('LOWER(key) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereRaw('LOWER(remark) LIKE LOWER(?)', [$likeSearch]);
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        return $query;
+    }
 
     public function getCategoryLabelAttribute(): string
     {

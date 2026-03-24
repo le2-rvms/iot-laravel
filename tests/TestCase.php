@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Models\Auth\AdminUser;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Testing\TestResponse;
 use Tests\Concerns\AssignsPermissionScopedRoles;
 use Tests\Concerns\ResetsPermissionRegistryCache;
 
@@ -41,5 +42,20 @@ abstract class TestCase extends BaseTestCase
         $this->assignPermissionsToUser($user, $permissions);
 
         return $user;
+    }
+
+    /**
+     * @return array<int, array<int, string>>
+     */
+    protected function csvRows(TestResponse $response): array
+    {
+        $content = $response->streamedContent();
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content ?? '') ?? '';
+        $lines = preg_split("/\r\n|\n|\r/", trim($content)) ?: [];
+
+        return array_values(array_map(
+            static fn (string $line): array => str_getcsv($line),
+            array_values(array_filter($lines, static fn (string $line): bool => $line !== '')),
+        ));
     }
 }

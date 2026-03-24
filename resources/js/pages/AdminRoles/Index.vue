@@ -32,8 +32,11 @@ const breadcrumbs = [
     >
         <div class="space-y-6">
             <AppPageToolbar title="管理员角色列表" description="查看现有角色，并按职责调整可用功能范围。">
-                <template #actions v-if="canWrite">
-                    <UiButton as-child class="rounded-xl">
+                <template #actions>
+                    <UiButton as-child variant="outline" class="rounded-xl">
+                        <a href="/admin/admin-roles/export">导出 CSV</a>
+                    </UiButton>
+                    <UiButton v-if="canWrite" as-child class="rounded-xl">
                         <Link href="/admin/admin-roles/create">新建管理员角色</Link>
                     </UiButton>
                 </template>

@@ -3,8 +3,10 @@
 namespace App\Models\Iot;
 
 use App\Models\Concerns\ModelSupport;
+use App\Support\ListQueryFilters;
 use App\Values\Iot\Enabled;
 use App\Values\Iot\IsSuperuser;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -49,6 +51,47 @@ class MqttAccount extends Model
     protected $primaryKey = 'act_id';
 
     protected $guarded = ['act_id'];
+
+    /**
+     * @return Builder<self>
+     */
+    public static function indexQuery(array $queryParameters): Builder
+    {
+        $query = self::query()
+            ->addSelect('mqtt_accounts.*')
+            ->addSelect(DB::raw(IsSuperuser::toCaseSQL()))
+            ->addSelect(DB::raw(Enabled::toCaseSQL()))
+            ->orderByDesc('act_id');
+
+        (new ListQueryFilters(
+            query: $queryParameters,
+            fieldDefinitions: [
+                'act_id' => ['integer'],
+                'user_name',
+                'clientid',
+                'product_key',
+                'device_name',
+                'enabled' => ['boolean'],
+                'is_superuser' => ['boolean'],
+            ],
+            callbacks: [
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+                    $likeSearch = "%{$search}%";
+
+                    $query->where(function (Builder $builder) use ($likeSearch): void {
+                        $builder
+                            ->whereRaw('LOWER(user_name) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereRaw('LOWER(clientid) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereRaw('LOWER(product_key) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereRaw('LOWER(device_name) LIKE LOWER(?)', [$likeSearch]);
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        return $query;
+    }
 
     /**
      * @return array<int, string>

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { buildQueryHref } from '@/lib/utils';
 import { resolveConfigResource } from './resource';
 
 const props = defineProps({
@@ -22,6 +23,7 @@ const page = usePage();
 const resource = computed(() => resolveConfigResource(props.category));
 const canWrite = computed(() => page.props.auth?.access?.[resource.value.write_permission] ?? false);
 const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
+const exportHref = computed(() => buildQueryHref(resource.value.export_href, props.filters));
 const breadcrumbs = computed(() => [
     { label: '仪表盘', href: '/admin/dashboard' },
     { label: resource.value.title },
@@ -38,8 +40,11 @@ const breadcrumbs = computed(() => [
     >
         <div class="space-y-6">
             <AppPageToolbar :title="`${resource.title}列表`" description="可按关键字查找，并直接维护配置项。">
-                <template #actions v-if="canWrite">
-                    <UiButton as-child class="rounded-xl">
+                <template #actions>
+                    <UiButton as-child variant="outline" class="rounded-xl">
+                        <a :href="exportHref">导出 CSV</a>
+                    </UiButton>
+                    <UiButton v-if="canWrite" as-child class="rounded-xl">
                         <Link :href="resource.create_href">新建配置项</Link>
                     </UiButton>
                 </template>

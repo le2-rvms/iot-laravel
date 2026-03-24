@@ -8,6 +8,8 @@ use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
 use App\Models\Iot\MqttAccount;
 use App\Models\Settings\Config;
+use App\Support\ListQueryFilters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -71,6 +73,44 @@ class Audit extends Model
     public function actor(): BelongsTo
     {
         return $this->belongsTo(AdminUser::class, 'actor_id');
+    }
+
+    /**
+     * @return Builder<self>
+     */
+    public static function indexQuery(array $queryParameters): Builder
+    {
+        $query = self::query()
+            ->with('actor:id,name,email')
+            ->latest('created_at')
+            ->latest('id');
+
+        (new ListQueryFilters(
+            query: $queryParameters,
+            fieldDefinitions: [
+                'event',
+                'auditable_type',
+            ],
+            callbacks: [
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+
+                    $query->where(function (Builder $nestedQuery) use ($search): void {
+                        $nestedQuery->whereHas('actor', function (Builder $actorQuery) use ($search): void {
+                            $actorQuery
+                                ->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        })->orWhere('meta->route', 'like', "%{$search}%");
+
+                        if (ctype_digit($search)) {
+                            $nestedQuery->orWhere('auditable_id', (int) $search);
+                        }
+                    });
+                },
+            ],
+        ))->apply($query);
+
+        return $query;
     }
 
     /**

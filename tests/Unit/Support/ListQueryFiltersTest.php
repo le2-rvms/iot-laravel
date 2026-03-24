@@ -7,7 +7,6 @@ use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class ListQueryFiltersTest extends TestCase
@@ -32,11 +31,11 @@ class ListQueryFiltersTest extends TestCase
         $query = AdminUser::query()->orderBy('id');
 
         $filters = (new ListQueryFilters(
-            Request::create('/admin/admin-users', 'GET', [
+            [
                 'id__gt' => '1',
                 'name__like' => 'o',
                 'email__in' => 'bob@example.com,boris@example.com',
-            ]),
+            ],
             [
                 'id' => ['integer'],
                 'name',
@@ -66,9 +65,9 @@ class ListQueryFiltersTest extends TestCase
         $query = AdminUser::query()->orderBy('id');
 
         (new ListQueryFilters(
-            Request::create('/admin/admin-users', 'GET', [
+            [
                 'search__func' => 'alpha',
-            ]),
+            ],
             ['name', 'email'],
             [
                 'search' => function (Builder $query, mixed $value): void {
@@ -94,10 +93,10 @@ class ListQueryFiltersTest extends TestCase
         $query = AdminUser::query()->orderBy('id');
 
         $filters = (new ListQueryFilters(
-            Request::create('/admin/admin-users', 'GET', [
+            [
                 'page' => '2',
                 'name__eq' => '',
-            ]),
+            ],
             ['name'],
         ))->apply($query);
 
@@ -111,11 +110,11 @@ class ListQueryFiltersTest extends TestCase
 
         try {
             (new ListQueryFilters(
-                Request::create('/admin/admin-users', 'GET', [
+                [
                     'unknown__eq' => 'alpha',
                     'name__foo' => 'beta',
                     'search__func' => 'gamma',
-                ]),
+                ],
                 ['name'],
             ))->apply(AdminUser::query());
         } catch (HttpResponseException $exception) {
@@ -136,9 +135,9 @@ class ListQueryFiltersTest extends TestCase
 
         try {
             (new ListQueryFilters(
-                Request::create('/configs', 'GET', [
+                [
                     'is_masked__gt' => '1',
-                ]),
+                ],
                 [
                     'is_masked' => ['boolean'],
                 ],

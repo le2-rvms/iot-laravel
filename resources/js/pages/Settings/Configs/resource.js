@@ -5,6 +5,7 @@ export function resolveConfigResource(category) {
             ? '维护应用层的可配置键值、打码策略与备注说明。'
             : '维护系统层的公共设定、展示策略与后台说明。',
         index_href: category === 'application' ? '/admin/settings/application-configs' : '/admin/settings/system-configs',
+        export_href: category === 'application' ? '/admin/settings/application-configs/export' : '/admin/settings/system-configs/export',
         create_href: category === 'application' ? '/admin/settings/application-configs/create' : '/admin/settings/system-configs/create',
         write_permission: `settings-${category}-config.write`,
     };

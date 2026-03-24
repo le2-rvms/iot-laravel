@@ -4,6 +4,7 @@ namespace App\Models\Auth;
 
 use App\Models\Concerns\ModelSupport;
 use App\Support\PermissionRegistry;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -26,6 +27,17 @@ class AdminRole extends SpatieRole
     use ModelSupport;
 
     protected $appends = ['is_protected'];
+
+    /**
+     * @return Builder<self>
+     */
+    public static function indexQuery(): Builder
+    {
+        return self::query()
+            ->withCount(['users', 'permissions'])
+            ->with('permissions:id,name')
+            ->orderBy('name');
+    }
 
     public static function syncPermissionsAndSuperAdminRole(): self
     {

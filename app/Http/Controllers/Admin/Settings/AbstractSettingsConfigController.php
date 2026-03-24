@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\StoreSettingRequest;
 use App\Http\Requests\Settings\UpdateSettingRequest;
 use App\Models\Settings\Config;
-use App\Support\ListQueryFilters;
-use Illuminate\Database\Eloquent\Builder;
+use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AbstractSettingsConfigController extends Controller
 {
@@ -23,33 +23,9 @@ abstract class AbstractSettingsConfigController extends Controller
 
     protected function indexConfigs(Request $request): Response
     {
-        $query = Config::query()
-            ->where('category', $this->category)
-            ->orderBy('key');
-
-        $filters = (new ListQueryFilters(
-            request: $request,
-            fieldDefinitions: [
-                // 配置列表只开放展示层需要的少数字段给查询 DSL。
-                'key',
-                'remark',
-                'is_masked' => ['boolean'],
-            ],
-            callbacks: [
-                // search__func 承接配置列表的关键字搜索，不把 category 这类固定约束暴露到 URL。
-                'search' => function (Builder $query, mixed $value): void {
-                    $search = trim((string) $value);
-                    $likeSearch = "%{$search}%";
-
-                    $query->where(function (Builder $nestedQuery) use ($likeSearch): void {
-                        // 与 MQTT 列表保持一致，配置搜索也按大小写不敏感处理，避免系统内同类列表行为分裂。
-                        $nestedQuery
-                            ->whereRaw('LOWER(key) LIKE LOWER(?)', [$likeSearch])
-                            ->orWhereRaw('LOWER(remark) LIKE LOWER(?)', [$likeSearch]);
-                    });
-                },
-            ],
-        ))->apply($query);
+        $query = Config::indexQuery($request->query())
+            ->where('category', $this->category);
+        $filters = $request->except('page');
 
         $configs = $query
             ->paginate(10)
@@ -60,6 +36,26 @@ abstract class AbstractSettingsConfigController extends Controller
             'filters' => $filters,
             'configs' => $configs,
         ]);
+    }
+
+    protected function exportConfigs(Request $request): StreamedResponse
+    {
+        $query = Config::indexQuery($request->query())
+            ->where('category', $this->category);
+
+        return CsvExporter::download(
+            query: $query,
+            columns: [
+                'models.config.id' => static fn (Config $config): int => $config->id,
+                'models.config.key' => static fn (Config $config): string => $config->key,
+                'models.config.value_display' => static fn (Config $config): string => $config->value_display,
+                'models.config.category_label' => static fn (Config $config): string => $config->category_label,
+                'models.config.is_masked_label' => static fn (Config $config): string => $config->is_masked_label,
+                'models.config.remark' => static fn (Config $config): string => $config->remark,
+                'models.config.updated_at' => static fn (Config $config): string => $config->updated_at?->format('Y-m-d H:i:s') ?? '',
+            ],
+            fileName: 'settings-'.$this->category.'-configs-'.now()->format('Ymd-His').'.csv',
+        );
     }
 
     protected function createConfig(): Response
