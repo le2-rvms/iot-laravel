@@ -17,7 +17,7 @@ use App\Models\Iot\IotGpsCommand;
 use App\Models\Iot\IotGpsGeofence;
 use App\Models\Iot\IotGpsPositionHistory;
 use App\Models\Iot\IotGpsPositionLast;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use App\Values\Iot\EventType_CMD;
 use App\Values\Iot\EventType_CONN;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,7 +72,7 @@ class CopiedIotModelsTest extends TestCase
         $this->assertInstanceOf(IotDeviceProduct::class, (new IotDevice)->deviceProduct()->getRelated());
         $this->assertInstanceOf(IotDeviceProduct::class, (new IotDeviceGroup)->product()->getRelated());
         $this->assertInstanceOf(IotDeviceGroupMapping::class, (new IotDeviceGroup)->mappings()->getRelated());
-        $this->assertInstanceOf(MqttAccount::class, (new IotDeviceGroupMapping)->mqttAccount()->getRelated());
+        $this->assertInstanceOf(IotMqttAccount::class, (new IotDeviceGroupMapping)->mqttAccount()->getRelated());
         $this->assertInstanceOf(IotDevice::class, (new IotDeviceProduct)->devices()->getRelated());
         $this->assertInstanceOf(IotDevice::class, (new IotGpsCommand)->device()->getRelated());
     }

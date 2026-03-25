@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Mqtt;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mqtt\EmqxAuthRequest;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Http\JsonResponse;
 
 class EmqxAuthController extends Controller
@@ -12,13 +12,13 @@ class EmqxAuthController extends Controller
     public function authenticate(EmqxAuthRequest $request): JsonResponse
     {
         $input = $request->validated();
-        $mqttAccount = MqttAccount::query()
+        $mqttAccount = IotMqttAccount::query()
             // 当前认证入口只按用户名校验；clientid 先保留在请求契约里，后续需要绑定时再收紧。
             ->where('user_name', $input['username'])
             ->first();
 
         if (
-            $mqttAccount instanceof MqttAccount
+            $mqttAccount instanceof IotMqttAccount
             && $mqttAccount->enabled?->isEnabled()
             && $mqttAccount->checkPassword($input['password'])
         ) {

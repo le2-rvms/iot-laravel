@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Api;
 
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -49,7 +49,7 @@ class EmqxAuthTest extends TestCase
 
     public function test_incorrect_passwords_are_denied(): void
     {
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'sensor-reader',
         ]);
 
@@ -67,9 +67,9 @@ class EmqxAuthTest extends TestCase
     public function test_disabled_accounts_are_denied_even_when_the_password_is_correct(): void
     {
         // 即使密码正确，停用账号也必须 deny，避免后台停用状态在鉴权层失效。
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'disabled-user',
-            ...MqttAccount::buildPasswordFields('public'),
+            ...IotMqttAccount::buildPasswordFields('public'),
             'enabled' => false,
         ]);
 
@@ -86,9 +86,9 @@ class EmqxAuthTest extends TestCase
 
     public function test_enabled_accounts_with_valid_passwords_are_allowed(): void
     {
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'mqtt-client',
-            ...MqttAccount::buildPasswordFields('public'),
+            ...IotMqttAccount::buildPasswordFields('public'),
         ]);
 
         // 成功场景仍显式带 clientid，确保当前“保留字段但暂不参与限制”的契约不被误删。
@@ -106,9 +106,9 @@ class EmqxAuthTest extends TestCase
 
     public function test_superuser_accounts_return_true_string_flag(): void
     {
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'mqtt-admin',
-            ...MqttAccount::buildPasswordFields('public'),
+            ...IotMqttAccount::buildPasswordFields('public'),
             'is_superuser' => true,
         ]);
 

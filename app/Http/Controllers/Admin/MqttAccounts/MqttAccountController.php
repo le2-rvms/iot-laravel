@@ -7,7 +7,7 @@ use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MqttAccounts\StoreMqttAccountRequest;
 use App\Http\Requests\MqttAccounts\UpdateMqttAccountRequest;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class MqttAccountController extends Controller
     #[PermissionAction('read')]
     public function index(Request $request): Response
     {
-        $query = MqttAccount::indexQuery($request->query());
+        $query = IotMqttAccount::indexQuery($request->query());
         $filters = $request->except('page');
 
         $accounts = $query
@@ -37,20 +37,20 @@ class MqttAccountController extends Controller
     #[PermissionAction('read')]
     public function export(Request $request): StreamedResponse
     {
-        $query = MqttAccount::indexQuery($request->query());
+        $query = IotMqttAccount::indexQuery($request->query());
 
         return CsvExporter::download(
             query: $query,
             columns: [
-                'models.mqtt_account.act_id' => static fn (MqttAccount $account): int => $account->act_id,
-                'models.mqtt_account.user_name' => static fn (MqttAccount $account): string => $account->user_name,
-                'models.mqtt_account.clientid' => static fn (MqttAccount $account): string => (string) ($account->clientid ?? ''),
-                'models.mqtt_account.product_key' => static fn (MqttAccount $account): string => (string) ($account->product_key ?? ''),
-                'models.mqtt_account.device_name' => static fn (MqttAccount $account): string => (string) ($account->device_name ?? ''),
-                'models.mqtt_account.is_superuser_label' => static fn (MqttAccount $account): string => $account->is_superuser_label ?? '',
-                'models.mqtt_account.enabled_label' => static fn (MqttAccount $account): string => $account->enabled_label ?? '',
-                'models.mqtt_account.act_updated_at' => static fn (MqttAccount $account): string => $account->act_updated_at?->format('Y-m-d H:i:s') ?? '',
-                'models.mqtt_account.act_updated_by' => static fn (MqttAccount $account): string => (string) ($account->act_updated_by ?? ''),
+                'models.iot_mqtt_account.act_id' => static fn (IotMqttAccount $account): int => $account->act_id,
+                'models.iot_mqtt_account.user_name' => static fn (IotMqttAccount $account): string => $account->user_name,
+                'models.iot_mqtt_account.clientid' => static fn (IotMqttAccount $account): string => (string) ($account->clientid ?? ''),
+                'models.iot_mqtt_account.product_key' => static fn (IotMqttAccount $account): string => (string) ($account->product_key ?? ''),
+                'models.iot_mqtt_account.device_name' => static fn (IotMqttAccount $account): string => (string) ($account->device_name ?? ''),
+                'models.iot_mqtt_account.is_superuser_label' => static fn (IotMqttAccount $account): string => $account->is_superuser_label ?? '',
+                'models.iot_mqtt_account.enabled_label' => static fn (IotMqttAccount $account): string => $account->enabled_label ?? '',
+                'models.iot_mqtt_account.act_updated_at' => static fn (IotMqttAccount $account): string => $account->act_updated_at?->format('Y-m-d H:i:s') ?? '',
+                'models.iot_mqtt_account.act_updated_by' => static fn (IotMqttAccount $account): string => (string) ($account->act_updated_by ?? ''),
             ],
             fileName: 'mqtt-accounts-'.now()->format('Ymd-His').'.csv',
         );
@@ -61,7 +61,7 @@ class MqttAccountController extends Controller
     {
         return Inertia::render('MqttAccounts/Create', [
             // 新建页直接返回模型对象，默认值与编辑页保持同一份数据结构。
-            'account' => new MqttAccount([
+            'account' => new IotMqttAccount([
                 'is_superuser' => 0,
                 'enabled' => 1,
             ]),
@@ -76,13 +76,13 @@ class MqttAccountController extends Controller
         unset($validated['password']);
 
         // 后台只接收明文输入，真正入库时统一转成 salt + hash，避免模型层外泄保存细节。
-        MqttAccount::createAccount($validated, $password);
+        IotMqttAccount::createAccount($validated, $password);
 
         return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已创建。');
     }
 
     #[PermissionAction('write')]
-    public function edit(MqttAccount $mqttAccount): Response
+    public function edit(IotMqttAccount $mqttAccount): Response
     {
         return Inertia::render('MqttAccounts/Edit', [
             'account' => $mqttAccount,
@@ -90,7 +90,7 @@ class MqttAccountController extends Controller
     }
 
     #[PermissionAction('write')]
-    public function update(UpdateMqttAccountRequest $request, MqttAccount $mqttAccount): RedirectResponse
+    public function update(UpdateMqttAccountRequest $request, IotMqttAccount $mqttAccount): RedirectResponse
     {
         $validated = $request->validated();
         $password = $validated['password'] ?? null;
@@ -103,7 +103,7 @@ class MqttAccountController extends Controller
     }
 
     #[PermissionAction('write')]
-    public function destroy(MqttAccount $mqttAccount): RedirectResponse
+    public function destroy(IotMqttAccount $mqttAccount): RedirectResponse
     {
         $mqttAccount->deleteAccount();
 

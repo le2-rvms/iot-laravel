@@ -6,6 +6,7 @@ use App\Models\Concerns\ModelSupport;
 use App\Support\ListQueryFilters;
 use App\Values\Iot\Enabled;
 use App\Values\Iot\IsSuperuser;
+use Database\Factories\Iot\MqttAccountFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +30,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $act_updated_at 更新时间
  * @property string|null $act_updated_by 最近更新人
  */
-class MqttAccount extends Model
+class IotMqttAccount extends Model
 {
     use HasFactory;
     use ModelSupport;
@@ -51,6 +52,11 @@ class MqttAccount extends Model
     protected $primaryKey = 'act_id';
 
     protected $guarded = ['act_id'];
+
+    protected static function newFactory(): MqttAccountFactory
+    {
+        return MqttAccountFactory::new();
+    }
 
     /**
      * @return Builder<self>

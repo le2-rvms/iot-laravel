@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\MqttAccounts;
 
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,7 +23,7 @@ class UpdateMqttAccountRequest extends FormRequest
                 'required',
                 'string',
                 'max:64',
-                Rule::unique(MqttAccount::class, 'user_name')->ignore($this->route('mqtt_account'), 'act_id'),
+                Rule::unique(IotMqttAccount::class, 'user_name')->ignore($this->route('mqtt_account'), 'act_id'),
             ],
             // 编辑页留空表示不修改密码，因此这里和创建请求不同，允许 nullable。
             'password' => ['nullable', 'string', 'max:255'],
@@ -41,6 +41,6 @@ class UpdateMqttAccountRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return MqttAccount::attributeLabels();
+        return IotMqttAccount::attributeLabels();
     }
 }

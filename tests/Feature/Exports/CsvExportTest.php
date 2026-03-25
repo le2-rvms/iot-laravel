@@ -6,7 +6,7 @@ use App\Models\Audit;
 use App\Models\Auth\AdminPermission;
 use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use App\Models\Settings\Config;
 use App\Support\PermissionRegistry;
 use App\Values\Settings\Category;
@@ -88,7 +88,7 @@ class CsvExportTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
 
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'user_name' => 'gateway-export',
             'password_hash' => 'secret-hash',
             'salt' => 'secret-salt',

@@ -2,15 +2,15 @@
 
 namespace Database\Factories\Iot;
 
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<MqttAccount>
+ * @extends Factory<IotMqttAccount>
  */
 class MqttAccountFactory extends Factory
 {
-    protected $model = MqttAccount::class;
+    protected $model = IotMqttAccount::class;
 
     public function definition(): array
     {
@@ -18,7 +18,7 @@ class MqttAccountFactory extends Factory
             'clientid' => fake()->optional()->bothify('client-####'),
             'user_name' => fake()->unique()->userName(),
             // 工厂统一走模型里的哈希规则，避免测试数据和实际鉴权逻辑脱节。
-            ...MqttAccount::buildPasswordFields('password'),
+            ...IotMqttAccount::buildPasswordFields('password'),
             'certificate' => fake()->optional()->sentence(),
             'is_superuser' => false,
             'product_key' => fake()->optional()->bothify('PK-####'),

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\MqttAccounts;
 
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +19,7 @@ class StoreMqttAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_name' => ['required', 'string', 'max:64', Rule::unique(MqttAccount::class, 'user_name')],
+            'user_name' => ['required', 'string', 'max:64', Rule::unique(IotMqttAccount::class, 'user_name')],
             'password' => ['required', 'string', 'max:255'],
             'clientid' => ['nullable', 'string', 'max:50'],
             'product_key' => ['nullable', 'string', 'max:64'],
@@ -36,6 +36,6 @@ class StoreMqttAccountRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return MqttAccount::attributeLabels();
+        return IotMqttAccount::attributeLabels();
     }
 }

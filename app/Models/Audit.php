@@ -7,7 +7,7 @@ namespace App\Models;
 use App\Enum\EnumLikeBase;
 use App\Models\Auth\AdminRole;
 use App\Models\Auth\AdminUser;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use App\Models\Settings\Config;
 use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
@@ -165,7 +165,7 @@ class Audit extends Model
         $groupKey = [
             AdminUser::class => 'admin-user',
             AdminRole::class => 'admin-role',
-            MqttAccount::class => 'mqtt-account',
+            IotMqttAccount::class => 'mqtt-account',
             Config::class => 'config',
         ][(string) $this->auditable_type] ?? null;
 
@@ -287,7 +287,7 @@ class Audit extends Model
 
     protected function displayField(string $field): string
     {
-        if ($this->auditable_type === MqttAccount::class && in_array($field, ['password_hash', 'salt'], true)) {
+        if ($this->auditable_type === IotMqttAccount::class && in_array($field, ['password_hash', 'salt'], true)) {
             return 'password';
         }
 

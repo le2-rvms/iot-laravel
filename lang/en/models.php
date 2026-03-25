@@ -49,7 +49,7 @@ return [
         'ip' => 'IP',
         'change_summary' => 'Changes',
     ],
-    'mqtt_account' => [
+    'iot_mqtt_account' => [
         'act_id' => 'Account ID',
         'clientid' => 'Client ID',
         'user_name' => 'Account Name',

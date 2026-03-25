@@ -3,7 +3,7 @@
 namespace Tests\Feature\MqttAccounts;
 
 use App\Models\Audit;
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -16,7 +16,7 @@ class MqttAccountManagementTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
 
-        MqttAccount::factory()->count(3)->create();
+        IotMqttAccount::factory()->count(3)->create();
 
         $this->actingAs($user)
             ->get('/admin/mqtt-accounts')
@@ -55,7 +55,7 @@ class MqttAccountManagementTest extends TestCase
             ->assertRedirect('/admin/mqtt-accounts')
             ->assertSessionHas('success', 'MQTT账号已创建。');
 
-        $account = MqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
+        $account = IotMqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
         $originalHash = $account->password_hash;
 
         $this->assertSame('client-001', $account->clientid);
@@ -116,7 +116,7 @@ class MqttAccountManagementTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
 
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'user_name' => 'device-gateway',
             'clientid' => 'client-001',
             'is_superuser' => false,
@@ -170,7 +170,7 @@ class MqttAccountManagementTest extends TestCase
             ])
             ->assertRedirect('/admin/mqtt-accounts');
 
-        $account = MqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
+        $account = IotMqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
 
         $this->assertSame($creator->email, $account->act_updated_by);
 
@@ -196,7 +196,7 @@ class MqttAccountManagementTest extends TestCase
     public function test_explicit_updated_by_values_are_not_overwritten_by_the_trait(): void
     {
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'act_updated_by' => 'creator@example.com',
         ]);
 
@@ -216,7 +216,7 @@ class MqttAccountManagementTest extends TestCase
     public function test_save_preserving_updated_by_keeps_explicit_same_value_assignments(): void
     {
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'act_updated_by' => 'creator@example.com',
         ]);
 
@@ -237,7 +237,7 @@ class MqttAccountManagementTest extends TestCase
     public function test_save_preserving_updated_by_only_applies_to_the_current_save(): void
     {
         $editor = $this->createUserWithPermissions(['mqtt-account.write']);
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'act_updated_by' => 'creator@example.com',
         ]);
 
@@ -265,7 +265,7 @@ class MqttAccountManagementTest extends TestCase
     public function test_saving_without_business_changes_does_not_refresh_updated_by(): void
     {
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
-        $account = MqttAccount::factory()->create([
+        $account = IotMqttAccount::factory()->create([
             'act_updated_by' => 'creator@example.com',
         ]);
 
@@ -281,14 +281,14 @@ class MqttAccountManagementTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
 
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'alpha-gateway',
             'clientid' => 'client-alpha',
             'product_key' => 'pk-alpha',
             'device_name' => 'alpha-device',
         ]);
 
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'beta-gateway',
             'clientid' => 'client-beta',
             'product_key' => 'pk-beta',
@@ -309,14 +309,14 @@ class MqttAccountManagementTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
 
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'Gateway-A',
             'clientid' => 'Client-Gateway-A',
             'product_key' => 'PK-Gateway-A',
             'device_name' => 'Device-Gateway-A',
         ]);
 
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'Sensor-B',
             'clientid' => 'Client-Sensor-B',
             'product_key' => 'PK-Sensor-B',
@@ -338,11 +338,11 @@ class MqttAccountManagementTest extends TestCase
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
 
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'enabled-account',
             'enabled' => true,
         ]);
-        MqttAccount::factory()->create([
+        IotMqttAccount::factory()->create([
             'user_name' => 'disabled-account',
             'enabled' => false,
         ]);
@@ -360,7 +360,7 @@ class MqttAccountManagementTest extends TestCase
     public function test_read_only_users_cannot_open_create_or_delete_mqtt_accounts(): void
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
-        $account = MqttAccount::factory()->create();
+        $account = IotMqttAccount::factory()->create();
 
         $this->actingAs($user)
             ->get('/admin/mqtt-accounts')

@@ -51,7 +51,7 @@ return [
         'ip' => 'IP',
         'change_summary' => '变更内容',
     ],
-    'mqtt_account' => [
+    'iot_mqtt_account' => [
         'act_id' => '账号ID',
         'clientid' => '客户端标识',
         'user_name' => '账号名',

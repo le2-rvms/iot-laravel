@@ -63,6 +63,6 @@ class IotDeviceGroupMapping extends Model
 
     public function mqttAccount(): BelongsTo
     {
-        return $this->belongsTo(MqttAccount::class, 'device_id', 'user_name');
+        return $this->belongsTo(IotMqttAccount::class, 'device_id', 'user_name');
     }
 }

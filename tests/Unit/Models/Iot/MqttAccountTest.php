@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Models\Iot;
 
-use App\Models\Iot\MqttAccount;
+use App\Models\Iot\IotMqttAccount;
 use App\Values\Iot\Enabled;
 use App\Values\Iot\IsSuperuser;
 use Tests\TestCase;
@@ -11,21 +11,21 @@ class MqttAccountTest extends TestCase
 {
     public function test_build_password_fields_generates_a_salt_and_password_hash(): void
     {
-        $fields = MqttAccount::buildPasswordFields('public');
+        $fields = IotMqttAccount::buildPasswordFields('public');
 
         $this->assertArrayHasKey('salt', $fields);
         $this->assertArrayHasKey('password_hash', $fields);
         $this->assertSame(10, strlen($fields['salt']));
         $this->assertSame(
-            MqttAccount::makePasswordHash('public', $fields['salt']),
+            IotMqttAccount::makePasswordHash('public', $fields['salt']),
             $fields['password_hash'],
         );
     }
 
     public function test_check_password_verifies_the_plain_text_password(): void
     {
-        $fields = MqttAccount::buildPasswordFields('public');
-        $account = new MqttAccount($fields);
+        $fields = IotMqttAccount::buildPasswordFields('public');
+        $account = new IotMqttAccount($fields);
 
         $this->assertTrue($account->checkPassword('public'));
         $this->assertFalse($account->checkPassword('private'));
@@ -33,7 +33,7 @@ class MqttAccountTest extends TestCase
 
     public function test_enum_like_casts_are_resolved_for_superuser_and_enabled_fields(): void
     {
-        $account = new MqttAccount([
+        $account = new IotMqttAccount([
             'is_superuser' => 1,
             'enabled' => 0,
         ]);
