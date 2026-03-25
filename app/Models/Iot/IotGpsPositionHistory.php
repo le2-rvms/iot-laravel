@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Models\Iot;
+
+use App\Models\Concerns\ModelSupport;
+use App\Support\ListQueryFilters;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property string $terminal_id
+ * @property string $gps_time
+ * @property float $latitude
+ * @property float $longitude
+ * @property float $latitude_gcj
+ * @property float $longitude_gcj
+ * @property int $altitude
+ * @property float $speed
+ * @property int $direction
+ * @property int $status
+ * @property int $alarm
+ * @property array $extra
+ * @property string $created_at
+ */
+class IotGpsPositionHistory extends Model
+{
+    use ModelSupport;
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = null;
+
+    public $incrementing = false;
+
+    protected $table = 'gps_position_histories';
+
+    protected $primaryKey;
+
+    protected $guarded = [];
+
+    public static function indexQuery(array $queryParameters): Builder
+    {
+        $query = self::query()
+            ->latest('gps_time');
+
+        (new ListQueryFilters(
+            query: $queryParameters,
+            fieldDefinitions: [
+                'terminal_id',
+                'status' => ['integer'],
+                'alarm' => ['integer'],
+            ],
+            callbacks: [
+                'search' => function (Builder $query, mixed $value): void {
+                    $search = trim((string) $value);
+
+                    $query->whereRaw('LOWER(terminal_id) LIKE LOWER(?)', ["%{$search}%"]);
+                },
+            ],
+        ))->apply($query);
+
+        return $query;
+    }
+
+    public function auditExcept(): array
+    {
+        return array_values(array_unique(array_filter([
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'extra',
+        ])));
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'gps_time' => 'datetime',
+            'created_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
+            'latitude_gcj' => 'float',
+            'longitude_gcj' => 'float',
+            'altitude' => 'integer',
+            'speed' => 'float',
+            'direction' => 'integer',
+            'status' => 'integer',
+            'alarm' => 'integer',
+            'extra' => 'array',
+        ];
+    }
+}
