@@ -1,4 +1,4 @@
-.PHONY: dev print-env serve horizon logs vite
+.PHONY: dev print-env serve horizon logs vite cli-bash
 
 ENV_FILES = \
 	../docker-compose/env/L_/0local.env \
@@ -26,3 +26,6 @@ logs:
 
 vite:
 	@$(LOAD_ENV) $(APP_ENV_OVERRIDES) npm run dev
+
+cli-bash:
+	@$(LOAD_ENV) $(APP_ENV_OVERRIDES) exec "$${SHELL:-/bin/bash}" -l
