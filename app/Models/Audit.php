@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enum\EnumLikeBase;
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Values\Support\EnumLikeBase;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use App\Models\Iot\IotMqttAccount;
 use App\Models\Settings\Config;
 use App\Support\ListQueryFilters;

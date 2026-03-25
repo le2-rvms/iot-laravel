@@ -4,8 +4,8 @@ namespace Tests\Feature\Audits;
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Audit;
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use App\Models\Settings\Config;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;

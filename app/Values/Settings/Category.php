@@ -2,7 +2,7 @@
 
 namespace App\Values\Settings;
 
-use App\Enum\EnumLikeBase;
+use App\Values\Support\EnumLikeBase;
 
 class Category extends EnumLikeBase
 {

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\Auth\EmailVerificationNotificationSentResponse;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;

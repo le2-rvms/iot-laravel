@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Support;
 
-use App\Http\Controllers\Admin\Admin\AdminUserController;
-use App\Http\Controllers\Admin\Audits\AuditController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MqttAccounts\MqttAccountController;
-use App\Http\Controllers\Admin\Settings\SettingsPrecognitionController;
-use App\Http\Controllers\Admin\Settings\SettingsVeeValidateController;
+use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
+use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\DashboardController;
+use App\Http\Controllers\Web\Admin\MqttAccounts\MqttAccountController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsPrecognitionController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsVeeValidateController;
 use App\Support\PermissionRegistry;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enum;
+namespace App\Values\Support;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

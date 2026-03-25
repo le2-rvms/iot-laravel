@@ -4,7 +4,7 @@ namespace App\Support;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Support\Str;
 use LogicException;
 use ReflectionClass;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Audits;
+namespace App\Http\Controllers\Web\Admin\Audits;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;

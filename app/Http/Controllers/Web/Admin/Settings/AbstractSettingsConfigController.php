@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Settings;
+namespace App\Http\Controllers\Web\Admin\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\StoreSettingRequest;

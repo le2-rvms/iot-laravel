@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\Account\PasswordController as AccountPasswordController;
-use App\Http\Controllers\Admin\Admin\AdminRoleController;
-use App\Http\Controllers\Admin\Admin\AdminUserController;
-use App\Http\Controllers\Admin\Audits\AuditController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MqttAccounts\MqttAccountController;
-use App\Http\Controllers\Admin\Settings\SettingsApplicationConfigController;
-use App\Http\Controllers\Admin\Settings\SettingsPrecognitionController;
-use App\Http\Controllers\Admin\Settings\SettingsSystemConfigController;
-use App\Http\Controllers\Admin\Settings\SettingsVeeValidateController;
-use App\Http\Controllers\Auth\DevQuickLoginController;
+use App\Http\Controllers\Web\Admin\Account\PasswordController as AccountPasswordController;
+use App\Http\Controllers\Web\Admin\Admin\AdminRoleController;
+use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
+use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\DashboardController;
+use App\Http\Controllers\Web\Admin\MqttAccounts\MqttAccountController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsApplicationConfigController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsPrecognitionController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsSystemConfigController;
+use App\Http\Controllers\Web\Admin\Settings\SettingsVeeValidateController;
+use App\Http\Controllers\Web\Auth\DevQuickLoginController;
 use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Support;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;

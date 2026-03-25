@@ -3,7 +3,7 @@
 namespace Tests\Unit\Models\Iot;
 
 use App\Models\Audit;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use App\Models\Iot\IotClientAuthEvent;
 use App\Models\Iot\IotClientCmdEvent;
 use App\Models\Iot\IotClientConnEvent;

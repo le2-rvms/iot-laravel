@@ -3,7 +3,7 @@
 namespace Tests\Feature\Database;
 
 use App\Models\Audit;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use App\Models\Concerns\Auditable;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Database\Eloquent\Model;

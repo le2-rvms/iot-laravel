@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\AdminUsers;
 
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;

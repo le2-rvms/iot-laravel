@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Testing\TestResponse;

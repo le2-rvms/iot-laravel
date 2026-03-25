@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Console;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Admin;
+namespace App\Http\Controllers\Web\Admin\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminUsers\StoreAdminUserRequest;
 use App\Http\Requests\AdminUsers\UpdateAdminUserRequest;
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

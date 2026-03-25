@@ -2,7 +2,7 @@
 
 namespace App\Values\Iot;
 
-use App\Enum\EnumLikeBase;
+use App\Values\Support\EnumLikeBase;
 
 class EventType_CMD extends EnumLikeBase
 {

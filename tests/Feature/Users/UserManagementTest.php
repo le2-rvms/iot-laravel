@@ -3,8 +3,8 @@
 namespace Tests\Feature\Users;
 
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;

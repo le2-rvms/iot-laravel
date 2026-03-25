@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Admin;
+namespace App\Http\Controllers\Web\Admin\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRoles\StoreAdminRoleRequest;
 use App\Http\Requests\AdminRoles\UpdateAdminRoleRequest;
-use App\Models\Auth\AdminRole;
+use App\Models\Admin\AdminRole;
 use App\Support\CsvExporter;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\RedirectResponse;

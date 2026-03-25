@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\Auth;
+namespace Database\Factories\Admin;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

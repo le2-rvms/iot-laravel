@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Concerns;
 
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use App\Models\Settings\NotificationChannel;
 use App\Models\Settings\NotificationRule;
 use Illuminate\Support\Arr;

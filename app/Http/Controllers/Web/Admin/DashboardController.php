@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Web\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
 use App\Http\Controllers\Controller;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use App\Support\NavigationRegistry;
 use Inertia\Inertia;
 use Inertia\Response;

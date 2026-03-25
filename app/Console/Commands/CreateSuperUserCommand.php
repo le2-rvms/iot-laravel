@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Console\Attribute\AsCommand;

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Roles;
 
-use App\Models\Auth\AdminPermission;
-use App\Models\Auth\AdminRole;
+use App\Models\Admin\AdminPermission;
+use App\Models\Admin\AdminRole;
 use App\Support\PermissionRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;

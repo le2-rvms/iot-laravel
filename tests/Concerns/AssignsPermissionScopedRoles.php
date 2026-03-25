@@ -2,8 +2,8 @@
 
 namespace Tests\Concerns;
 
-use App\Models\Auth\AdminRole;
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminUser;
 use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
 

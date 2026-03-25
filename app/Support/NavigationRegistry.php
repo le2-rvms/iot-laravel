@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\Auth\AdminUser;
+use App\Models\Admin\AdminUser;
 
 class NavigationRegistry
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Auth;
+namespace App\Models\Admin;
 
 use App\Models\Concerns\ModelSupport;
 use Illuminate\Database\Eloquent\Collection;
