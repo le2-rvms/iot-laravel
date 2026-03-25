@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\Account\PasswordController as AccountPassword
 use App\Http\Controllers\Web\Admin\Admin\AdminRoleController;
 use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
 use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\Devices\DeviceController;
 use App\Http\Controllers\Web\Admin\DeviceProducts\DeviceProductController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\MqttAccounts\MqttAccountController;
@@ -53,6 +54,10 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
     Route::get('device-products/export', [DeviceProductController::class, 'export']);
     Route::resource('device-products', DeviceProductController::class)
         ->parameters(['device-products' => 'deviceProduct'])
+        ->except(['show']);
+
+    Route::get('devices/export', [DeviceController::class, 'export']);
+    Route::resource('devices', DeviceController::class)
         ->except(['show']);
 
     Route::get('settings/application-configs/export', [SettingsApplicationConfigController::class, 'export']);

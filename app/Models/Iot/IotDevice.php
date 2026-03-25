@@ -7,6 +7,7 @@ use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $dev_id
@@ -88,6 +89,21 @@ class IotDevice extends Model
     public function deviceProduct(): BelongsTo
     {
         return $this->belongsTo(IotDeviceProduct::class, 'product_key', 'product_key');
+    }
+
+    public function gpsCommands(): HasMany
+    {
+        return $this->hasMany(IotGpsCommand::class, 'device_id', 'dev_id');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function auditMask(): array
+    {
+        return [
+            'auth_code_seed',
+        ];
     }
 
     protected function casts(): array

@@ -21,7 +21,7 @@ class NavigationRegistryTest extends TestCase
         $this->assertSame('/admin/dashboard', $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/device-products', '/admin/settings/application-configs', '/admin/settings/system-configs'],
+            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/devices', '/admin/device-products', '/admin/settings/application-configs', '/admin/settings/system-configs'],
             array_column($sections[1]['items'], 'href'),
         );
     }
@@ -54,7 +54,7 @@ class NavigationRegistryTest extends TestCase
 
     public function test_dashboard_quick_links_only_include_allowed_items_marked_for_dashboard(): void
     {
-        $user = $this->createUserWithPermissions(['admin-user.read', 'mqtt-account.read', 'device-product.read', 'settings-system-config.read', 'settings-vee-validate.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read', 'mqtt-account.read', 'device.read', 'device-product.read', 'settings-system-config.read', 'settings-vee-validate.read']);
 
         $links = NavigationRegistry::dashboardQuickLinksFor($user);
 
@@ -68,6 +68,11 @@ class NavigationRegistryTest extends TestCase
                 'title' => 'MQTT账号管理',
                 'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
                 'href' => '/admin/mqtt-accounts',
+            ],
+            [
+                'title' => '设备管理',
+                'description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
+                'href' => '/admin/devices',
             ],
             [
                 'title' => '设备产品',

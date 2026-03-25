@@ -148,6 +148,70 @@ class CsvExportTest extends TestCase
         $this->assertSame('1', $rows[1][7]);
     }
 
+    public function test_devices_export_uses_current_filters_and_hides_sensitive_auth_fields(): void
+    {
+        \Illuminate\Support\Facades\Schema::create('device_products', function ($table): void {
+            $table->increments('product_id');
+            $table->string('product_key', 64)->unique();
+            $table->string('product_name', 255);
+            $table->timestamps();
+        });
+        \Illuminate\Support\Facades\Schema::create('devices', function ($table): void {
+            $table->string('terminal_id', 64)->primary();
+            $table->integer('dev_id')->nullable();
+            $table->string('dev_name', 255);
+            $table->string('company_id', 64)->nullable();
+            $table->string('manufacturer_id', 64)->nullable();
+            $table->string('product_key', 64)->nullable();
+            $table->string('sim_number', 64)->nullable();
+            $table->string('_vehicle_plate', 64)->nullable();
+            $table->string('_vehicle_vin', 64)->nullable();
+            $table->string('_bind_status', 64)->nullable();
+            $table->string('device_status', 64)->nullable();
+            $table->string('review_status', 64)->nullable();
+            $table->string('auth_code_seed', 255)->nullable();
+            $table->integer('city_relation_id')->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+
+        $user = $this->createUserWithPermissions(['device.read']);
+
+        \DB::table('device_products')->insert([
+            'product_key' => 'PK-DEVICE',
+            'product_name' => 'Device Product',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        \DB::table('devices')->insert([
+            'terminal_id' => 'terminal-export',
+            'dev_id' => 20,
+            'dev_name' => 'Export Device',
+            'company_id' => 'company-export',
+            'manufacturer_id' => 'maker-export',
+            'product_key' => 'PK-DEVICE',
+            'sim_number' => 'SIM-EXPORT',
+            '_vehicle_plate' => '京A88888',
+            '_vehicle_vin' => 'VIN-EXPORT',
+            '_bind_status' => 'bound',
+            'device_status' => 'online',
+            'review_status' => 'approved',
+            'auth_code_seed' => 'secret-seed',
+            'city_relation_id' => 8,
+            'created_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get('/admin/devices/export?search__func=export&device_status__eq=online');
+
+        $rows = $this->csvRows($response);
+
+        $this->assertSame(['设备ID', '终端ID', '设备名称', '公司ID', '厂商ID', '产品标识', 'SIM号', '车牌号', '车架号', '绑定状态', '设备状态', '审核状态', '城市关联ID', '创建时间'], $rows[0]);
+        $this->assertSame('20', $rows[1][0]);
+        $this->assertSame('terminal-export', $rows[1][1]);
+        $this->assertSame('online', $rows[1][10]);
+        $this->assertStringNotContainsString('secret-seed', $response->streamedContent());
+    }
+
     public function test_admin_roles_export_shows_empty_permissions_for_super_admin_role(): void
     {
         $user = $this->createSuperAdmin();

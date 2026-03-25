@@ -65,6 +65,15 @@ class NavigationRegistry
                         'show_in_dashboard' => true,
                     ],
                     [
+                        'title' => '设备管理',
+                        'description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
+                        'dashboard_description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
+                        'href' => '/admin/devices',
+                        'icon' => 'Cpu',
+                        'permission' => 'device.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
                         'title' => '设备产品',
                         'description' => '维护设备产品标识、名称与协议分类信息。',
                         'dashboard_description' => '维护设备产品标识、名称与协议分类信息。',
