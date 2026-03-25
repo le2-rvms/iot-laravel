@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Web\Admin\MqttAccounts;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Http\Requests\MqttAccounts\StoreMqttAccountRequest;
 use App\Http\Requests\MqttAccounts\UpdateMqttAccountRequest;
 use App\Models\Iot\IotMqttAccount;
 use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -28,7 +27,7 @@ class MqttAccountController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('MqttAccounts/Index', [
+        return $this->renderPage([
             'accounts' => $accounts,
             'filters' => $filters,
         ]);
@@ -59,7 +58,7 @@ class MqttAccountController extends Controller
     #[PermissionAction('write')]
     public function create(): Response
     {
-        return Inertia::render('MqttAccounts/Create', [
+        return $this->renderPage([
             // 新建页直接返回模型对象，默认值与编辑页保持同一份数据结构。
             'account' => new IotMqttAccount([
                 'is_superuser' => 0,
@@ -84,7 +83,7 @@ class MqttAccountController extends Controller
     #[PermissionAction('write')]
     public function edit(IotMqttAccount $mqttAccount): Response
     {
-        return Inertia::render('MqttAccounts/Edit', [
+        return $this->renderPage([
             'account' => $mqttAccount,
         ]);
     }

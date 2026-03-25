@@ -66,11 +66,6 @@ class PermissionStructureBuilder
             $permissions = [];
 
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                // 忽略继承来的框架/基类辅助方法，只有当前控制器自己声明的方法才定义权限。
-                if ($method->getDeclaringClass()->getName() !== $controllerClass) {
-                    continue;
-                }
-
                 $actionAttribute = $method->getAttributes(PermissionAction::class)[0] ?? null;
 
                 if (! $actionAttribute) {

@@ -20,7 +20,7 @@ class SettingsPageTest extends TestCase
             ->get('/admin/settings/vee-validate')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/FormLab')
+                ->component('SettingsVeeValidate/Index')
                 ->has('channelTypes', 3)
                 ->has('triggerModes', 3));
     }
@@ -33,7 +33,7 @@ class SettingsPageTest extends TestCase
             ->get(route('precognition.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/FormLabPrecognition')
+                ->component('SettingsPrecognition/Index')
                 ->has('channelTypes', 3));
     }
 
@@ -327,7 +327,7 @@ class SettingsPageTest extends TestCase
             ->get(route('application-configs.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Index')
+                ->component('SettingsApplicationConfig/Index')
                 ->where('category', Category::APPLICATION)
                 ->where('configs.data.0.key', 'app.name')
                 ->where('configs.data.0.value_display', 'IoT Admin'));
@@ -349,7 +349,7 @@ class SettingsPageTest extends TestCase
             ->get(route('system-configs.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Index')
+                ->component('SettingsSystemConfig/Index')
                 ->where('category', Category::SYSTEM)
                 ->where('configs.data.0.key', 'system.notice'));
     }
@@ -401,14 +401,14 @@ class SettingsPageTest extends TestCase
             ->get(route('application-configs.create'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Create')
+                ->component('SettingsApplicationConfig/Create')
                 ->where('category', Category::APPLICATION));
 
         $this->actingAs($writeUser)
             ->get(route('application-configs.edit', $applicationConfig))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Edit')
+                ->component('SettingsApplicationConfig/Edit')
                 ->where('config.key', 'app.secret'));
     }
 
@@ -435,7 +435,7 @@ class SettingsPageTest extends TestCase
             ->get(route('application-configs.index', ['search__func' => '密钥']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Index')
+                ->component('SettingsApplicationConfig/Index')
                 ->has('configs.data', 1)
                 ->where('configs.data.0.key', 'app.secret')
                 ->where('configs.data.0.value_display', '*****'));
@@ -465,7 +465,7 @@ class SettingsPageTest extends TestCase
             ->assertOk()
             // 这里锁的是 PostgreSQL 目标环境下的大小写不敏感搜索行为。
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Index')
+                ->component('SettingsApplicationConfig/Index')
                 ->where('filters.search__func', 'gateway')
                 ->has('configs.data', 1)
                 ->where('configs.data.0.key', 'GatewayTimeout'));
@@ -494,7 +494,7 @@ class SettingsPageTest extends TestCase
             ->get(route('application-configs.index', ['is_masked__eq' => '1']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Settings/Configs/Index')
+                ->component('SettingsApplicationConfig/Index')
                 ->where('filters.is_masked__eq', '1')
                 ->has('configs.data', 1)
                 ->where('configs.data.0.key', 'app.secret')

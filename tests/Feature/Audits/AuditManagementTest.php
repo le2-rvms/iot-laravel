@@ -43,7 +43,7 @@ class AuditManagementTest extends TestCase
             ->get('/admin/audits')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Audits/Index')
+                ->component('Audit/Index')
                 ->where('filters.search__func', '')
                 ->where('filters.event__eq', '')
                 ->where('filters.auditable_type__eq', '')
@@ -241,12 +241,12 @@ class AuditManagementTest extends TestCase
                 'X-Inertia' => 'true',
                 'X-Requested-With' => 'XMLHttpRequest',
                 'X-Inertia-Version' => $version,
-                'X-Inertia-Partial-Component' => 'Audits/Index',
+                'X-Inertia-Partial-Component' => 'Audit/Index',
                 'X-Inertia-Partial-Data' => 'audits,filters',
             ])
             ->get('/admin/audits?event__eq=deleted')
             ->assertOk()
-            ->assertJsonPath('component', 'Audits/Index')
+            ->assertJsonPath('component', 'Audit/Index')
             ->assertJsonPath('props.filters.event__eq', 'deleted')
             ->assertJsonPath('props.audits.data.0.event', 'deleted');
     }

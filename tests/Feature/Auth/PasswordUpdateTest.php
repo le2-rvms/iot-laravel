@@ -19,7 +19,7 @@ class PasswordUpdateTest extends TestCase
         $this->actingAs($user)
             ->get('/admin/account/security-password/edit')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Account/Password/Edit'));
+            ->assertInertia(fn (Assert $page) => $page->component('Password/Edit'));
     }
 
     public function test_users_without_password_write_permission_cannot_view_the_password_edit_screen(): void

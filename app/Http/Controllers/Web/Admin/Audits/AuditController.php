@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Web\Admin\Audits;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Models\Audit;
 use App\Support\CsvExporter;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -33,7 +32,7 @@ class AuditController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('Audits/Index', [
+        return $this->renderPage([
             'filters' => $filters,
             'audits' => $audits,
             'eventOptions' => Audit::eventOptions(),

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Web\Admin\Settings;
 
-use App\Http\Controllers\Controller;
+use App\Attributes\PermissionAction;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Http\Requests\Settings\StoreSettingRequest;
 use App\Http\Requests\Settings\UpdateSettingRequest;
 use App\Models\Settings\Config;
@@ -21,7 +22,8 @@ abstract class AbstractSettingsConfigController extends Controller
         private readonly array $indexAction,
     ) {}
 
-    protected function indexConfigs(Request $request): Response
+    #[PermissionAction('read')]
+    public function index(Request $request): Response
     {
         $query = Config::indexQuery($request->query())
             ->where('category', $this->category);
@@ -31,14 +33,15 @@ abstract class AbstractSettingsConfigController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Settings/Configs/Index', [
+        return $this->renderPage([
             'category' => $this->category,
             'filters' => $filters,
             'configs' => $configs,
         ]);
     }
 
-    protected function exportConfigs(Request $request): StreamedResponse
+    #[PermissionAction('read')]
+    public function export(Request $request): StreamedResponse
     {
         $query = Config::indexQuery($request->query())
             ->where('category', $this->category);
@@ -58,9 +61,10 @@ abstract class AbstractSettingsConfigController extends Controller
         );
     }
 
-    protected function createConfig(): Response
+    #[PermissionAction('write')]
+    public function create(): Response
     {
-        return Inertia::render('Settings/Configs/Create', [
+        return $this->renderPage([
             'category' => $this->category,
             // 新建页直接带入固定分类，避免前端再次判断应用配置/系统配置属于哪一路由。
             'config' => new Config([
@@ -70,7 +74,8 @@ abstract class AbstractSettingsConfigController extends Controller
         ]);
     }
 
-    protected function storeConfig(StoreSettingRequest $request): RedirectResponse
+    #[PermissionAction('write')]
+    public function store(StoreSettingRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $validated['category'] = $this->category;
@@ -80,17 +85,19 @@ abstract class AbstractSettingsConfigController extends Controller
         return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已创建。");
     }
 
-    protected function editConfig(Config $config): Response
+    #[PermissionAction('write')]
+    public function edit(Config $config): Response
     {
         $this->ensureCategoryMatches($config);
 
-        return Inertia::render('Settings/Configs/Edit', [
+        return $this->renderPage([
             'category' => $this->category,
             'config' => $config,
         ]);
     }
 
-    protected function updateConfig(UpdateSettingRequest $request, Config $config): RedirectResponse
+    #[PermissionAction('write')]
+    public function update(UpdateSettingRequest $request, Config $config): RedirectResponse
     {
         $this->ensureCategoryMatches($config);
 
@@ -102,7 +109,8 @@ abstract class AbstractSettingsConfigController extends Controller
         return redirect()->action($this->indexAction)->with('success', "{$this->categoryLabel}已更新。");
     }
 
-    protected function destroyConfig(Config $config): RedirectResponse
+    #[PermissionAction('write')]
+    public function destroy(Config $config): RedirectResponse
     {
         $this->ensureCategoryMatches($config);
 

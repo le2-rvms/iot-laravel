@@ -1,9 +1,7 @@
 <script setup>
-import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { resolveConfigResource } from './resource';
 
-const props = defineProps({
+defineProps({
     category: {
         type: String,
         required: true,
@@ -14,13 +12,16 @@ const props = defineProps({
     },
 });
 
-const resource = computed(() => resolveConfigResource(props.category));
+const resource = {
+    title: '应用配置',
+    index_href: '/admin/settings/application-configs',
+};
 
-const breadcrumbs = computed(() => [
+const breadcrumbs = [
     { label: '仪表盘', href: '/admin/dashboard' },
-    { label: resource.value.title, href: resource.value.index_href },
+    { label: resource.title, href: resource.index_href },
     { label: '新建配置项' },
-]);
+];
 </script>
 
 <template>

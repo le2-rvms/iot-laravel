@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
 use App\Models\Admin\AdminUser;
 use App\Support\NavigationRegistry;
 use Inertia\Inertia;
@@ -18,7 +17,7 @@ class DashboardController extends Controller
     {
         $user = request()->user();
 
-        return Inertia::render('Dashboard', [
+        return $this->renderPage([
             'stats' => [
                 'usersCount' => AdminUser::count(),
             ],

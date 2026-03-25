@@ -1,8 +1,7 @@
 <script setup>
-import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { buildQueryHref } from '@/lib/utils';
-import { resolveConfigResource } from './resource';
 
 const props = defineProps({
     category: {
@@ -20,14 +19,21 @@ const props = defineProps({
 });
 
 const page = usePage();
-const resource = computed(() => resolveConfigResource(props.category));
-const canWrite = computed(() => page.props.auth?.access?.[resource.value.write_permission] ?? false);
+const resource = {
+    title: '系统配置',
+    description: '维护系统层的公共设定、展示策略与后台说明。',
+    index_href: '/admin/settings/system-configs',
+    export_href: '/admin/settings/system-configs/export',
+    create_href: '/admin/settings/system-configs/create',
+    write_permission: 'settings-system-config.write',
+};
+const canWrite = computed(() => page.props.auth?.access?.[resource.write_permission] ?? false);
 const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
-const exportHref = computed(() => buildQueryHref(resource.value.export_href, props.filters));
-const breadcrumbs = computed(() => [
+const exportHref = computed(() => buildQueryHref(resource.export_href, props.filters));
+const breadcrumbs = [
     { label: '仪表盘', href: '/admin/dashboard' },
-    { label: resource.value.title },
-]);
+    { label: resource.title },
+];
 </script>
 
 <template>

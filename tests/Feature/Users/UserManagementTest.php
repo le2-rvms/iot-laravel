@@ -25,7 +25,7 @@ class UserManagementTest extends TestCase
             ->get('/admin/admin-users')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('AdminUsers/Index')
+                ->component('AdminUser/Index')
                 ->has('users.data', 4)
                 ->where('filters', [])
                 ->where('auth.access', fn ($access) => ($access['admin-user.read'] ?? false) === true)
@@ -145,7 +145,7 @@ class UserManagementTest extends TestCase
             ->get('/admin/admin-users?search__func=alice')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('AdminUsers/Index')
+                ->component('AdminUser/Index')
                 ->where('filters.search__func', 'alice')
                 ->has('users.data', 1)
                 ->where('users.data.0.email', 'alice@example.com'));
@@ -168,7 +168,7 @@ class UserManagementTest extends TestCase
             ->get('/admin/admin-users?name__eq=Alice Cooper')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('AdminUsers/Index')
+                ->component('AdminUser/Index')
                 ->where('filters.name__eq', 'Alice Cooper')
                 ->has('users.data', 1)
                 ->where('users.data.0.email', 'alice@example.com'));
@@ -189,12 +189,12 @@ class UserManagementTest extends TestCase
                 'X-Inertia' => 'true',
                 'X-Requested-With' => 'XMLHttpRequest',
                 'X-Inertia-Version' => $version,
-                'X-Inertia-Partial-Component' => 'AdminUsers/Index',
+                'X-Inertia-Partial-Component' => 'AdminUser/Index',
                 'X-Inertia-Partial-Data' => 'users,filters',
             ])
             ->get('/admin/admin-users?search__func=partial')
             ->assertOk()
-            ->assertJsonPath('component', 'AdminUsers/Index')
+            ->assertJsonPath('component', 'AdminUser/Index')
             ->assertJsonPath('props.filters.search__func', 'partial')
             ->assertJsonPath('props.users.data.0.email', 'partial@example.com');
     }

@@ -21,7 +21,7 @@ class RoleManagementTest extends TestCase
             ->get('/admin/admin-roles')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('AdminRoles/Index')
+                ->component('AdminRole/Index')
                 ->has('roles.data')
                 ->where('roles.data.0.permissions', fn ($permissions): bool => collect($permissions)->pluck('name')->contains('dashboard.read'))
                 ->where('permissionDisplayNames', fn ($labels): bool => ($labels['dashboard.read'] ?? null) === '仪表盘 · 读取')
@@ -79,7 +79,7 @@ class RoleManagementTest extends TestCase
             ->get('/admin/admin-roles/create')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('AdminRoles/Create')
+                ->component('AdminRole/Create')
                 ->has('permissionGroups', 10)
                 ->where('permissionGroups', function ($groups): bool {
                     $auditGroup = collect($groups)->firstWhere('module', 'audit');

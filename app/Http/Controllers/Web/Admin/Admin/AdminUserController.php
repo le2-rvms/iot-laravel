@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Http\Requests\AdminUsers\StoreAdminUserRequest;
 use App\Http\Requests\AdminUsers\UpdateAdminUserRequest;
 use App\Models\Admin\AdminRole;
@@ -12,7 +12,6 @@ use App\Models\Admin\AdminUser;
 use App\Support\CsvExporter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -29,7 +28,7 @@ class AdminUserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('AdminUsers/Index', [
+        return $this->renderPage([
             // filters 和 rows 一起返回，方便 partial reload 时同步更新。
             'filters' => $filters,
             'users' => $adminUsers,
@@ -59,7 +58,7 @@ class AdminUserController extends Controller
     #[PermissionAction('write')]
     public function create(): Response
     {
-        return Inertia::render('AdminUsers/Create', [
+        return $this->renderPage([
             // 用户表单只需要角色名列表，更丰富的角色信息仍留在角色管理流里。
             'availableRoles' => AdminRole::availableNames(),
         ]);
@@ -86,7 +85,7 @@ class AdminUserController extends Controller
         // 编辑页直接消费用户模型和角色关系的序列化结果。
         $adminUser->loadMissing('roles:id,name');
 
-        return Inertia::render('AdminUsers/Edit', [
+        return $this->renderPage([
             'user' => $adminUser,
             'availableRoles' => AdminRole::availableNames(),
         ]);

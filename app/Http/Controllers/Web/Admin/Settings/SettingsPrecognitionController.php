@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Web\Admin\Settings;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Http\Requests\Settings\StorePrecognitionDemoRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 use Inertia\Response;
 
 #[PermissionGroup]
@@ -17,7 +16,7 @@ class SettingsPrecognitionController extends Controller
     #[PermissionAction('read')]
     public function index(): Response
     {
-        return Inertia::render('Settings/FormLabPrecognition', [
+        return $this->renderPage([
             'channelTypes' => $this->channelTypes(),
         ]);
     }

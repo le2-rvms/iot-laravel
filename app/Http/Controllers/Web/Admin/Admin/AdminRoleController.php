@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Web\Admin\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\Controller;
 use App\Http\Requests\AdminRoles\StoreAdminRoleRequest;
 use App\Http\Requests\AdminRoles\UpdateAdminRoleRequest;
 use App\Models\Admin\AdminRole;
 use App\Support\CsvExporter;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
 use Inertia\Response;
 use LogicException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -26,7 +25,7 @@ class AdminRoleController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('AdminRoles/Index', [
+        return $this->renderPage([
             'roles' => $adminRoles,
             // 页面拿原始权限名，再通过独立的显示文案映射转成中文。
             'permissionDisplayNames' => PermissionRegistry::displayNames(PermissionRegistry::permissionNames()),
@@ -57,7 +56,7 @@ class AdminRoleController extends Controller
     #[PermissionAction('write')]
     public function create(): Response
     {
-        return Inertia::render('AdminRoles/Create', [
+        return $this->renderPage([
             // 角色表单消费的是分组权限元数据，文案在读取阶段再本地化。
             'permissionGroups' => PermissionRegistry::groups(),
         ]);
@@ -80,7 +79,7 @@ class AdminRoleController extends Controller
         // 编辑页直接消费模型和关系序列化结果，不再额外组装 DTO。
         $adminRole->loadMissing('permissions:id,name');
 
-        return Inertia::render('AdminRoles/Edit', [
+        return $this->renderPage([
             'permissionGroups' => PermissionRegistry::groups(),
             'role' => $adminRole,
         ]);
