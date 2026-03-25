@@ -111,6 +111,8 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
         $superAdmin = AdminRole::syncPermissionsAndSuperAdminRole();
 
         if ($this->hasRole($superAdmin->name)) {
+            $this->refreshAuthorizationState();
+
             return;
         }
 

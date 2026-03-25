@@ -23,7 +23,8 @@ class RoleManagementTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRole/Index')
                 ->has('roles.data')
-                ->where('roles.data.0.permissions', fn ($permissions): bool => collect($permissions)->pluck('name')->contains('dashboard.read'))
+                ->where('roles.data.0.permissions', [])
+                ->where('roles.data.0.permissions_count', 0)
                 ->where('permissionDisplayNames', fn ($labels): bool => ($labels['dashboard.read'] ?? null) === '仪表盘 · 读取')
                 ->where('auth.access', fn ($access) => ($access['admin-role.read'] ?? false) === true));
     }
@@ -153,6 +154,28 @@ class RoleManagementTest extends TestCase
         ]);
     }
 
+    public function test_protected_super_admin_role_clears_explicit_permissions_when_updated(): void
+    {
+        $admin = $this->createSuperAdmin();
+        $superAdminRole = AdminRole::findByName(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
+
+        AdminPermission::findOrCreate('dashboard.read', 'web');
+        AdminPermission::findOrCreate('admin-user.read', 'web');
+        $superAdminRole->syncPermissions(['dashboard.read']);
+
+        $this->actingAs($admin)
+            ->put("/admin/admin-roles/{$superAdminRole->id}", [
+                'name' => 'Renamed Super Admin',
+                'permissions' => ['dashboard.read', 'admin-user.read'],
+            ])
+            ->assertRedirect("/admin/admin-roles/{$superAdminRole->id}/edit");
+
+        $superAdminRole = $superAdminRole->fresh();
+
+        $this->assertSame(PermissionRegistry::SUPER_ADMIN_ROLE, $superAdminRole->name);
+        $this->assertCount(0, $superAdminRole->permissions);
+    }
+
     public function test_roles_with_bound_users_cannot_be_deleted(): void
     {
         $admin = $this->createSuperAdmin();
@@ -173,16 +196,19 @@ class RoleManagementTest extends TestCase
         ]);
     }
 
-    public function test_sync_permissions_and_super_admin_role_removes_stale_permissions(): void
+    public function test_sync_permissions_and_super_admin_role_removes_stale_permissions_and_clears_super_admin_permissions(): void
     {
         $permissionsTable = config('permission.table_names.permissions');
+        $superAdminRole = AdminRole::syncPermissionsAndSuperAdminRole();
 
         AdminPermission::query()->create([
             'name' => 'legacy.permission',
             'guard_name' => 'web',
         ]);
+        AdminPermission::findOrCreate('dashboard.read', 'web');
+        $superAdminRole->syncPermissions(['dashboard.read']);
 
-        AdminRole::syncPermissionsAndSuperAdminRole();
+        $superAdminRole = AdminRole::syncPermissionsAndSuperAdminRole();
 
         $this->assertDatabaseMissing($permissionsTable, [
             'name' => 'legacy.permission',
@@ -192,5 +218,6 @@ class RoleManagementTest extends TestCase
             'name' => 'admin-user.read',
             'guard_name' => 'web',
         ]);
+        $this->assertCount(0, $superAdminRole->permissions);
     }
 }

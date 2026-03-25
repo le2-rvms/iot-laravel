@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Console;
 
+use App\Models\Admin\AdminPermission;
+use App\Models\Admin\AdminRole;
 use App\Models\Admin\AdminUser;
+use App\Support\PermissionRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -25,11 +28,13 @@ class AdminCreateSuperUserCommandTest extends TestCase
             ->assertSuccessful();
 
         $user = AdminUser::query()->where('email', 'console-admin@example.com')->firstOrFail();
+        $superAdminRole = AdminRole::findByName(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
 
         $this->assertSame('Console Admin', $user->name);
         $this->assertTrue(Hash::check('password', $user->password));
         $this->assertNotNull($user->email_verified_at);
         $this->assertTrue($user->hasRole('Super Admin'));
+        $this->assertCount(0, $superAdminRole->permissions);
 
         $this->actingAs($user)
             ->get('/admin/dashboard')
@@ -55,11 +60,13 @@ class AdminCreateSuperUserCommandTest extends TestCase
             ->assertSuccessful();
 
         $user = $user->fresh();
+        $superAdminRole = AdminRole::findByName(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
 
         $this->assertSame('Updated Admin', $user->name);
         $this->assertTrue(Hash::check('new-password', $user->password));
         $this->assertNotNull($user->email_verified_at);
         $this->assertTrue($user->hasRole('Super Admin'));
+        $this->assertCount(0, $superAdminRole->permissions);
 
         $this->actingAs($user)
             ->get('/admin/dashboard')
@@ -76,11 +83,13 @@ class AdminCreateSuperUserCommandTest extends TestCase
             ->assertSuccessful();
 
         $user = AdminUser::query()->where('email', 'admin@example.com')->firstOrFail();
+        $superAdminRole = AdminRole::findByName(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
 
         $this->assertSame('Admin', $user->name);
         $this->assertTrue(Hash::check('password', $user->password));
         $this->assertNotNull($user->email_verified_at);
         $this->assertTrue($user->hasRole('Super Admin'));
+        $this->assertCount(0, $superAdminRole->permissions);
     }
 
     public function test_it_fails_when_email_is_invalid(): void
@@ -92,5 +101,22 @@ class AdminCreateSuperUserCommandTest extends TestCase
         ])
             ->expectsOutputToContain('The --email option must be a valid email address.')
             ->assertFailed();
+    }
+
+    public function test_it_clears_existing_explicit_permissions_from_the_super_admin_role(): void
+    {
+        $superAdminRole = AdminRole::syncPermissionsAndSuperAdminRole();
+
+        AdminPermission::findOrCreate('dashboard.read', 'web');
+        AdminPermission::findOrCreate('admin-user.read', 'web');
+        $superAdminRole->syncPermissions(['dashboard.read', 'admin-user.read']);
+
+        $this->artisan('admin:create-super-user', [
+            '--name' => 'Console Admin',
+            '--email' => 'console-admin@example.com',
+            '--password' => 'password',
+        ])->assertSuccessful();
+
+        $this->assertCount(0, $superAdminRole->fresh()->permissions);
     }
 }

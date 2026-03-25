@@ -57,9 +57,9 @@ class AdminRole extends SpatieRole
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // 受保护角色必须始终和当前权限面保持一致。
+        // 受保护角色本身不保存显式权限，授权完全走 Gate::before。
         $superAdmin = self::findOrCreate(PermissionRegistry::SUPER_ADMIN_ROLE, 'web');
-        $superAdmin->syncPermissions($permissionNames);
+        $superAdmin->syncPermissions([]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
@@ -110,10 +110,10 @@ class AdminRole extends SpatieRole
                 'name' => $this->protectedFlag() ? $this->name : ($attributes['name'] ?? $this->name),
             ]);
 
-            // 受保护角色永远拥有控制器发现出来的完整权限集。
+            // 受保护角色不持久化显式权限，避免和 Gate::before 的超级授权语义冲突。
             $this->syncPermissions(
                 $this->protectedFlag()
-                    ? PermissionRegistry::permissionNames()
+                    ? []
                     : $permissions,
             );
 

@@ -84,6 +84,20 @@ class CsvExportTest extends TestCase
         $this->assertStringContainsString('仪表盘 · 读取', $rows[1][4]);
     }
 
+    public function test_admin_roles_export_shows_empty_permissions_for_super_admin_role(): void
+    {
+        $user = $this->createSuperAdmin();
+
+        $response = $this->actingAs($user)
+            ->get('/admin/admin-roles/export');
+
+        $rows = $this->csvRows($response);
+
+        $this->assertSame('Super Admin', $rows[1][1]);
+        $this->assertSame('0', $rows[1][2]);
+        $this->assertSame('', $rows[1][4]);
+    }
+
     public function test_mqtt_accounts_export_does_not_include_sensitive_fields(): void
     {
         $user = $this->createUserWithPermissions(['mqtt-account.read']);
