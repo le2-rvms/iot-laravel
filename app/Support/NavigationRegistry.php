@@ -65,6 +65,15 @@ class NavigationRegistry
                         'show_in_dashboard' => true,
                     ],
                     [
+                        'title' => '设备产品',
+                        'description' => '维护设备产品标识、名称与协议分类信息。',
+                        'dashboard_description' => '维护设备产品标识、名称与协议分类信息。',
+                        'href' => '/admin/device-products',
+                        'icon' => 'Package',
+                        'permission' => 'device-product.read',
+                        'show_in_dashboard' => true,
+                    ],
+                    [
                         'title' => '应用配置',
                         'description' => '维护应用层的可配置键值、打码策略与备注说明。',
                         'dashboard_description' => '维护应用层的可配置键值、打码策略与备注说明。',

@@ -8,6 +8,7 @@ return [
         'password' => 'Account Password',
         'admin-role' => 'Admin Roles',
         'audit' => 'Audit Logs',
+        'device-product' => 'Device Products',
         'settings-application-config' => 'Application Settings',
         'settings-precognition' => 'Precognition Form Lab',
         'settings-system-config' => 'System Settings',

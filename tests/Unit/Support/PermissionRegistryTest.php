@@ -4,6 +4,7 @@ namespace Tests\Unit\Support;
 
 use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
 use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\DeviceProducts\DeviceProductController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\MqttAccounts\MqttAccountController;
 use App\Http\Controllers\Web\Admin\Settings\SettingsPrecognitionController;
@@ -23,13 +24,14 @@ class PermissionRegistryTest extends TestCase
         $this->assertSame('账户密码', $groups['password']['label']);
         $this->assertSame('管理员用户', $groups['admin-user']['label']);
         $this->assertSame('审计日志', $groups['audit']['label']);
+        $this->assertSame('设备产品', $groups['device-product']['label']);
         $this->assertSame('MQTT账号管理', $groups['mqtt-account']['label']);
         $this->assertSame('应用配置', $groups['settings-application-config']['label']);
         $this->assertSame('系统配置', $groups['settings-system-config']['label']);
         $this->assertSame('复杂表单实验室', $groups['settings-vee-validate']['label']);
         $this->assertSame('Precognition 表单实验室', $groups['settings-precognition']['label']);
         $this->assertEqualsCanonicalizing(
-            ['dashboard.read', 'audit.read', 'mqtt-account.read', 'mqtt-account.write', 'password.write', 'admin-role.read', 'admin-role.write', 'settings-application-config.read', 'settings-application-config.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-system-config.read', 'settings-system-config.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'admin-user.read', 'admin-user.write'],
+            ['dashboard.read', 'audit.read', 'device-product.read', 'device-product.write', 'mqtt-account.read', 'mqtt-account.write', 'password.write', 'admin-role.read', 'admin-role.write', 'settings-application-config.read', 'settings-application-config.write', 'settings-precognition.read', 'settings-precognition.write', 'settings-system-config.read', 'settings-system-config.write', 'settings-vee-validate.read', 'settings-vee-validate.write', 'admin-user.read', 'admin-user.write'],
             PermissionRegistry::permissionNames(),
         );
     }
@@ -77,6 +79,7 @@ class PermissionRegistryTest extends TestCase
     {
         $this->assertSame('dashboard.read', PermissionRegistry::permissionForControllerAction(DashboardController::class, '__invoke'));
         $this->assertSame('audit.read', PermissionRegistry::permissionForControllerAction(AuditController::class, 'index'));
+        $this->assertSame('device-product.read', PermissionRegistry::permissionForControllerAction(DeviceProductController::class, 'index'));
         $this->assertSame('mqtt-account.write', PermissionRegistry::permissionForControllerAction(MqttAccountController::class, 'store'));
         $this->assertSame('admin-user.read', PermissionRegistry::permissionForControllerAction(AdminUserController::class, 'index'));
         $this->assertSame('settings-vee-validate.write', PermissionRegistry::permissionForControllerAction(SettingsVeeValidateController::class, 'store'));

@@ -168,6 +168,8 @@ return [
         'manufacturer' => 'Manufacturer',
         'protocol' => 'Protocol',
         'category' => 'Category',
+        'devices_count' => 'Devices Count',
+        'groups_count' => 'Groups Count',
         'created_at' => 'Created At',
         'updated_at' => 'Updated At',
     ],

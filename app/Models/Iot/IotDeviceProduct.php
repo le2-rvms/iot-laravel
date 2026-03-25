@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property null|string $category
  * @property null|string $created_at
  * @property null|string $updated_at
+ * @property int $devices_count
+ * @property int $groups_count
  */
 class IotDeviceProduct extends Model
 {
@@ -36,6 +38,7 @@ class IotDeviceProduct extends Model
     public static function indexQuery(array $queryParameters): Builder
     {
         $query = self::query()
+            ->withCount(['devices', 'groups'])
             ->latest('product_id');
 
         (new ListQueryFilters(
@@ -72,6 +75,11 @@ class IotDeviceProduct extends Model
     public function devices(): HasMany
     {
         return $this->hasMany(IotDevice::class, 'product_key', 'product_key');
+    }
+
+    public function groups(): HasMany
+    {
+        return $this->hasMany(IotDeviceGroup::class, 'product_key', 'product_key');
     }
 
     protected function casts(): array

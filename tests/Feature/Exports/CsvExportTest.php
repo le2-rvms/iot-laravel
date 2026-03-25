@@ -84,6 +84,70 @@ class CsvExportTest extends TestCase
         $this->assertStringContainsString('仪表盘 · 读取', $rows[1][4]);
     }
 
+    public function test_device_products_export_uses_current_filters_and_downloads_counts(): void
+    {
+        \Illuminate\Support\Facades\Schema::create('device_products', function ($table): void {
+            $table->increments('product_id');
+            $table->string('product_key', 64)->unique();
+            $table->string('product_name', 255);
+            $table->text('description')->nullable();
+            $table->string('manufacturer', 255)->nullable();
+            $table->string('protocol', 64)->nullable();
+            $table->string('category', 64)->nullable();
+            $table->timestamps();
+        });
+        \Illuminate\Support\Facades\Schema::create('devices', function ($table): void {
+            $table->string('terminal_id')->primary();
+            $table->integer('dev_id')->nullable();
+            $table->string('dev_name')->nullable();
+            $table->string('company_id')->nullable();
+            $table->string('product_key')->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+        \Illuminate\Support\Facades\Schema::create('device_groups', function ($table): void {
+            $table->increments('group_id');
+            $table->string('group_name');
+            $table->string('product_key');
+            $table->timestamps();
+        });
+        config()->set('app.company_id', 'company-1');
+
+        $user = $this->createUserWithPermissions(['device-product.read']);
+
+        $product = \App\Models\Iot\IotDeviceProduct::query()->create([
+            'product_key' => 'PK-EXPORT',
+            'product_name' => 'Export Product',
+            'manufacturer' => 'RVMS',
+            'protocol' => 'JT808',
+            'category' => 'tracker',
+        ]);
+        \DB::table('devices')->insert([
+            'terminal_id' => 'terminal-export',
+            'dev_id' => 10,
+            'dev_name' => 'Export Device',
+            'company_id' => 'company-1',
+            'product_key' => 'PK-EXPORT',
+            'created_at' => now(),
+        ]);
+        \DB::table('device_groups')->insert([
+            'group_name' => 'Export Group',
+            'product_key' => 'PK-EXPORT',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get('/admin/device-products/export?search__func=export');
+
+        $rows = $this->csvRows($response);
+
+        $this->assertSame(['产品ID', '产品标识', '产品名称', '厂商', '协议', '分类', '关联设备数', '关联分组数', '创建时间'], $rows[0]);
+        $this->assertSame((string) $product->product_id, $rows[1][0]);
+        $this->assertSame('PK-EXPORT', $rows[1][1]);
+        $this->assertSame('1', $rows[1][6]);
+        $this->assertSame('1', $rows[1][7]);
+    }
+
     public function test_admin_roles_export_shows_empty_permissions_for_super_admin_role(): void
     {
         $user = $this->createSuperAdmin();
@@ -215,6 +279,7 @@ class CsvExportTest extends TestCase
     {
         $this->assertContains('admin-user.read', PermissionRegistry::permissionNames());
         $this->assertContains('admin-role.read', PermissionRegistry::permissionNames());
+        $this->assertContains('device-product.read', PermissionRegistry::permissionNames());
         $this->assertContains('mqtt-account.read', PermissionRegistry::permissionNames());
         $this->assertContains('settings-application-config.read', PermissionRegistry::permissionNames());
         $this->assertContains('settings-system-config.read', PermissionRegistry::permissionNames());

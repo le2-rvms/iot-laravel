@@ -170,6 +170,8 @@ return [
         'manufacturer' => '厂商',
         'protocol' => '协议',
         'category' => '分类',
+        'devices_count' => '关联设备数',
+        'groups_count' => '关联分组数',
         'created_at' => '创建时间',
         'updated_at' => '更新时间',
     ],

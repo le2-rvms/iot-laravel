@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\Account\PasswordController as AccountPassword
 use App\Http\Controllers\Web\Admin\Admin\AdminRoleController;
 use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
 use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\DeviceProducts\DeviceProductController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\MqttAccounts\MqttAccountController;
 use App\Http\Controllers\Web\Admin\Settings\SettingsApplicationConfigController;
@@ -47,6 +48,11 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
     Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export']);
     Route::resource('mqtt-accounts', MqttAccountController::class)
+        ->except(['show']);
+
+    Route::get('device-products/export', [DeviceProductController::class, 'export']);
+    Route::resource('device-products', DeviceProductController::class)
+        ->parameters(['device-products' => 'deviceProduct'])
         ->except(['show']);
 
     Route::get('settings/application-configs/export', [SettingsApplicationConfigController::class, 'export']);

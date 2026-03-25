@@ -90,13 +90,6 @@ class IotDevice extends Model
         return $this->belongsTo(IotDeviceProduct::class, 'product_key', 'product_key');
     }
 
-    protected static function booted(): void
-    {
-        static::addGlobalScope('company_id', function (Builder $builder) {
-            $builder->where('company_id', config('app.company_id'));
-        });
-    }
-
     protected function casts(): array
     {
         return [

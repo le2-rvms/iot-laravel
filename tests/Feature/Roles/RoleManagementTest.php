@@ -81,9 +81,10 @@ class RoleManagementTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRole/Create')
-                ->has('permissionGroups', 10)
+                ->has('permissionGroups', 11)
                 ->where('permissionGroups', function ($groups): bool {
                     $auditGroup = collect($groups)->firstWhere('module', 'audit');
+                    $deviceProductGroup = collect($groups)->firstWhere('module', 'device-product');
                     $passwordGroup = collect($groups)->firstWhere('module', 'password');
                     $mqttAccountGroup = collect($groups)->firstWhere('module', 'mqtt-account');
                     $applicationGroup = collect($groups)->firstWhere('module', 'settings-application-config');
@@ -93,6 +94,7 @@ class RoleManagementTest extends TestCase
 
                     return $passwordGroup !== null
                         && $auditGroup !== null
+                        && $deviceProductGroup !== null
                         && $mqttAccountGroup !== null
                         && $applicationGroup !== null
                         && $systemGroup !== null
@@ -100,6 +102,9 @@ class RoleManagementTest extends TestCase
                         && $precognitionGroup !== null
                         && $auditGroup['label'] === '审计日志'
                         && $auditGroup['permissions'][0]['name'] === 'audit.read'
+                        && $deviceProductGroup['label'] === '设备产品'
+                        && $deviceProductGroup['permissions'][0]['name'] === 'device-product.read'
+                        && $deviceProductGroup['permissions'][1]['name'] === 'device-product.write'
                         && $passwordGroup['label'] === '账户密码'
                         && $passwordGroup['permissions'][0]['name'] === 'password.write'
                         && $mqttAccountGroup['label'] === 'MQTT账号管理'
