@@ -27,6 +27,21 @@ export function setZiggyConfig(config) {
     return globalThis.Ziggy;
 }
 
+export function updateZiggyLocation(location) {
+    if (!globalThis.Ziggy) {
+        return null;
+    }
+
+    const baseUrl = globalThis.Ziggy.url ?? window.location.origin;
+
+    globalThis.Ziggy = {
+        ...globalThis.Ziggy,
+        location: location instanceof URL ? location : new URL(location, baseUrl),
+    };
+
+    return globalThis.Ziggy;
+}
+
 export function route(name, params = {}, absolute = false) {
     return ziggyRoute(name, params, absolute, globalThis.Ziggy);
 }

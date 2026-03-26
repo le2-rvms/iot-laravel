@@ -36,7 +36,7 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="账号列表" description="支持按账号名、客户端标识或设备信息查找。">
+            <AppPageToolbar title="账号列表">
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a :href="exportHref">导出 CSV</a>

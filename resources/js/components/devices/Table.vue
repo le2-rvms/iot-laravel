@@ -51,7 +51,7 @@ function confirmDelete(device) {
                 <UiTableHead>审核状态</UiTableHead>
                 <UiTableHead>城市关联ID</UiTableHead>
                 <UiTableHead class="w-[16%]">创建时间</UiTableHead>
-                <UiTableHead class="w-[260px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[260px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -75,8 +75,8 @@ function confirmDelete(device) {
                 <UiTableCell class="app-copy-muted">{{ device.review_status || '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ device.city_relation_id ?? '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ device.created_at?.slice(0, 16).replace('T', ' ') || '-' }}</UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canMonitor || canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canMonitor || canWrite" class="flex justify-center gap-2">
                         <UiButton v-if="canMonitor" as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="monitorHref(device)" class="inline-flex items-center gap-2">
                                 <ScanSearch class="size-4" />

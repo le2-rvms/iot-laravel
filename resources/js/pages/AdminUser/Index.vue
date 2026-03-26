@@ -33,7 +33,7 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="管理员用户列表" description="支持按姓名或邮箱筛选，并可继续新增用户。">
+            <AppPageToolbar title="管理员用户列表">
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a :href="exportHref">导出 CSV</a>

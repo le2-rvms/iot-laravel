@@ -46,10 +46,7 @@ const hasFilters = computed(() => {
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar
-                title="审计日志"
-                description="支持按操作者、事件类型和资源类型筛选后台写操作记录。"
-            >
+            <AppPageToolbar title="审计日志">
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a :href="exportHref">导出 CSV</a>

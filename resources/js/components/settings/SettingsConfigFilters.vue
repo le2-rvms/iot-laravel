@@ -35,10 +35,10 @@ function submit() {
 
 <template>
     <div
-        class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4"
+        class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-3"
     >
         <form
-            class="flex flex-col gap-3 lg:flex-row lg:items-center"
+            class="flex flex-col gap-2 lg:flex-row lg:items-center"
             @submit.prevent="submit"
         >
             <div class="relative flex-1">
@@ -47,13 +47,13 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-11 rounded-2xl pl-10"
+                    class="h-10 rounded-xl pl-10"
                     placeholder="按配置键或备注搜索"
                 />
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <UiButton type="submit" class="rounded-xl">搜索</UiButton>
+                <UiButton type="submit" size="sm" class="rounded-lg">搜索</UiButton>
             </div>
         </form>
     </div>

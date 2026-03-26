@@ -49,7 +49,7 @@ function confirmDelete(account) {
                 <UiTableHead>超级用户</UiTableHead>
                 <UiTableHead>启用状态</UiTableHead>
                 <UiTableHead class="w-[18%]">最近更新</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -78,8 +78,8 @@ function confirmDelete(account) {
                     <div>{{ account.act_updated_at?.slice(0, 16).replace('T', ' ') || '-' }}</div>
                     <div class="text-xs">{{ account.act_updated_by || '系统' }}</div>
                 </UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="route('mqtt-accounts.edit', accountRouteParams(account))" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />

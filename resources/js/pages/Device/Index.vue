@@ -34,7 +34,7 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar title="设备列表" description="支持按终端、产品标识、状态和城市关联信息快速定位设备。">
+            <AppPageToolbar title="设备列表">
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a :href="exportHref">导出 CSV</a>

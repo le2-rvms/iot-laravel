@@ -1,5 +1,4 @@
 <script setup>
-import { watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { Search } from "lucide-vue-next";
 import { useFilterForm } from "@/composables/useFilterForm";
@@ -13,16 +12,6 @@ const props = defineProps({
         }),
     },
 });
-
-console.log("[MqttAccountsFilters] setup run", props.filters);
-
-watch(
-    () => props.filters,
-    (filters) => {
-        console.log("[MqttAccountsFilters] props.filters changed", filters);
-    },
-    { deep: true },
-);
 
 // MQTT 列表的搜索输入和服务端 filters 保持同一份表单结构。
 const form = useFilterForm(() => props.filters);
@@ -45,10 +34,10 @@ function submit() {
 
 <template>
     <div
-        class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4"
+        class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-3"
     >
         <form
-            class="flex flex-col gap-3 lg:flex-row lg:items-center"
+            class="flex flex-col gap-2 lg:flex-row lg:items-center"
             @submit.prevent="submit"
         >
             <div class="relative flex-1">
@@ -57,13 +46,13 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-11 rounded-2xl pl-10"
+                    class="h-10 rounded-xl pl-10"
                     placeholder="按账号名、客户端标识或设备信息搜索"
                 />
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <UiButton type="submit" class="rounded-xl">搜索</UiButton>
+                <UiButton type="submit" size="sm" class="rounded-lg">搜索</UiButton>
             </div>
         </form>
     </div>

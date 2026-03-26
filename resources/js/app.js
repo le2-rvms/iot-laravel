@@ -2,10 +2,10 @@ import '../css/app.css';
 import 'vue-sonner/style.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
-import { setZiggyConfig } from './lib/routes';
+import { setZiggyConfig, updateZiggyLocation } from './lib/routes';
 import { initializeTheme } from './theme';
 
 const appName = window.document.title;
@@ -21,6 +21,10 @@ createInertiaApp({
     resolve: (name) => pages[`./pages/${name}.vue`],
     setup({ el, App, props, plugin }) {
         const ziggy = setZiggyConfig(props.initialPage.props.ziggy);
+
+        router.on('navigate', (event) => {
+            updateZiggyLocation(event.detail.page.url);
+        });
 
         createApp({ render: () => h(App, props) })
             .use(plugin)

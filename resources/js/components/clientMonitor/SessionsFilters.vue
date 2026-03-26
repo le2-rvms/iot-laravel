@@ -28,20 +28,20 @@ function submit() {
 </script>
 
 <template>
-    <div class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4">
-        <form class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))_auto] lg:items-center" @submit.prevent="submit">
+    <div class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-3">
+        <form class="grid gap-2 lg:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))_auto] lg:items-center" @submit.prevent="submit">
             <div class="relative">
                 <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-app-subtle-foreground" />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-11 rounded-2xl pl-10"
+                    class="h-10 rounded-xl pl-10"
                     placeholder="按客户端ID、用户名、事件类型或对端地址搜索"
                 />
             </div>
-            <UiInput v-model="form.last_event_type__eq" class="h-11 rounded-xl" placeholder="最近事件类型" />
-            <UiInput v-model="form.last_protocol__eq" class="h-11 rounded-xl" placeholder="最近协议" />
+            <UiInput v-model="form.last_event_type__eq" class="h-10 rounded-lg" placeholder="最近事件类型" />
+            <UiInput v-model="form.last_protocol__eq" class="h-10 rounded-lg" placeholder="最近协议" />
             <div class="flex items-center gap-2 lg:justify-end">
-                <UiButton type="submit" class="rounded-xl">搜索</UiButton>
+                <UiButton type="submit" size="sm" class="rounded-lg">搜索</UiButton>
             </div>
         </form>
     </div>

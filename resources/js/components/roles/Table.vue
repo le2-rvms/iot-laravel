@@ -45,7 +45,7 @@ function confirmDelete(role) {
                 <UiTableHead>绑定管理员用户</UiTableHead>
                 <UiTableHead>已选权限</UiTableHead>
                 <UiTableHead>创建时间</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -69,8 +69,8 @@ function confirmDelete(role) {
                     </div>
                 </UiTableCell>
                 <UiTableCell>{{ role.created_at?.slice(0, 10) }}</UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="route('admin-roles.edit', role)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />

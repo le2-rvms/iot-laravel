@@ -46,7 +46,7 @@ function confirmDelete(product) {
                 <UiTableHead>关联设备数</UiTableHead>
                 <UiTableHead>关联分组数</UiTableHead>
                 <UiTableHead class="w-[16%]">创建时间</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -65,8 +65,8 @@ function confirmDelete(product) {
                 <UiTableCell>{{ product.devices_count }}</UiTableCell>
                 <UiTableCell>{{ product.groups_count }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ product.created_at?.slice(0, 16).replace('T', ' ') || '-' }}</UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="route('device-products.edit', product)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />

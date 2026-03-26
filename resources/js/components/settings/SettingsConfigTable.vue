@@ -46,7 +46,7 @@ function confirmDelete(config) {
                 <UiTableHead>分类</UiTableHead>
                 <UiTableHead>是否打码</UiTableHead>
                 <UiTableHead class="w-[22%]">备注</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -65,8 +65,8 @@ function confirmDelete(config) {
                     </UiBadge>
                 </UiTableCell>
                 <UiTableCell class="app-copy-muted break-words">{{ config.remark }}</UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="route(resource.edit_route, config)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />

@@ -1,6 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
-import { hrefForRouteTarget, route } from '@/lib/routes';
+import { hrefForRouteTarget } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 defineProps({
@@ -10,10 +10,19 @@ defineProps({
     },
 });
 
-usePage();
+const page = usePage();
 
 function isActive(section) {
-    return route().current(section.routeName);
+    return normalizePath(page.url) === normalizePath(hrefForRouteTarget(section));
+}
+
+function normalizePath(url) {
+    const value = String(url ?? '');
+    const relative = value.startsWith('http')
+        ? new URL(value).pathname
+        : value.split('?')[0];
+
+    return relative.replace(/\/+$/, '') || '/';
 }
 </script>
 

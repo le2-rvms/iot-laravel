@@ -52,12 +52,46 @@ class NavigationAccessTest extends TestCase
                     $links = collect($links);
 
                     return $links->count() === 6
-                        && $links->contains(fn (array $link) => $link['title'] === '客户端监控' && $link['href'] === route('client-monitor.sessions', [], false))
-                        && $links->contains(fn (array $link) => $link['title'] === '设备管理' && $link['href'] === route('devices.index', [], false))
-                        && $links->contains(fn (array $link) => $link['title'] === '设备产品' && $link['href'] === route('device-products.index', [], false))
-                        && $links->contains(fn (array $link) => $link['title'] === '应用配置' && $link['href'] === route('application-configs.index', [], false))
-                        && $links->contains(fn (array $link) => $link['title'] === 'VeeValidate 实验室' && $link['href'] === route('vee-validate.index', [], false))
-                        && $links->contains(fn (array $link) => $link['title'] === 'Precognition 实验室' && $link['href'] === route('precognition.index', [], false));
+                        && $links->contains(fn (array $link) => $link['title'] === '客户端监控' && $link['routeName'] === 'client-monitor.sessions')
+                        && $links->contains(fn (array $link) => $link['title'] === '设备管理' && $link['routeName'] === 'devices.index')
+                        && $links->contains(fn (array $link) => $link['title'] === '设备产品' && $link['routeName'] === 'device-products.index')
+                        && $links->contains(fn (array $link) => $link['title'] === '应用配置' && $link['routeName'] === 'application-configs.index')
+                        && $links->contains(fn (array $link) => $link['title'] === 'VeeValidate 实验室' && $link['routeName'] === 'vee-validate.index')
+                        && $links->contains(fn (array $link) => $link['title'] === 'Precognition 实验室' && $link['routeName'] === 'precognition.index');
                 }));
+    }
+
+    public function test_sidebar_splits_iot_and_system_management_items_into_separate_sections(): void
+    {
+        $user = $this->createUserWithPermissions([
+            'dashboard.read',
+            'device.read',
+            'client-monitor.read',
+            'mqtt-account.read',
+            'device-product.read',
+            'audit.read',
+            'admin-user.read',
+            'settings-system-config.read',
+            'settings-vee-validate.read',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('navigation.sections.0.title', '工作台')
+                ->where('navigation.sections.1.title', 'IoT')
+                ->where('navigation.sections.2.title', '系统管理')
+                ->where('navigation.sections.1.items', fn ($items) => collect($items)->pluck('title')->all() === [
+                    '设备管理',
+                    '客户端监控',
+                    'MQTT账号管理',
+                    '设备产品',
+                ])
+                ->where('navigation.sections.2.items', fn ($items) => collect($items)->pluck('title')->all() === [
+                    '审计日志',
+                    '管理员用户',
+                    '系统配置',
+                ]));
     }
 }

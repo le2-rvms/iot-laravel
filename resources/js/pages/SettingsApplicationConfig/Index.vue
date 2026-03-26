@@ -49,7 +49,7 @@ const breadcrumbs = [
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <AppPageToolbar :title="`${resource.title}列表`" description="可按关键字查找，并直接维护配置项。">
+            <AppPageToolbar :title="`${resource.title}列表`">
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
                         <a :href="exportHref">导出 CSV</a>

@@ -30,9 +30,9 @@ function submit() {
 </script>
 
 <template>
-    <div class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-4">
+    <div class="rounded-t-[1.5rem] border-b border-app-panel-border/80 px-5 py-3">
         <form
-            class="grid gap-3 lg:grid-cols-5 xl:grid-cols-[minmax(0,2.4fr)_repeat(4,minmax(0,1fr))_auto] xl:items-center"
+            class="grid gap-2 lg:grid-cols-5 xl:grid-cols-[minmax(0,2.4fr)_repeat(4,minmax(0,1fr))_auto] xl:items-center"
             @submit.prevent="submit"
         >
             <div class="relative lg:col-span-5 xl:col-span-1 xl:min-w-0">
@@ -41,18 +41,18 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-11 rounded-2xl pl-10"
+                    class="h-10 rounded-xl pl-10"
                     placeholder="按终端ID、设备名称、产品标识或SIM号搜索"
                 />
             </div>
 
-            <UiInput v-model="form.product_key__eq" class="h-11 rounded-xl" placeholder="产品标识" />
-            <UiInput v-model="form.device_status__eq" class="h-11 rounded-xl" placeholder="设备状态" />
-            <UiInput v-model="form.review_status__eq" class="h-11 rounded-xl" placeholder="审核状态" />
-            <UiInput v-model="form.city_relation_id__eq" class="h-11 rounded-xl" placeholder="城市关联ID" />
+            <UiInput v-model="form.product_key__eq" class="h-10 rounded-lg" placeholder="产品标识" />
+            <UiInput v-model="form.device_status__eq" class="h-10 rounded-lg" placeholder="设备状态" />
+            <UiInput v-model="form.review_status__eq" class="h-10 rounded-lg" placeholder="审核状态" />
+            <UiInput v-model="form.city_relation_id__eq" class="h-10 rounded-lg" placeholder="城市关联ID" />
 
             <div class="flex items-center gap-2 lg:justify-end">
-                <UiButton type="submit" class="rounded-xl">搜索</UiButton>
+                <UiButton type="submit" size="sm" class="rounded-lg">搜索</UiButton>
             </div>
         </form>
     </div>

@@ -43,7 +43,7 @@ function confirmDelete(user) {
                 <UiTableHead>管理员角色</UiTableHead>
                 <UiTableHead class="w-[18%]">验证状态</UiTableHead>
                 <UiTableHead class="w-[20%]">创建时间</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -76,8 +76,8 @@ function confirmDelete(user) {
                 <UiTableCell class="app-copy-muted">
                     {{ user.created_at?.slice(0, 10) }}
                 </UiTableCell>
-                <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
+                <UiTableCell class="text-center">
+                    <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="route('admin-users.edit', user)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />

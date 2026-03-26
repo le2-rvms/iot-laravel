@@ -15,22 +15,29 @@ class NavigationRegistryTest extends TestCase
         $user = $this->createSuperAdmin();
 
         $sections = NavigationRegistry::sidebarFor($user);
-        $systemManagement = $sections[1]['items'];
-        $clientMonitor = collect($systemManagement)->firstWhere('title', '客户端监控');
+        $iot = $sections[1]['items'];
+        $systemManagement = $sections[2]['items'];
+        $clientMonitor = collect($iot)->firstWhere('title', '客户端监控');
 
-        $this->assertCount(2, $sections);
+        $this->assertCount(3, $sections);
         $this->assertSame('工作台', $sections[0]['title']);
         $this->assertSame(route('dashboard', [], false), $sections[0]['items'][0]['href']);
-        $this->assertSame('系统管理', $sections[1]['title']);
+        $this->assertSame('IoT', $sections[1]['title']);
+        $this->assertSame('系统管理', $sections[2]['title']);
         $this->assertSame(
             [
+                route('devices.index', [], false),
+                route('client-monitor.sessions', [], false),
+                route('mqtt-accounts.index', [], false),
+                route('device-products.index', [], false),
+            ],
+            array_column($iot, 'href'),
+        );
+        $this->assertSame(
+            [
+                route('audits.index', [], false),
                 route('admin-users.index', [], false),
                 route('admin-roles.index', [], false),
-                route('audits.index', [], false),
-                route('mqtt-accounts.index', [], false),
-                route('client-monitor.sessions', [], false),
-                route('devices.index', [], false),
-                route('device-products.index', [], false),
                 route('application-configs.index', [], false),
                 route('system-configs.index', [], false),
             ],
@@ -74,16 +81,10 @@ class NavigationRegistryTest extends TestCase
 
         $this->assertSame([
             [
-                'title' => '管理员用户',
-                'description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
-                'href' => route('admin-users.index', [], false),
-                'routeName' => 'admin-users.index',
-            ],
-            [
-                'title' => 'MQTT账号管理',
-                'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
-                'href' => route('mqtt-accounts.index', [], false),
-                'routeName' => 'mqtt-accounts.index',
+                'title' => '设备管理',
+                'description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
+                'href' => route('devices.index', [], false),
+                'routeName' => 'devices.index',
             ],
             [
                 'title' => '客户端监控',
@@ -92,16 +93,22 @@ class NavigationRegistryTest extends TestCase
                 'routeName' => 'client-monitor.sessions',
             ],
             [
-                'title' => '设备管理',
-                'description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
-                'href' => route('devices.index', [], false),
-                'routeName' => 'devices.index',
+                'title' => 'MQTT账号管理',
+                'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
+                'href' => route('mqtt-accounts.index', [], false),
+                'routeName' => 'mqtt-accounts.index',
             ],
             [
                 'title' => '设备产品',
                 'description' => '维护设备产品标识、名称与协议分类信息。',
                 'href' => route('device-products.index', [], false),
                 'routeName' => 'device-products.index',
+            ],
+            [
+                'title' => '管理员用户',
+                'description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
+                'href' => route('admin-users.index', [], false),
+                'routeName' => 'admin-users.index',
             ],
             [
                 'title' => '系统配置',
@@ -144,10 +151,20 @@ class NavigationRegistryTest extends TestCase
         $user = $this->createUserWithPermissions(['client-monitor.read']);
 
         $sections = NavigationRegistry::sidebarFor($user);
-        $systemManagement = collect($sections)->firstWhere('title', '系统管理');
-        $clientMonitor = collect($systemManagement['items'])->firstWhere('title', '客户端监控');
+        $iot = collect($sections)->firstWhere('title', 'IoT');
+        $clientMonitor = collect($iot['items'])->firstWhere('title', '客户端监控');
 
         $this->assertNotNull($clientMonitor);
         $this->assertSame(route('client-monitor.sessions', [], false), $clientMonitor['href']);
+    }
+
+    public function test_experiment_links_are_not_visible_in_sidebar_even_when_permitted(): void
+    {
+        $user = $this->createUserWithPermissions(['settings-vee-validate.read', 'settings-precognition.read']);
+
+        $sections = NavigationRegistry::sidebarFor($user);
+        $systemManagement = collect($sections)->firstWhere('title', '系统管理') ?? ['items' => []];
+
+        $this->assertSame([], $systemManagement['items']);
     }
 }
