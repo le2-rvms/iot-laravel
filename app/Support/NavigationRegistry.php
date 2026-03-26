@@ -70,7 +70,7 @@ class NavigationRegistry
                         'description' => '查看客户端在线会话、鉴权结果、命令事件和连接事件。',
                         'dashboard_description' => '查看客户端在线会话、鉴权结果、命令事件和连接事件。',
                         'href' => action([ClientMonitorController::class, 'sessions'], [], false),
-                        'show_in_dashboard' => false,
+                        'show_in_dashboard' => true,
                         'icon' => 'ScanSearch',
                         'permission' => 'client-monitor.read',
                     ],

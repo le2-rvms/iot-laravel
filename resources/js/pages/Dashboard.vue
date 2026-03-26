@@ -1,8 +1,20 @@
 <script setup>
-import { Deferred, Head, Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({
-    stats: {
+const props = defineProps({
+    hero: {
+        type: Object,
+        required: true,
+    },
+    kpis: {
+        type: Array,
+        default: () => [],
+    },
+    alertFeeds: {
+        type: Object,
+        required: true,
+    },
+    snapshots: {
         type: Object,
         required: true,
     },
@@ -10,19 +22,19 @@ defineProps({
         type: Array,
         default: () => [],
     },
-    recentUsers: {
-        type: Array,
-        default: undefined,
-    },
-    systemCards: {
-        type: Array,
-        default: undefined,
-    },
 });
 
 const breadcrumbs = [
     { label: '仪表盘' },
 ];
+
+function formatDateTime(value) {
+    if (!value) {
+        return '-';
+    }
+
+    return String(value).replace('T', ' ').slice(0, 16);
+}
 </script>
 
 <template>
@@ -30,110 +42,180 @@ const breadcrumbs = [
 
     <AppLayout
         title="仪表盘"
-        description="查看系统概览、常用入口和最近新增的账号。"
+        description="查看设备、客户端监控、GPS 与异常摘要的运维总览。"
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <section class="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-                <UiCard class="rounded-[1.5rem] border border-app-panel-border bg-app-panel text-app-panel-foreground shadow-sm">
-                    <UiCardHeader>
-                        <UiCardDescription class="text-app-subtle-foreground">欢迎回来</UiCardDescription>
-                        <UiCardTitle class="text-3xl tracking-tight">
-                            {{ $page.props.auth.user?.name }}
-                        </UiCardTitle>
-                    </UiCardHeader>
-                    <UiCardContent class="grid gap-6 lg:grid-cols-[200px_1fr]">
-                        <div class="rounded-xl border border-app-subtle-border bg-app-subtle/70 p-5">
-                            <p class="text-sm text-app-subtle-foreground">当前管理员用户总数</p>
-                            <p class="mt-3 text-4xl font-semibold">{{ stats.usersCount }}</p>
+            <UiCard class="overflow-hidden rounded-[1.75rem] border border-app-panel-border/80 bg-app-panel shadow-sm">
+                <UiCardContent class="p-0">
+                    <section class="grid gap-6 bg-[linear-gradient(135deg,rgba(15,23,42,0.04),rgba(14,165,233,0.12))] px-6 py-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
+                        <div class="space-y-5">
+                            <div class="space-y-2">
+                                <p class="text-xs font-semibold uppercase tracking-[0.28em] text-app-subtle-foreground">
+                                    IoT 运维驾驶舱
+                                </p>
+                                <h1 class="text-3xl font-semibold tracking-tight text-app-panel-foreground lg:text-4xl">
+                                    欢迎回来，{{ hero.userName || $page.props.auth.user?.name }}
+                                </h1>
+                                <p class="max-w-2xl text-sm leading-7 text-app-subtle-foreground">
+                                    首屏聚合设备、在线会话、GPS 与异常摘要，便于快速识别当前系统态势并跳转处理。
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3">
+                                <UiButton
+                                    v-for="(action, index) in hero.primaryActions"
+                                    :key="action.href"
+                                    as-child
+                                    :variant="index === 0 ? 'default' : 'outline'"
+                                    class="rounded-xl"
+                                >
+                                    <Link :href="action.href">{{ action.label }}</Link>
+                                </UiButton>
+                            </div>
                         </div>
-                        <div class="grid gap-3">
-                            <UiCard
-                                v-for="link in quickLinks"
-                                :key="link.href"
-                                class="rounded-xl border border-app-subtle-border bg-app-subtle/70 text-app-panel-foreground shadow-none"
+
+                        <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+                            <div
+                                v-for="item in hero.summary"
+                                :key="item.label"
+                                class="rounded-2xl border border-app-panel-border/70 bg-app-panel/75 px-4 py-4 backdrop-blur"
                             >
-                                <UiCardContent class="flex items-center justify-between gap-4 p-5">
-                                    <div>
-                                        <p class="font-medium">{{ link.title }}</p>
-                                        <p class="mt-1 text-sm text-app-subtle-foreground">{{ link.description }}</p>
+                                <div class="text-xs font-semibold uppercase tracking-[0.18em] text-app-subtle-foreground">
+                                    {{ item.label }}
+                                </div>
+                                <div class="mt-3 flex items-end gap-3">
+                                    <div class="text-3xl font-semibold tracking-tight text-app-panel-foreground">
+                                        {{ item.value }}
                                     </div>
-                                    <UiButton as-child class="rounded-xl">
-                                        <Link :href="link.href">进入</Link>
-                                    </UiButton>
-                                </UiCardContent>
-                            </UiCard>
+                                    <UiBadge :variant="item.tone" class="mb-1">
+                                        {{ item.label }}
+                                    </UiBadge>
+                                </div>
+                            </div>
                         </div>
-                    </UiCardContent>
-                </UiCard>
+                    </section>
+                </UiCardContent>
+            </UiCard>
 
-                <Deferred data="systemCards">
-                    <template #fallback>
-                        <AppLoadingState :rows="2" />
-                    </template>
-
-                    <div class="grid gap-4">
-                        <UiCard
-                            v-for="card in systemCards"
-                            :key="card.title"
-                            class="rounded-[1.5rem] border-app-panel-border bg-app-panel shadow-sm"
-                        >
-                            <UiCardHeader>
-                                <UiCardDescription>{{ card.status }}</UiCardDescription>
-                                <UiCardTitle>{{ card.title }}</UiCardTitle>
-                            </UiCardHeader>
-                            <UiCardContent class="text-sm leading-6 text-app-subtle-foreground">
-                                {{ card.description }}
-                            </UiCardContent>
-                        </UiCard>
-                    </div>
-                </Deferred>
+            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <DashboardKpiCard
+                    v-for="item in kpis"
+                    :key="item.key"
+                    :item="item"
+                />
             </section>
 
-            <section>
-                <Deferred data="recentUsers">
-                    <template #fallback>
-                        <AppLoadingState :rows="4" />
-                    </template>
-
-                    <AppDataTableShell v-if="recentUsers?.length">
-                        <div class="border-b border-app-panel-border/80 px-5 py-5">
-                            <h2 class="text-lg font-semibold text-app-panel-foreground">最近创建的管理员用户</h2>
-                            <p class="mt-1 text-sm text-app-subtle-foreground">这里显示最近创建的后台账号记录。</p>
+            <section class="grid gap-6 xl:grid-cols-2">
+                <DashboardFeedList
+                    title="GPS 告警"
+                    description="优先关注最近触发的 GPS 告警记录。"
+                    :items="alertFeeds.gpsAlarms"
+                    empty-title="当前没有 GPS 告警"
+                    empty-description="暂无 GPS 告警记录时，这里会保持清爽空态。"
+                >
+                    <template #item="{ item }">
+                        <div class="flex items-start justify-between gap-4 px-5 py-4">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <p class="font-medium text-app-panel-foreground">{{ item.alarm_type }}</p>
+                                    <UiBadge variant="destructive">{{ item.terminal_id }}</UiBadge>
+                                </div>
+                                <p class="text-sm leading-6 text-app-subtle-foreground">
+                                    {{ item.description || '未填写告警描述。' }}
+                                </p>
+                            </div>
+                            <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
+                                <div>{{ formatDateTime(item.gps_time) }}</div>
+                                <div class="mt-1">记录于 {{ formatDateTime(item.created_at) }}</div>
+                            </div>
                         </div>
-                        <UiTable>
-                            <UiTableHeader>
-                                <UiTableRow>
-                                    <UiTableHead>姓名</UiTableHead>
-                                    <UiTableHead>邮箱</UiTableHead>
-                                    <UiTableHead>验证状态</UiTableHead>
-                                    <UiTableHead>创建时间</UiTableHead>
-                                </UiTableRow>
-                            </UiTableHeader>
-                            <UiTableBody>
-                                <UiTableRow v-for="user in recentUsers" :key="user.id">
-                                    <UiTableCell class="font-medium">{{ user.name }}</UiTableCell>
-                                    <UiTableCell>{{ user.email }}</UiTableCell>
-                                    <UiTableCell>
-                                        <UiBadge :variant="user.verified ? 'default' : 'secondary'">
-                                            {{ user.verified ? '已验证' : '待验证' }}
-                                        </UiBadge>
-                                    </UiTableCell>
-                                    <UiTableCell>{{ user.created_at?.replace('T', ' ').slice(0, 16) }}</UiTableCell>
-                                </UiTableRow>
-                            </UiTableBody>
-                        </UiTable>
-                    </AppDataTableShell>
+                    </template>
+                </DashboardFeedList>
 
-                    <AppEmptyState
-                        v-else
-                        title="暂无管理员用户数据"
-                        description="创建第一个后台管理员用户后，这里会显示最近的入库记录。"
-                        action-label="前往管理员用户"
-                        action-href="/admin/admin-users"
-                    />
-                </Deferred>
+                <DashboardFeedList
+                    title="GPS 命令"
+                    description="展示最近变更状态的 GPS 指令记录。"
+                    :items="alertFeeds.gpsCommands"
+                    empty-title="当前没有 GPS 命令"
+                    empty-description="产生 GPS 指令后，会在这里显示最新执行状态。"
+                >
+                    <template #item="{ item }">
+                        <div class="flex items-start justify-between gap-4 px-5 py-4">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <p class="font-medium text-app-panel-foreground">{{ item.cmd_type }}</p>
+                                    <UiBadge variant="outline">{{ item.status || '未填写状态' }}</UiBadge>
+                                </div>
+                                <p class="text-sm leading-6 text-app-subtle-foreground">
+                                    终端 {{ item.terminal_id || '-' }}
+                                    <span v-if="item.device_name"> · {{ item.device_name }}</span>
+                                </p>
+                            </div>
+                            <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
+                                <div>#{{ item.id }}</div>
+                                <div class="mt-1">{{ formatDateTime(item.updated_at || item.created_at) }}</div>
+                            </div>
+                        </div>
+                    </template>
+                </DashboardFeedList>
             </section>
+
+            <section class="grid gap-6 xl:grid-cols-2">
+                <DashboardFeedList
+                    title="在线会话快照"
+                    description="最近活跃的客户端会话摘要。"
+                    :items="snapshots.sessions"
+                    empty-title="当前没有在线会话"
+                    empty-description="客户端建立会话后，这里会出现最新活动。"
+                >
+                    <template #item="{ item }">
+                        <div class="flex items-start justify-between gap-4 px-5 py-4">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <p class="font-medium text-app-panel-foreground">{{ item.client_id }}</p>
+                                    <UiBadge variant="secondary">{{ item.last_event_type || '未填写事件' }}</UiBadge>
+                                </div>
+                                <p class="text-sm leading-6 text-app-subtle-foreground">
+                                    {{ item.username || '未填写用户名' }} · {{ item.last_protocol || '未填写协议' }}
+                                </p>
+                            </div>
+                            <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
+                                {{ formatDateTime(item.last_event_ts) }}
+                            </div>
+                        </div>
+                    </template>
+                </DashboardFeedList>
+
+                <DashboardFeedList
+                    title="定位快照"
+                    description="最近更新的终端定位记录。"
+                    :items="snapshots.positions"
+                    empty-title="当前没有定位快照"
+                    empty-description="终端上报定位后，这里会显示最新快照。"
+                >
+                    <template #item="{ item }">
+                        <div class="flex items-start justify-between gap-4 px-5 py-4">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <p class="font-medium text-app-panel-foreground">{{ item.terminal_id }}</p>
+                                    <UiBadge variant="outline">状态 {{ item.status ?? '-' }}</UiBadge>
+                                    <UiBadge variant="secondary">告警 {{ item.alarm ?? '-' }}</UiBadge>
+                                </div>
+                                <p class="text-sm leading-6 text-app-subtle-foreground">
+                                    <span v-if="item.device_name">{{ item.device_name }} · </span>
+                                    速度 {{ item.speed ?? '未填写' }} · 定位 {{ formatDateTime(item.gps_time) }}
+                                </p>
+                            </div>
+                            <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
+                                {{ formatDateTime(item.updated_at) }}
+                            </div>
+                        </div>
+                    </template>
+                </DashboardFeedList>
+            </section>
+
+            <DashboardQuickLinksGrid :links="quickLinks" />
         </div>
     </AppLayout>
 </template>
