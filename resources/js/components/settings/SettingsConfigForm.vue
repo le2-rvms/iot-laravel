@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     mode: {
@@ -19,7 +20,9 @@ const props = defineProps({
 
 const isEdit = computed(() => props.mode === 'edit');
 const submitMethod = isEdit.value ? 'put' : 'post';
-const submitHref = isEdit.value ? `${props.resource.index_href}/${props.config.id}` : props.resource.index_href;
+const submitHref = isEdit.value
+    ? route(props.resource.update_route, props.config)
+    : route(props.resource.store_route);
 
 const form = useForm({
     key: props.config.key ?? '',
@@ -113,7 +116,7 @@ function submit() {
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link :href="resource.index_href">返回列表</Link>
+                    <Link :href="route(resource.index_route)">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建配置项' }}

@@ -13,7 +13,7 @@ class SettingsSystemConfigController extends AbstractSettingsConfigController
         parent::__construct(
             Category::SYSTEM,
             '系统配置',
-            [self::class, 'index'],
+            'system-configs.index',
         );
     }
 }

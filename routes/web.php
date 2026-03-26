@@ -17,16 +17,17 @@ use App\Http\Controllers\Web\Auth\DevQuickLoginController;
 use App\Http\Middleware\AuthorizeControllerPermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 Route::get('/', function () {
     return Auth::check()
-        ? redirect()->action(DashboardController::class)
-        : redirect()->action([AuthenticatedSessionController::class, 'create']);
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
 });
 
 if (app()->environment(['local','dev'])) {
-    Route::middleware('guest')->post('login/dev-users/{adminUser}', DevQuickLoginController::class);
+    Route::middleware('guest')
+        ->post('login/dev-users/{adminUser}', DevQuickLoginController::class)
+        ->name('dev-users.login');
 }
 
 Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermission::class])->group(function () {
@@ -34,47 +35,56 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
     Route::singleton('account/security-password', AccountPasswordController::class)
         ->only(['edit', 'update']);
 
-    Route::get('dashboard', DashboardController::class);
-    Route::get('admin-users/export', [AdminUserController::class, 'export']);
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('admin-users/export', [AdminUserController::class, 'export'])->name('admin-users.export');
     Route::resource('admin-users', AdminUserController::class)
         ->except(['show']);
 
-    Route::get('admin-roles/export', [AdminRoleController::class, 'export']);
+    Route::get('admin-roles/export', [AdminRoleController::class, 'export'])->name('admin-roles.export');
     Route::resource('admin-roles', AdminRoleController::class)
         ->except(['show']);
 
-    Route::get('audits/export', [AuditController::class, 'export']);
+    Route::get('audits/export', [AuditController::class, 'export'])->name('audits.export');
     Route::resource('audits', AuditController::class)
         ->only(['index']);
 
-    Route::get('client-monitor/device-overview', [ClientMonitorController::class, 'index']);
-    Route::get('client-monitor/sessions', [ClientMonitorController::class, 'sessions']);
-    Route::get('client-monitor/auth-events', [ClientMonitorController::class, 'authEvents']);
-    Route::get('client-monitor/cmd-events', [ClientMonitorController::class, 'cmdEvents']);
-    Route::get('client-monitor/conn-events', [ClientMonitorController::class, 'connEvents']);
-    Route::get('client-monitor/gps-position-last', [ClientMonitorController::class, 'gpsPositionLast']);
-    Route::get('client-monitor/gps-position-histories', [ClientMonitorController::class, 'gpsPositionHistories']);
+    Route::get('client-monitor/device-overview', [ClientMonitorController::class, 'index'])
+        ->name('client-monitor.device-overview');
+    Route::get('client-monitor/sessions', [ClientMonitorController::class, 'sessions'])
+        ->name('client-monitor.sessions');
+    Route::get('client-monitor/auth-events', [ClientMonitorController::class, 'authEvents'])
+        ->name('client-monitor.auth-events');
+    Route::get('client-monitor/cmd-events', [ClientMonitorController::class, 'cmdEvents'])
+        ->name('client-monitor.cmd-events');
+    Route::get('client-monitor/conn-events', [ClientMonitorController::class, 'connEvents'])
+        ->name('client-monitor.conn-events');
+    Route::get('client-monitor/gps-position-last', [ClientMonitorController::class, 'gpsPositionLast'])
+        ->name('client-monitor.gps-position-last');
+    Route::get('client-monitor/gps-position-histories', [ClientMonitorController::class, 'gpsPositionHistories'])
+        ->name('client-monitor.gps-position-histories');
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
-    Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export']);
+    Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export'])->name('mqtt-accounts.export');
     Route::resource('mqtt-accounts', MqttAccountController::class)
         ->except(['show']);
 
-    Route::get('device-products/export', [DeviceProductController::class, 'export']);
+    Route::get('device-products/export', [DeviceProductController::class, 'export'])->name('device-products.export');
     Route::resource('device-products', DeviceProductController::class)
         ->parameters(['device-products' => 'deviceProduct'])
         ->except(['show']);
 
-    Route::get('devices/export', [DeviceController::class, 'export']);
+    Route::get('devices/export', [DeviceController::class, 'export'])->name('devices.export');
     Route::resource('devices', DeviceController::class)
         ->except(['show']);
 
-    Route::get('settings/application-configs/export', [SettingsApplicationConfigController::class, 'export']);
+    Route::get('settings/application-configs/export', [SettingsApplicationConfigController::class, 'export'])
+        ->name('application-configs.export');
     Route::resource('settings/application-configs', SettingsApplicationConfigController::class)
         ->parameters(['application-configs' => 'config'])
         ->except(['show']);
 
-    Route::get('settings/system-configs/export', [SettingsSystemConfigController::class, 'export']);
+    Route::get('settings/system-configs/export', [SettingsSystemConfigController::class, 'export'])
+        ->name('system-configs.export');
     Route::resource('settings/system-configs', SettingsSystemConfigController::class)
         ->parameters(['system-configs' => 'config'])
         ->except(['show']);

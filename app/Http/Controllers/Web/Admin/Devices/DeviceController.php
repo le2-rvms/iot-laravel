@@ -79,7 +79,7 @@ class DeviceController extends Controller
             $device->save();
         });
 
-        return redirect()->action([self::class, 'index'])->with('success', '设备已创建。');
+        return to_route('devices.index')->with('success', '设备已创建。');
     }
 
     #[PermissionAction('write')]
@@ -102,7 +102,7 @@ class DeviceController extends Controller
             return $device->fresh('deviceProduct');
         });
 
-        return redirect()->action([self::class, 'edit'], $device)->with('success', '设备已更新。');
+        return to_route('devices.edit', $device)->with('success', '设备已更新。');
     }
 
     #[PermissionAction('write')]
@@ -117,9 +117,9 @@ class DeviceController extends Controller
                 $device->delete();
             });
         } catch (LogicException $exception) {
-            return redirect()->action([self::class, 'index'])->with('error', $exception->getMessage());
+            return to_route('devices.index')->with('error', $exception->getMessage());
         }
 
-        return redirect()->action([self::class, 'index'])->with('success', '设备已删除。');
+        return to_route('devices.index')->with('success', '设备已删除。');
     }
 }

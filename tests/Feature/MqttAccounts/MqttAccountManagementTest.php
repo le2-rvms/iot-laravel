@@ -19,7 +19,7 @@ class MqttAccountManagementTest extends TestCase
         IotMqttAccount::factory()->count(3)->create();
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts')
+            ->get(route('mqtt-accounts.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccount/Index')
@@ -33,7 +33,7 @@ class MqttAccountManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['dashboard.read']);
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts')
+            ->get(route('mqtt-accounts.index'))
             ->assertForbidden();
     }
 
@@ -42,7 +42,7 @@ class MqttAccountManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
 
         $this->actingAs($user)
-            ->post('/admin/mqtt-accounts', [
+            ->post(route('mqtt-accounts.store'), [
                 'user_name' => 'device-gateway',
                 'password' => 'secret-pass',
                 'clientid' => 'client-001',
@@ -52,7 +52,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => false,
                 'enabled' => true,
             ])
-            ->assertRedirect('/admin/mqtt-accounts')
+            ->assertRedirect(route('mqtt-accounts.index'))
             ->assertSessionHas('success', 'MQTT账号已创建。');
 
         $account = IotMqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
@@ -63,7 +63,7 @@ class MqttAccountManagementTest extends TestCase
         $this->assertSame($user->email, $account->act_updated_by);
 
         $this->actingAs($user)
-            ->put("/admin/mqtt-accounts/{$account->act_id}", [
+            ->put(route('mqtt-accounts.update', $account), [
                 'user_name' => 'device-gateway',
                 'password' => '',
                 'clientid' => 'client-002',
@@ -73,7 +73,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => true,
                 'enabled' => true,
             ])
-            ->assertRedirect("/admin/mqtt-accounts/{$account->act_id}/edit")
+            ->assertRedirect(route('mqtt-accounts.edit', $account))
             ->assertSessionHas('success', 'MQTT账号已更新。');
 
         $account->refresh();
@@ -84,7 +84,7 @@ class MqttAccountManagementTest extends TestCase
         $this->assertTrue($account->is_superuser->isEnabled());
 
         $this->actingAs($user)
-            ->put("/admin/mqtt-accounts/{$account->act_id}", [
+            ->put(route('mqtt-accounts.update', $account), [
                 'user_name' => 'device-gateway',
                 'password' => 'new-secret-pass',
                 'clientid' => 'client-002',
@@ -94,7 +94,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => true,
                 'enabled' => false,
             ])
-            ->assertRedirect("/admin/mqtt-accounts/{$account->act_id}/edit");
+            ->assertRedirect(route('mqtt-accounts.edit', $account));
 
         $account->refresh();
 
@@ -103,8 +103,8 @@ class MqttAccountManagementTest extends TestCase
         $this->assertFalse($account->enabled->isEnabled());
 
         $this->actingAs($user)
-            ->delete("/admin/mqtt-accounts/{$account->act_id}")
-            ->assertRedirect('/admin/mqtt-accounts')
+            ->delete(route('mqtt-accounts.destroy', $account))
+            ->assertRedirect(route('mqtt-accounts.index'))
             ->assertSessionHas('success', 'MQTT账号已删除。');
 
         $this->assertDatabaseMissing('mqtt_accounts', [
@@ -126,7 +126,7 @@ class MqttAccountManagementTest extends TestCase
         Audit::query()->delete();
 
         $this->actingAs($user)
-            ->put("/admin/mqtt-accounts/{$account->act_id}", [
+            ->put(route('mqtt-accounts.update', $account), [
                 'user_name' => 'device-gateway',
                 'password' => 'new-secret-pass',
                 'clientid' => 'client-001',
@@ -136,7 +136,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => true,
                 'enabled' => true,
             ])
-            ->assertRedirect("/admin/mqtt-accounts/{$account->act_id}/edit");
+            ->assertRedirect(route('mqtt-accounts.edit', $account));
 
         $audit = Audit::query()->latest('id')->firstOrFail();
 
@@ -158,7 +158,7 @@ class MqttAccountManagementTest extends TestCase
         $editor = $this->createUserWithPermissions(['mqtt-account.write']);
 
         $this->actingAs($creator)
-            ->post('/admin/mqtt-accounts', [
+            ->post(route('mqtt-accounts.store'), [
                 'user_name' => 'device-gateway',
                 'password' => 'secret-pass',
                 'clientid' => 'client-001',
@@ -168,14 +168,14 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => false,
                 'enabled' => true,
             ])
-            ->assertRedirect('/admin/mqtt-accounts');
+            ->assertRedirect(route('mqtt-accounts.index'));
 
         $account = IotMqttAccount::query()->where('user_name', 'device-gateway')->firstOrFail();
 
         $this->assertSame($creator->email, $account->act_updated_by);
 
         $this->actingAs($editor)
-            ->put("/admin/mqtt-accounts/{$account->act_id}", [
+            ->put(route('mqtt-accounts.update', $account), [
                 'user_name' => 'device-gateway',
                 'password' => '',
                 'clientid' => 'client-002',
@@ -185,7 +185,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => true,
                 'enabled' => true,
             ])
-            ->assertRedirect("/admin/mqtt-accounts/{$account->act_id}/edit");
+            ->assertRedirect(route('mqtt-accounts.edit', $account));
 
         $account->refresh();
 
@@ -296,7 +296,7 @@ class MqttAccountManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts?search__func=alpha')
+            ->get(route('mqtt-accounts.index', ['search__func' => 'alpha']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccount/Index')
@@ -324,7 +324,7 @@ class MqttAccountManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts?search__func=gateway')
+            ->get(route('mqtt-accounts.index', ['search__func' => 'gateway']))
             ->assertOk()
             // 这里锁的是 MQTT 列表与配置列表一致的大小写不敏感搜索约定。
             ->assertInertia(fn (Assert $page) => $page
@@ -348,7 +348,7 @@ class MqttAccountManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts?enabled__eq=0')
+            ->get(route('mqtt-accounts.index', ['enabled__eq' => 0]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('MqttAccount/Index')
@@ -363,15 +363,15 @@ class MqttAccountManagementTest extends TestCase
         $account = IotMqttAccount::factory()->create();
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts')
+            ->get(route('mqtt-accounts.index'))
             ->assertOk();
 
         $this->actingAs($user)
-            ->get('/admin/mqtt-accounts/create')
+            ->get(route('mqtt-accounts.create'))
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->delete("/admin/mqtt-accounts/{$account->act_id}")
+            ->delete(route('mqtt-accounts.destroy', $account))
             ->assertForbidden();
     }
 
@@ -380,8 +380,8 @@ class MqttAccountManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['mqtt-account.write']);
 
         $this->actingAs($user)
-            ->from('/admin/mqtt-accounts/create')
-            ->post('/admin/mqtt-accounts', [
+            ->from(route('mqtt-accounts.create'))
+            ->post(route('mqtt-accounts.store'), [
                 'user_name' => '',
                 'password' => '',
                 'clientid' => str_repeat('x', 51),
@@ -391,7 +391,7 @@ class MqttAccountManagementTest extends TestCase
                 'is_superuser' => '',
                 'enabled' => '',
             ])
-            ->assertRedirect('/admin/mqtt-accounts/create')
+            ->assertRedirect(route('mqtt-accounts.create'))
             ->assertSessionHasErrors(['user_name', 'password', 'clientid', 'product_key', 'device_name', 'is_superuser', 'enabled']);
 
         $errors = session('errors')->getBag('default');

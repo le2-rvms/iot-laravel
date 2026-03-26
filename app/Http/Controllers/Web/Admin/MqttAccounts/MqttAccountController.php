@@ -77,7 +77,7 @@ class MqttAccountController extends Controller
         // 后台只接收明文输入，真正入库时统一转成 salt + hash，避免模型层外泄保存细节。
         IotMqttAccount::createAccount($validated, $password);
 
-        return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已创建。');
+        return to_route('mqtt-accounts.index')->with('success', 'MQTT账号已创建。');
     }
 
     #[PermissionAction('write')]
@@ -98,7 +98,7 @@ class MqttAccountController extends Controller
         // 编辑页留空表示不改密码；只有明确填写时才刷新 salt 和 hash。
         $mqttAccount = $mqttAccount->updateAccount($validated, $password);
 
-        return redirect()->action([self::class, 'edit'], $mqttAccount)->with('success', 'MQTT账号已更新。');
+        return to_route('mqtt-accounts.edit', $mqttAccount)->with('success', 'MQTT账号已更新。');
     }
 
     #[PermissionAction('write')]
@@ -106,6 +106,6 @@ class MqttAccountController extends Controller
     {
         $mqttAccount->deleteAccount();
 
-        return redirect()->action([self::class, 'index'])->with('success', 'MQTT账号已删除。');
+        return to_route('mqtt-accounts.index')->with('success', 'MQTT账号已删除。');
     }
 }

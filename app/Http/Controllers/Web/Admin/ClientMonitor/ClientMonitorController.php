@@ -13,6 +13,7 @@ use App\Models\Iot\IotGpsPositionHistory;
 use App\Models\Iot\IotGpsPositionLast;
 use Illuminate\Http\Request;
 use Inertia\Response;
+use stdClass;
 
 #[PermissionGroup]
 class ClientMonitorController extends Controller
@@ -33,9 +34,7 @@ class ClientMonitorController extends Controller
         return $this->renderPage([
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'previews' => [
                 'sessions' => IotClientSession::indexQuery($contextQuery)
                     ->limit(5)
@@ -87,14 +86,12 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '在线会话',
                 'description' => '查看客户端当前在线状态、最近事件和连接上下文。',
-                'href' => action([self::class, 'sessions'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.sessions', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
@@ -123,14 +120,12 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '鉴权事件',
                 'description' => '查看客户端鉴权成功、失败和失败原因。',
-                'href' => action([self::class, 'authEvents'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.auth-events', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
@@ -159,14 +154,12 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '命令事件',
                 'description' => '查看命令事件流、命令类型和原因码。',
-                'href' => action([self::class, 'cmdEvents'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.cmd-events', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
@@ -195,14 +188,12 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '连接事件',
                 'description' => '查看客户端连接、断开和原因码记录。',
-                'href' => action([self::class, 'connEvents'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.conn-events', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
@@ -235,14 +226,12 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '当前定位',
                 'description' => '查看终端当前最新定位、速度、方向和状态信息。',
-                'href' => action([self::class, 'gpsPositionLast'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.gps-position-last', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
@@ -275,20 +264,18 @@ class ClientMonitorController extends Controller
                 ->withQueryString(),
             'filters' => $filters,
             'sections' => self::sections($contextQuery),
-            'deviceContext' => $contextQuery === [] ? null : [
-                'rootHref' => action([self::class, 'index'], $contextQuery, false),
-            ],
+            'deviceContext' => $contextQuery === [] ? null : self::routeTarget('client-monitor.device-overview', query: $contextQuery),
             'pageMeta' => [
                 'title' => '定位历史',
                 'description' => '查看终端历史定位记录、速度、方向和状态变化。',
-                'href' => action([self::class, 'gpsPositionHistories'], $contextQuery, false),
-                'monitorHref' => action([self::class, 'sessions'], [], false),
+                ...self::routeTarget('client-monitor.gps-position-histories', query: $contextQuery),
+                'monitorRoute' => self::routeTarget('client-monitor.sessions'),
             ],
         ]);
     }
 
     /**
-     * @return array<int, array{title: string, description: string, href: string}>
+     * @return array<int, array{title: string, description: string, routeName: string, routeParams: stdClass, routeQuery: array<string, string>}>
      */
     protected static function sections(array $query): array
     {
@@ -296,33 +283,47 @@ class ClientMonitorController extends Controller
             [
                 'title' => '在线会话',
                 'description' => '查看客户端当前在线状态与最近事件。',
-                'href' => action([self::class, 'sessions'], $query, false),
+                ...self::routeTarget('client-monitor.sessions', query: $query),
             ],
             [
                 'title' => '鉴权事件',
                 'description' => '查看客户端鉴权结果、原因和上下文。',
-                'href' => action([self::class, 'authEvents'], $query, false),
+                ...self::routeTarget('client-monitor.auth-events', query: $query),
             ],
             [
                 'title' => '命令事件',
                 'description' => '查看命令事件流、命令类型与原因码。',
-                'href' => action([self::class, 'cmdEvents'], $query, false),
+                ...self::routeTarget('client-monitor.cmd-events', query: $query),
             ],
             [
                 'title' => '连接事件',
                 'description' => '查看连接、断开和原因码记录。',
-                'href' => action([self::class, 'connEvents'], $query, false),
+                ...self::routeTarget('client-monitor.conn-events', query: $query),
             ],
             [
                 'title' => '当前定位',
                 'description' => '查看终端当前最新定位、速度和状态。',
-                'href' => action([self::class, 'gpsPositionLast'], $query, false),
+                ...self::routeTarget('client-monitor.gps-position-last', query: $query),
             ],
             [
                 'title' => '定位历史',
                 'description' => '查看终端历史定位轨迹与状态变化。',
-                'href' => action([self::class, 'gpsPositionHistories'], $query, false),
+                ...self::routeTarget('client-monitor.gps-position-histories', query: $query),
             ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $params
+     * @param  array<string, string>  $query
+     * @return array{routeName: string, routeParams: stdClass|array<string, mixed>, routeQuery: stdClass|array<string, string>}
+     */
+    protected static function routeTarget(string $routeName, array $params = [], array $query = []): array
+    {
+        return [
+            'routeName' => $routeName,
+            'routeParams' => $params === [] ? new stdClass : $params,
+            'routeQuery' => $query === [] ? new stdClass : $query,
         ];
     }
 

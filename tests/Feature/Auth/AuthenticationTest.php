@@ -17,7 +17,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_renders(): void
     {
-        $this->get('/login')
+        $this->get(route('login'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/Login')
@@ -38,7 +38,7 @@ class AuthenticationTest extends TestCase
             'email' => 'bravo@example.com',
         ]);
 
-        $this->get('/login')
+        $this->get(route('login'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/Login')
@@ -46,11 +46,11 @@ class AuthenticationTest extends TestCase
                 ->has('devQuickLogin.users', 2)
                 ->where('devQuickLogin.users.0.id', $alpha->id)
                 ->where('devQuickLogin.users.0.email', 'alpha@example.com')
-                ->where('devQuickLogin.users.0.login_url', url("/login/dev-users/{$alpha->id}"))
+                ->where('devQuickLogin.users.0.login_url', route('dev-users.login', $alpha))
                 ->where('devQuickLogin.users.1.id', $bravo->id)
                 ->where('devQuickLogin.users.1.email', 'bravo@example.com')
                 ->where('devQuickLogin.users.1.email_verified_at', null)
-                ->where('devQuickLogin.users.1.login_url', url("/login/dev-users/{$bravo->id}")));
+                ->where('devQuickLogin.users.1.login_url', route('dev-users.login', $bravo)));
     }
 
     public function test_users_can_authenticate_using_the_login_form(): void
@@ -59,10 +59,10 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $this->post('/login', [
+        $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
-        ])->assertRedirect('/admin/dashboard');
+        ])->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($user);
     }
@@ -73,7 +73,7 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $this->post('/login', [
+        $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
             'remember' => true,
@@ -89,10 +89,10 @@ class AuthenticationTest extends TestCase
         $user = $this->createSuperAdmin();
         $csrfToken = 'test-token';
 
-        $this->withSession(['_token' => $csrfToken])->post("/login/dev-users/{$user->id}", [
+        $this->withSession(['_token' => $csrfToken])->post(route('dev-users.login', $user), [
             '_token' => $csrfToken,
         ])
-            ->assertRedirect('/admin/dashboard');
+            ->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($user);
     }
@@ -105,23 +105,23 @@ class AuthenticationTest extends TestCase
         ]);
         $csrfToken = 'test-token';
 
-        $this->withSession(['_token' => $csrfToken])->post("/login/dev-users/{$user->id}", [
+        $this->withSession(['_token' => $csrfToken])->post(route('dev-users.login', $user), [
             '_token' => $csrfToken,
         ])
-            ->assertRedirect('/admin/dashboard');
+            ->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($user);
         $this->assertNull($user->refresh()->email_verified_at);
 
-        $this->get('/admin/dashboard')
-            ->assertRedirect('/email/verify');
+        $this->get(route('dashboard'))
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_non_dev_environment_cannot_use_dev_quick_login(): void
     {
         $user = AdminUser::factory()->create();
 
-        $this->post("/login/dev-users/{$user->id}")
+        $this->post(route('dev-users.login', $user))
             ->assertNotFound();
 
         $this->assertGuest();
@@ -133,10 +133,10 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $this->from('/login')->post('/login', [
+        $this->from(route('login'))->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'wrong-password',
-        ])->assertRedirect('/login')
+        ])->assertRedirect(route('login'))
             ->assertSessionHasErrors('email');
 
         $this->assertSame(__('auth.failed'), session('errors')->getBag('default')->first('email'));
@@ -145,10 +145,10 @@ class AuthenticationTest extends TestCase
 
     public function test_login_validation_errors_are_returned_in_chinese(): void
     {
-        $this->from('/login')->post('/login', [
+        $this->from(route('login'))->post(route('login.store'), [
             'email' => '',
             'password' => '',
-        ])->assertRedirect('/login')
+        ])->assertRedirect(route('login'))
             ->assertSessionHasErrors(['email', 'password']);
 
         $errors = session('errors')->getBag('default');
@@ -159,7 +159,7 @@ class AuthenticationTest extends TestCase
 
     public function test_forgot_password_screen_renders(): void
     {
-        $this->get('/forgot-password')
+        $this->get(route('password.request'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
     }
@@ -170,7 +170,7 @@ class AuthenticationTest extends TestCase
 
         $user = AdminUser::factory()->create();
 
-        $this->post('/forgot-password', [
+        $this->post(route('password.email'), [
             'email' => $user->email,
         ])->assertSessionHas('status', __('passwords.sent'));
 
@@ -179,9 +179,9 @@ class AuthenticationTest extends TestCase
 
     public function test_forgot_password_validation_errors_are_returned_in_chinese(): void
     {
-        $this->from('/forgot-password')->post('/forgot-password', [
+        $this->from(route('password.request'))->post(route('password.email'), [
             'email' => '',
-        ])->assertRedirect('/forgot-password')
+        ])->assertRedirect(route('password.request'))
             ->assertSessionHasErrors(['email']);
 
         $errors = session('errors')->getBag('default');
@@ -194,7 +194,7 @@ class AuthenticationTest extends TestCase
         $user = AdminUser::factory()->create();
         $token = Password::broker()->createToken($user);
 
-        $this->get("/reset-password/{$token}?email={$user->email}")
+        $this->get(route('password.reset', ['token' => $token, 'email' => $user->email]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/ResetPassword')
@@ -207,25 +207,25 @@ class AuthenticationTest extends TestCase
         $user = AdminUser::factory()->create();
         $token = Password::broker()->createToken($user);
 
-        $this->post('/reset-password', [
+        $this->post(route('password.update'), [
             'token' => $token,
             'email' => $user->email,
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
         ])->assertSessionHasNoErrors()
-            ->assertRedirect('/login');
+            ->assertRedirect(route('login'));
     }
 
     public function test_users_cannot_reset_their_password_with_an_invalid_token(): void
     {
         $user = AdminUser::factory()->create();
 
-        $this->from('/reset-password/invalid')->post('/reset-password', [
+        $this->from(route('password.reset', ['token' => 'invalid']))->post(route('password.update'), [
             'token' => 'invalid-token',
             'email' => $user->email,
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
-        ])->assertRedirect('/reset-password/invalid')
+        ])->assertRedirect(route('password.reset', ['token' => 'invalid']))
             ->assertSessionHasErrors('email');
 
         $this->assertSame(__('passwords.token'), session('errors')->getBag('default')->first('email'));
@@ -233,12 +233,12 @@ class AuthenticationTest extends TestCase
 
     public function test_reset_password_validation_errors_are_returned_in_chinese(): void
     {
-        $this->from('/reset-password/invalid')->post('/reset-password', [
+        $this->from(route('password.reset', ['token' => 'invalid']))->post(route('password.update'), [
             'token' => 'invalid-token',
             'email' => '',
             'password' => '',
             'password_confirmation' => '',
-        ])->assertRedirect('/reset-password/invalid')
+        ])->assertRedirect(route('password.reset', ['token' => 'invalid']))
             ->assertSessionHasErrors(['email', 'password']);
 
         $errors = session('errors')->getBag('default');
@@ -252,8 +252,8 @@ class AuthenticationTest extends TestCase
         $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
-            ->get('/admin/dashboard')
-            ->assertRedirect('/email/verify');
+            ->get(route('dashboard'))
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_verification_notice_renders_for_unverified_users(): void
@@ -261,7 +261,7 @@ class AuthenticationTest extends TestCase
         $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
-            ->get('/email/verify')
+            ->get(route('verification.notice'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Auth/VerifyEmail'));
     }
@@ -273,14 +273,14 @@ class AuthenticationTest extends TestCase
         $user = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($user)
-            ->post('/email/verification-notification')
+            ->post(route('verification.send'))
             ->assertSessionHas('success', __('A new verification link has been sent to the email address you provided during registration.'));
 
         $this->actingAs($user)
             ->withSession([
                 'success' => __('A new verification link has been sent to the email address you provided during registration.'),
             ])
-            ->get('/email/verify')
+            ->get(route('verification.notice'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/VerifyEmail')
                 ->where('flash.success', __('A new verification link has been sent to the email address you provided during registration.')));

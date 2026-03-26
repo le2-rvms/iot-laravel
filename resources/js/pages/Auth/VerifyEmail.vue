@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const page = usePage();
 const status = computed(() => page.props.flash?.success);
@@ -9,11 +10,11 @@ const status = computed(() => page.props.flash?.success);
 const resendForm = useForm({});
 
 function resend() {
-    resendForm.post('/email/verification-notification');
+    resendForm.post(route('verification.send'));
 }
 
 function logout() {
-    router.post('/logout');
+    router.post(route('logout'));
 }
 </script>
 

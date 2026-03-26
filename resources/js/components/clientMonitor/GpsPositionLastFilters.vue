@@ -2,14 +2,15 @@
 import { router } from '@inertiajs/vue3';
 import { Search } from 'lucide-vue-next';
 import { useFilterForm } from '@/composables/useFilterForm';
+import { hrefForRouteTarget } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
         type: Object,
         required: true,
     },
-    href: {
-        type: String,
+    routeTarget: {
+        type: Object,
         required: true,
     },
 });
@@ -17,7 +18,7 @@ const props = defineProps({
 const form = useFilterForm(() => props.filters);
 
 function submit() {
-    router.get(props.href, form, {
+    router.get(hrefForRouteTarget(props.routeTarget), form, {
         preserveState: true,
         preserveScroll: true,
         replace: true,

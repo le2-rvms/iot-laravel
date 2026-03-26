@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useForm as useVeeForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useInertiaFormBridge } from '@/composables/useInertiaFormBridge';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     channelTypes: {
@@ -137,7 +138,7 @@ function removeChannel(index) {
 const submit = handleSubmit((formValues) => {
     bridge.submitWithInertia({
         method: 'post',
-        url: '/admin/settings/vee-validate',
+        url: route('vee-validate.store'),
         data: formValues,
     });
 });

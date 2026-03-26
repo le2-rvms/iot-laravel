@@ -74,7 +74,7 @@ class DeviceProductController extends Controller
             $product->save();
         });
 
-        return redirect()->action([self::class, 'index'])->with('success', '设备产品已创建。');
+        return to_route('device-products.index')->with('success', '设备产品已创建。');
     }
 
     #[PermissionAction('write')]
@@ -97,7 +97,7 @@ class DeviceProductController extends Controller
             return $deviceProduct->fresh();
         });
 
-        return redirect()->action([self::class, 'edit'], $deviceProduct)->with('success', '设备产品已更新。');
+        return to_route('device-products.edit', $deviceProduct)->with('success', '设备产品已更新。');
     }
 
     #[PermissionAction('write')]
@@ -116,9 +116,9 @@ class DeviceProductController extends Controller
                 $deviceProduct->delete();
             });
         } catch (LogicException $exception) {
-            return redirect()->action([self::class, 'index'])->with('error', $exception->getMessage());
+            return to_route('device-products.index')->with('error', $exception->getMessage());
         }
 
-        return redirect()->action([self::class, 'index'])->with('success', '设备产品已删除。');
+        return to_route('device-products.index')->with('success', '设备产品已删除。');
     }
 }

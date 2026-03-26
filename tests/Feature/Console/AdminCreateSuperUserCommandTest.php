@@ -37,7 +37,7 @@ class AdminCreateSuperUserCommandTest extends TestCase
         $this->assertCount(0, $superAdminRole->permissions);
 
         $this->actingAs($user)
-            ->get('/admin/dashboard')
+            ->get(route('dashboard'))
             ->assertOk();
     }
 
@@ -69,7 +69,7 @@ class AdminCreateSuperUserCommandTest extends TestCase
         $this->assertCount(0, $superAdminRole->permissions);
 
         $this->actingAs($user)
-            ->get('/admin/dashboard')
+            ->get(route('dashboard'))
             ->assertOk();
     }
 

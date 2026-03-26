@@ -70,7 +70,7 @@ class AdminRoleController extends Controller
             permissions: $request->validated('permissions') ?? [],
         );
 
-        return redirect()->action([self::class, 'index'])->with('success', '管理员角色已创建。');
+        return to_route('admin-roles.index')->with('success', '管理员角色已创建。');
     }
 
     #[PermissionAction('write')]
@@ -94,7 +94,7 @@ class AdminRoleController extends Controller
             permissions: $request->validated('permissions') ?? [],
         );
 
-        return redirect()->action([self::class, 'edit'], $adminRole)->with('success', '管理员角色已更新。');
+        return to_route('admin-roles.edit', $adminRole)->with('success', '管理员角色已更新。');
     }
 
     #[PermissionAction('write')]
@@ -104,9 +104,9 @@ class AdminRoleController extends Controller
             $adminRole->deleteRole();
         } catch (LogicException $exception) {
             // 领域失败统一转成 flash，前端可以继续停留在列表页。
-            return redirect()->action([self::class, 'index'])->with('error', $exception->getMessage());
+            return to_route('admin-roles.index')->with('error', $exception->getMessage());
         }
 
-        return redirect()->action([self::class, 'index'])->with('success', '管理员角色已删除。');
+        return to_route('admin-roles.index')->with('success', '管理员角色已删除。');
     }
 }

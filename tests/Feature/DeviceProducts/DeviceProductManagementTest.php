@@ -77,7 +77,7 @@ class DeviceProductManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/device-products')
+            ->get(route('device-products.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('DeviceProduct/Index')
@@ -92,7 +92,7 @@ class DeviceProductManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['device-product.write']);
 
         $this->actingAs($user)
-            ->post('/admin/device-products', [
+            ->post(route('device-products.store'), [
                 'product_key' => 'PK-BETA',
                 'product_name' => 'Beta Tracker',
                 'description' => 'Outdoor unit',
@@ -100,12 +100,12 @@ class DeviceProductManagementTest extends TestCase
                 'protocol' => 'JT808',
                 'category' => 'tracker',
             ])
-            ->assertRedirect('/admin/device-products');
+            ->assertRedirect(route('device-products.index'));
 
         $product = IotDeviceProduct::query()->where('product_key', 'PK-BETA')->firstOrFail();
 
         $this->actingAs($user)
-            ->put("/admin/device-products/{$product->product_id}", [
+            ->put(route('device-products.update', $product), [
                 'product_key' => 'PK-BETA-CHANGED',
                 'product_name' => 'Beta Tracker Updated',
                 'description' => 'Indoor unit',
@@ -113,7 +113,7 @@ class DeviceProductManagementTest extends TestCase
                 'protocol' => 'JT809',
                 'category' => 'gateway',
             ])
-            ->assertRedirect("/admin/device-products/{$product->product_id}/edit");
+            ->assertRedirect(route('device-products.edit', $product));
 
         $product->refresh();
 
@@ -125,8 +125,8 @@ class DeviceProductManagementTest extends TestCase
         $this->assertSame('gateway', $product->category);
 
         $this->actingAs($user)
-            ->delete("/admin/device-products/{$product->product_id}")
-            ->assertRedirect('/admin/device-products');
+            ->delete(route('device-products.destroy', $product))
+            ->assertRedirect(route('device-products.index'));
 
         $this->assertDatabaseMissing('device_products', [
             'product_id' => $product->product_id,
@@ -149,7 +149,7 @@ class DeviceProductManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/device-products?search__func=gateway')
+            ->get(route('device-products.index', ['search__func' => 'gateway']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('DeviceProduct/Index')
@@ -163,15 +163,15 @@ class DeviceProductManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['device-product.write']);
 
         $this->actingAs($user)
-            ->from('/admin/device-products/create')
-            ->post('/admin/device-products', [
+            ->from(route('device-products.create'))
+            ->post(route('device-products.store'), [
                 'product_key' => '',
                 'product_name' => '',
                 'manufacturer' => str_repeat('x', 256),
                 'protocol' => str_repeat('y', 65),
                 'category' => str_repeat('z', 65),
             ])
-            ->assertRedirect('/admin/device-products/create')
+            ->assertRedirect(route('device-products.create'))
             ->assertSessionHasErrors(['product_key', 'product_name', 'manufacturer', 'protocol', 'category']);
 
         $errors = session('errors')->getBag('default');
@@ -199,8 +199,8 @@ class DeviceProductManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->delete("/admin/device-products/{$product->product_id}")
-            ->assertRedirect('/admin/device-products')
+            ->delete(route('device-products.destroy', $product))
+            ->assertRedirect(route('device-products.index'))
             ->assertSessionHas('error', '该设备产品仍有关联设备，无法删除。');
 
         \DB::table('devices')->where('terminal_id', 'terminal-002')->delete();
@@ -212,8 +212,8 @@ class DeviceProductManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->delete("/admin/device-products/{$product->product_id}")
-            ->assertRedirect('/admin/device-products')
+            ->delete(route('device-products.destroy', $product))
+            ->assertRedirect(route('device-products.index'))
             ->assertSessionHas('error', '该设备产品仍有关联分组，无法删除。');
     }
 }

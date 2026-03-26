@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionGroup;
-use App\Http\Controllers\Web\Admin\ClientMonitor\ClientMonitorController;
 use App\Models\Admin\AdminUser;
 use App\Models\Iot\IotClientSession;
 use App\Models\Iot\IotDevice;
@@ -15,8 +14,8 @@ use App\Models\Iot\IotMqttAccount;
 use App\Support\NavigationRegistry;
 use App\Values\Iot\Enabled;
 use Inertia\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
+use stdClass;
 
 #[PermissionGroup]
 class DashboardController extends Controller
@@ -49,11 +48,15 @@ class DashboardController extends Controller
                 'primaryActions' => [
                     [
                         'label' => '进入设备管理',
-                        'href' => '/admin/devices',
+                        'routeName' => 'devices.index',
+                        'routeParams' => new stdClass,
+                        'routeQuery' => new stdClass,
                     ],
                     [
                         'label' => '进入客户端监控',
-                        'href' => action([ClientMonitorController::class, 'sessions'], [], false),
+                        'routeName' => 'client-monitor.sessions',
+                        'routeParams' => new stdClass,
+                        'routeQuery' => new stdClass,
                     ],
                 ],
                 'summary' => [
@@ -80,42 +83,54 @@ class DashboardController extends Controller
                     'title' => '设备总数',
                     'value' => $metrics['devices'],
                     'description' => '当前系统内登记的设备总量。',
-                    'href' => '/admin/devices',
+                    'routeName' => 'devices.index',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
                 [
                     'key' => 'sessions',
                     'title' => '在线会话',
                     'value' => $metrics['sessions'],
                     'description' => '当前可见的客户端在线会话快照。',
-                    'href' => action([ClientMonitorController::class, 'sessions'], [], false),
+                    'routeName' => 'client-monitor.sessions',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
                 [
                     'key' => 'positions',
                     'title' => '定位覆盖',
                     'value' => $metrics['positions'],
                     'description' => '已上报当前定位的终端覆盖数。',
-                    'href' => action([ClientMonitorController::class, 'gpsPositionLast'], [], false),
+                    'routeName' => 'client-monitor.gps-position-last',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
                 [
                     'key' => 'gps_alarms_24h',
                     'title' => '24h GPS告警',
                     'value' => $metrics['gps_alarms_24h'],
                     'description' => '最近 24 小时内累计触发的 GPS 告警。',
-                    'href' => action([ClientMonitorController::class, 'gpsPositionHistories'], [], false),
+                    'routeName' => 'client-monitor.gps-position-histories',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
                 [
                     'key' => 'gps_commands',
                     'title' => 'GPS命令总数',
                     'value' => $metrics['gps_commands'],
                     'description' => '累计入库的 GPS 指令记录总量。',
-                    'href' => action([ClientMonitorController::class, 'cmdEvents'], [], false),
+                    'routeName' => 'client-monitor.cmd-events',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
                 [
                     'key' => 'mqtt_enabled',
                     'title' => '已启用MQTT账号',
                     'value' => $metrics['mqtt_enabled'],
                     'description' => '当前处于启用状态的 MQTT 连接账号数。',
-                    'href' => '/admin/mqtt-accounts',
+                    'routeName' => 'mqtt-accounts.index',
+                    'routeParams' => new stdClass,
+                    'routeQuery' => new stdClass,
                 ],
             ],
             'alertFeeds' => [
@@ -249,21 +264,28 @@ class DashboardController extends Controller
 
     /**
      * @param  AdminUser|null  $user
-     * @return array<int, array{title: string, description: string, href: string}>
+     * @return array<int, array{title: string, description: string, routeName: string, routeParams: stdClass, routeQuery: stdClass}>
      */
     private function quickLinksFor(?AdminUser $user): array
     {
         $priority = [
-            '/admin/devices' => 0,
-            action([ClientMonitorController::class, 'sessions'], [], false) => 1,
-            '/admin/mqtt-accounts' => 2,
+            'devices.index' => 0,
+            'client-monitor.sessions' => 1,
+            'mqtt-accounts.index' => 2,
         ];
 
         return collect(NavigationRegistry::dashboardQuickLinksFor($user))
             ->values()
             ->sortBy(fn (array $link, int $index): array => [
-                $priority[$link['href']] ?? 100,
+                $priority[$link['routeName']] ?? 100,
                 $index,
+            ])
+            ->map(fn (array $link): array => [
+                'title' => $link['title'],
+                'description' => $link['description'],
+                'routeName' => $link['routeName'],
+                'routeParams' => new stdClass,
+                'routeQuery' => new stdClass,
             ])
             ->take(6)
             ->values()

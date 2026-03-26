@@ -18,11 +18,11 @@ class ControllerPermissionMiddlewareTest extends TestCase
         $forbiddenUser = $this->createUserWithPermissions(['admin-role.read']);
 
         $this->actingAs($authorizedUser)
-            ->get('/admin/admin-users')
+            ->get(route('admin-users.index'))
             ->assertOk();
 
         $this->actingAs($forbiddenUser)
-            ->get('/admin/admin-users')
+            ->get(route('admin-users.index'))
             ->assertForbidden();
     }
 }

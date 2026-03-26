@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight } from 'lucide-vue-next';
+import { hrefForRouteTarget } from '@/lib/routes';
 
 const props = defineProps({
     item: {
@@ -12,8 +13,8 @@ const props = defineProps({
 
 <template>
     <component
-        :is="props.item.href ? Link : 'div'"
-        :href="props.item.href || undefined"
+        :is="props.item.routeName ? Link : 'div'"
+        :href="props.item.routeName ? hrefForRouteTarget(props.item) : undefined"
         class="group block min-w-0"
     >
         <UiCard class="h-full min-w-0 rounded-[1.35rem] border border-app-panel-border/80 bg-app-panel/85 shadow-sm transition group-hover:border-app-panel-border group-hover:shadow-md">
@@ -28,7 +29,7 @@ const props = defineProps({
                         </p>
                     </div>
                     <ArrowRight
-                        v-if="props.item.href"
+                        v-if="props.item.routeName"
                         class="mt-1 size-4 shrink-0 text-app-subtle-foreground transition group-hover:translate-x-0.5 group-hover:text-app-panel-foreground"
                     />
                 </div>

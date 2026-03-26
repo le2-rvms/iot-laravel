@@ -104,16 +104,12 @@ class ClientMonitorPageTest extends TestCase
         });
     }
 
-    public function test_removed_generic_client_monitor_entry_is_not_accessible(): void
+    public function test_device_overview_without_client_context_is_not_accessible(): void
     {
         $user = $this->createUserWithPermissions(['client-monitor.read']);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor')
-            ->assertNotFound();
-
-        $this->actingAs($user)
-            ->get('/admin/client-monitor/device-overview')
+            ->get(route('client-monitor.device-overview'))
             ->assertNotFound();
     }
 
@@ -122,19 +118,19 @@ class ClientMonitorPageTest extends TestCase
         $user = $this->createUserWithPermissions(['dashboard.read']);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/device-overview?client_id__eq=terminal-001')
+            ->get(route('client-monitor.device-overview', ['client_id__eq' => 'terminal-001']))
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/sessions')
+            ->get(route('client-monitor.sessions'))
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/gps-position-last')
+            ->get(route('client-monitor.gps-position-last'))
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/gps-position-histories')
+            ->get(route('client-monitor.gps-position-histories'))
             ->assertForbidden();
     }
 
@@ -168,11 +164,15 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/sessions?search__func=alpha&last_event_type__eq=connected&last_protocol__eq=mqtt')
+            ->get(route('client-monitor.sessions', [
+                'search__func' => 'alpha',
+                'last_event_type__eq' => 'connected',
+                'last_protocol__eq' => 'mqtt',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/Sessions')
-                ->where('pageMeta.href', '/admin/client-monitor/sessions')
+                ->where('pageMeta.href', route('client-monitor.sessions', [], false))
                 ->where('filters.search__func', 'alpha')
                 ->where('filters.last_event_type__eq', 'connected')
                 ->where('filters.last_protocol__eq', 'mqtt')
@@ -369,15 +369,15 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/device-overview?client_id__eq=terminal-001')
+            ->get(route('client-monitor.device-overview', ['client_id__eq' => 'terminal-001']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/Index')
                 ->where('filters.client_id__eq', 'terminal-001')
-                ->where('deviceContext.rootHref', '/admin/client-monitor/device-overview?client_id__eq=terminal-001')
-                ->where('sections.0.href', '/admin/client-monitor/sessions?client_id__eq=terminal-001')
-                ->where('sections.4.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-001')
-                ->where('sections.5.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-001')
+                ->where('deviceContext.rootHref', route('client-monitor.device-overview', ['client_id__eq' => 'terminal-001'], false))
+                ->where('sections.0.href', route('client-monitor.sessions', ['client_id__eq' => 'terminal-001'], false))
+                ->where('sections.4.href', route('client-monitor.gps-position-last', ['client_id__eq' => 'terminal-001'], false))
+                ->where('sections.5.href', route('client-monitor.gps-position-histories', ['client_id__eq' => 'terminal-001'], false))
                 ->has('previews.sessions', 1)
                 ->where('previews.sessions.0.client_id', 'terminal-001')
                 ->where('previews.authEvents.0.client_id', 'terminal-001')
@@ -413,7 +413,11 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/auth-events?search__func=password&result__eq=failed&protocol__eq=ws')
+            ->get(route('client-monitor.auth-events', [
+                'search__func' => 'password',
+                'result__eq' => 'failed',
+                'protocol__eq' => 'ws',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/AuthEvents')
@@ -450,13 +454,16 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/auth-events?client_id__eq=terminal-xyz&result__eq=success')
+            ->get(route('client-monitor.auth-events', [
+                'client_id__eq' => 'terminal-xyz',
+                'result__eq' => 'success',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/AuthEvents')
-                ->where('pageMeta.href', '/admin/client-monitor/auth-events?client_id__eq=terminal-xyz')
+                ->where('pageMeta.href', route('client-monitor.auth-events', ['client_id__eq' => 'terminal-xyz'], false))
                 ->where('filters.client_id__eq', 'terminal-xyz')
-                ->where('sections.2.href', '/admin/client-monitor/cmd-events?client_id__eq=terminal-xyz')
+                ->where('sections.2.href', route('client-monitor.cmd-events', ['client_id__eq' => 'terminal-xyz'], false))
                 ->has('authEvents.data', 1)
                 ->where('authEvents.data.0.client_id', 'terminal-xyz'));
     }
@@ -489,7 +496,11 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/cmd-events?search__func=beta&event_type__eq=cmd-ack&protocol__eq=ws')
+            ->get(route('client-monitor.cmd-events', [
+                'search__func' => 'beta',
+                'event_type__eq' => 'cmd-ack',
+                'protocol__eq' => 'ws',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/CmdEvents')
@@ -529,7 +540,11 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/conn-events?search__func=beta&event_type__eq=disconnect&protocol__eq=tcp')
+            ->get(route('client-monitor.conn-events', [
+                'search__func' => 'beta',
+                'event_type__eq' => 'disconnect',
+                'protocol__eq' => 'tcp',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/ConnEvents')
@@ -592,11 +607,17 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/gps-position-last?search__func=beta&status__eq=2&alarm__eq=9&gps_time__gte=2026-03-26T10:00&gps_time__lte=2026-03-26T10:15')
+            ->get(route('client-monitor.gps-position-last', [
+                'search__func' => 'beta',
+                'status__eq' => 2,
+                'alarm__eq' => 9,
+                'gps_time__gte' => '2026-03-26T10:00',
+                'gps_time__lte' => '2026-03-26T10:15',
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/GpsPositionLast')
-                ->where('pageMeta.href', '/admin/client-monitor/gps-position-last')
+                ->where('pageMeta.href', route('client-monitor.gps-position-last', [], false))
                 ->where('filters.search__func', 'beta')
                 ->where('filters.status__eq', '2')
                 ->where('filters.alarm__eq', '9')
@@ -691,26 +712,29 @@ class ClientMonitorPageTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+            ->get(route('client-monitor.gps-position-last', ['client_id__eq' => 'terminal-xyz']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/GpsPositionLast')
-                ->where('pageMeta.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+                ->where('pageMeta.href', route('client-monitor.gps-position-last', ['client_id__eq' => 'terminal-xyz'], false))
                 ->where('filters.client_id__eq', 'terminal-xyz')
-                ->where('deviceContext.rootHref', '/admin/client-monitor/device-overview?client_id__eq=terminal-xyz')
-                ->where('sections.5.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz')
+                ->where('deviceContext.rootHref', route('client-monitor.device-overview', ['client_id__eq' => 'terminal-xyz'], false))
+                ->where('sections.5.href', route('client-monitor.gps-position-histories', ['client_id__eq' => 'terminal-xyz'], false))
                 ->has('gpsPositionLast.data', 1)
                 ->where('gpsPositionLast.data.0.terminal_id', 'terminal-xyz'));
 
         $this->actingAs($user)
-            ->get('/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz&status__eq=1')
+            ->get(route('client-monitor.gps-position-histories', [
+                'client_id__eq' => 'terminal-xyz',
+                'status__eq' => 1,
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('ClientMonitor/GpsPositionHistories')
-                ->where('pageMeta.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz')
+                ->where('pageMeta.href', route('client-monitor.gps-position-histories', ['client_id__eq' => 'terminal-xyz'], false))
                 ->where('filters.client_id__eq', 'terminal-xyz')
                 ->where('filters.status__eq', '1')
-                ->where('sections.4.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+                ->where('sections.4.href', route('client-monitor.gps-position-last', ['client_id__eq' => 'terminal-xyz'], false))
                 ->has('gpsPositionHistories.data', 1)
                 ->where('gpsPositionHistories.data.0.terminal_id', 'terminal-xyz'));
     }

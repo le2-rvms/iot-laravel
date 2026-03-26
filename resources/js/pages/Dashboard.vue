@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import { hrefForRouteTarget } from '@/lib/routes';
 
 const props = defineProps({
     hero: {
@@ -65,12 +66,12 @@ function formatDateTime(value) {
                             <div class="flex flex-wrap gap-3">
                                 <UiButton
                                     v-for="(action, index) in hero.primaryActions"
-                                    :key="action.href"
+                                    :key="`${action.routeName}:${action.label}`"
                                     as-child
                                     :variant="index === 0 ? 'default' : 'outline'"
                                     class="rounded-xl"
                                 >
-                                    <Link :href="action.href">{{ action.label }}</Link>
+                                    <Link :href="hrefForRouteTarget(action)">{{ action.label }}</Link>
                                 </UiButton>
                             </div>
                         </div>

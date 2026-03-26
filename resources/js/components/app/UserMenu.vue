@@ -8,6 +8,7 @@ import {
     getCurrentTheme,
     setThemePreference,
 } from '@/theme';
+import { route } from '@/lib/routes';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -46,12 +47,12 @@ function setThemeMode(mode) {
 }
 
 function logout() {
-    router.post('/logout');
+    router.post(route('logout'));
 }
 
 function goToPasswordPage() {
     // 菜单直接跳到独立改密页，和资源路由 / 权限控制保持同一入口。
-    router.get('/admin/account/security-password/edit');
+    router.get(route('security-password.edit'));
 }
 
 function initials(name) {

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     roles: {
@@ -27,7 +28,7 @@ function confirmDelete(role) {
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/admin/admin-roles/${role.id}`, {
+            router.delete(route('admin-roles.destroy', role), {
                 preserveScroll: true,
             });
         },
@@ -71,7 +72,7 @@ function confirmDelete(role) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/admin/admin-roles/${role.id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="route('admin-roles.edit', role)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

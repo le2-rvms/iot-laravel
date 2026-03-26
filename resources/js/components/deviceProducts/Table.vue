@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { route } from '@/lib/routes';
 
 defineProps({
     products: {
@@ -23,7 +24,7 @@ function confirmDelete(product) {
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/admin/device-products/${product.product_id}`, {
+            router.delete(route('device-products.destroy', product), {
                 preserveScroll: true,
                 only: ['products', 'filters', 'flash'],
             });
@@ -67,7 +68,7 @@ function confirmDelete(product) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/admin/device-products/${product.product_id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="route('device-products.edit', product)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

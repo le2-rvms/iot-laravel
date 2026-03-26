@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
+import { hrefForRouteTarget, route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -26,8 +27,8 @@ const props = defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '客户端监控', href: props.deviceContext?.rootHref ?? props.pageMeta.monitorHref },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: '客户端监控', href: hrefForRouteTarget(props.deviceContext ?? props.pageMeta.monitorRoute) },
     { label: props.pageMeta.title },
 ];
 
@@ -49,7 +50,7 @@ const hasFilters = computed(() => Object.values(props.filters ?? {}).some((value
             <ClientMonitorDeviceContextBanner :device-context="deviceContext" :client-id="filters.client_id__eq" />
 
             <AppDataTableShell>
-                <ClientMonitorGpsPositionLastFilters :filters="filters" :href="pageMeta.href" />
+                <ClientMonitorGpsPositionLastFilters :filters="filters" :route-target="pageMeta" />
                 <ClientMonitorGpsPositionLastTable v-if="gpsPositionLast.data.length" :gps-position-last="gpsPositionLast" />
 
                 <div v-else class="p-5">

@@ -13,7 +13,7 @@ class SettingsApplicationConfigController extends AbstractSettingsConfigControll
         parent::__construct(
             Category::APPLICATION,
             '应用配置',
-            [self::class, 'index'],
+            'application-configs.index',
         );
     }
 }

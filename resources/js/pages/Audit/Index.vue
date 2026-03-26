@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { Head } from "@inertiajs/vue3";
-import { buildQueryHref } from "@/lib/utils";
+import { buildRouteQueryHref, route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -23,10 +23,10 @@ const props = defineProps({
 });
 
 const breadcrumbs = [
-    { label: "仪表盘", href: "/admin/dashboard" },
+    { label: "仪表盘", href: route('dashboard') },
     { label: "审计日志" },
 ];
-const exportHref = computed(() => buildQueryHref("/admin/audits/export", props.filters));
+const exportHref = computed(() => buildRouteQueryHref('audits.export', props.filters));
 
 const hasFilters = computed(() => {
     return Boolean(

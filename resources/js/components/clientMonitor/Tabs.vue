@@ -1,5 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
+import { hrefForRouteTarget, route } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 defineProps({
@@ -9,14 +10,10 @@ defineProps({
     },
 });
 
-const page = usePage();
+usePage();
 
-function normalizePath(url) {
-    return String(url ?? '').split('?')[0];
-}
-
-function isActive(href) {
-    return normalizePath(page.url) === normalizePath(href);
+function isActive(section) {
+    return route().current(section.routeName);
 }
 </script>
 
@@ -24,11 +21,11 @@ function isActive(href) {
     <div class="flex flex-wrap gap-2 rounded-[1.5rem] border border-app-panel-border/80 bg-app-panel/60 p-2">
         <Link
             v-for="section in sections"
-            :key="section.href"
-            :href="section.href"
+            :key="`${section.routeName}:${section.title}`"
+            :href="hrefForRouteTarget(section)"
             class="rounded-xl px-4 py-2 text-sm font-medium transition"
             :class="cn(
-                isActive(section.href)
+                isActive(section)
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-app-secondary-foreground hover:bg-app-subtle/75',
             )"

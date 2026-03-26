@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     device: {
@@ -9,8 +10,8 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '设备管理', href: '/admin/devices' },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: '设备管理', href: route('devices.index') },
     { label: '新建设备' },
 ];
 </script>

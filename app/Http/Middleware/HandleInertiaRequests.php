@@ -7,6 +7,7 @@ use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Str;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -45,6 +46,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'navigation' => [
                 'sections' => fn () => NavigationRegistry::sidebarFor($request->user()),
+            ],
+            'ziggy' => fn (): array => [
+                ...(new Ziggy)->toArray(),
+                'location' => $request->fullUrl(),
             ],
             'auth' => [
                 'user' => fn () => $request->user()?->only('id', 'name', 'email', 'email_verified_at'),

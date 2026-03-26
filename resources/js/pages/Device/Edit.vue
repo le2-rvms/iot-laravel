@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ScanSearch } from 'lucide-vue-next';
 import { buildDeviceMonitorOverviewHref } from '@/lib/deviceMonitorLinks';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     device: {
@@ -16,8 +17,8 @@ const canMonitor = computed(() => page.props.auth?.access?.['client-monitor.read
 const monitorHref = computed(() => buildDeviceMonitorOverviewHref(props.device.terminal_id));
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '设备管理', href: '/admin/devices' },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: '设备管理', href: route('devices.index') },
     { label: '编辑设备' },
 ];
 </script>

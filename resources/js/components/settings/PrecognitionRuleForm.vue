@@ -1,5 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     channelTypes: {
@@ -15,7 +16,7 @@ const form = useForm({
     target: '',
     daily_limit: 5,
     notes: '',
-}).withPrecognition('post', '/admin/settings/precognition');
+}).withPrecognition('post', route('precognition.store'));
 
 form.setValidationTimeout(350);
 
@@ -32,7 +33,7 @@ function handleChannelChange() {
 }
 
 function submit() {
-    form.post('/admin/settings/precognition');
+    form.post(route('precognition.store'));
 }
 </script>
 

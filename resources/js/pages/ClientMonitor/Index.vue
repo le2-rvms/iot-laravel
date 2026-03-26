@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import { hrefForRouteTarget, route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -31,8 +32,8 @@ function previewExtra(extra) {
 }
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '客户端监控', href: props.deviceContext.rootHref },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: '客户端监控', href: hrefForRouteTarget(props.deviceContext) },
 ];
 </script>
 
@@ -60,7 +61,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 最近 5 条在线会话记录。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[0].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[0])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">
@@ -83,7 +84,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 最近 5 条鉴权事件。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[1].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[1])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">
@@ -106,7 +107,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 最近 5 条命令事件。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[2].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[2])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">
@@ -129,7 +130,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 最近 5 条连接事件。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[3].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[3])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">
@@ -152,7 +153,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 的最新定位记录。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[4].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[4])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">
@@ -227,7 +228,7 @@ const breadcrumbs = [
                             <UiCardDescription>展示当前 Client ID 最近 5 条定位历史记录。</UiCardDescription>
                         </div>
                         <UiButton as-child variant="outline" size="sm" class="rounded-xl">
-                            <Link :href="sections[5].href">查看更多</Link>
+                            <Link :href="hrefForRouteTarget(sections[5])">查看更多</Link>
                         </UiButton>
                     </UiCardHeader>
                     <UiCardContent class="pt-0">

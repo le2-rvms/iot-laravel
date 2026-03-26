@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { Link, router, useForm } from "@inertiajs/vue3";
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     devQuickLogin: {
@@ -22,7 +23,7 @@ const hasErrors = computed(() => Object.keys(form.errors).length > 0);
 const showDevQuickLogin = computed(() => props.devQuickLogin.enabled);
 
 function submit() {
-    form.post("/login", {
+    form.post(route('login.store'), {
         onFinish: () => form.reset("password"),
     });
 }
@@ -61,7 +62,7 @@ function loginAs(loginUrl) {
                 <div class="flex items-center justify-between gap-3">
                     <UiLabel for="login-password">密码</UiLabel>
                     <Link
-                        href="/forgot-password"
+                        :href="route('password.request')"
                         class="app-link-muted text-sm font-medium"
                     >
                         忘记密码？

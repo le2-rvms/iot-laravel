@@ -31,7 +31,7 @@ class SettingsVeeValidateController extends Controller
     {
         Log::info('settings.form_lab.submitted', $request->validated());
 
-        return redirect()->action([self::class, 'index'])->with('success', '规则内容已提交。');
+        return to_route('vee-validate.index')->with('success', '规则内容已提交。');
     }
 
     /**

@@ -37,7 +37,7 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/admin-users/export?search__func=alice');
+            ->get(route('admin-users.export', ['search__func' => 'alice']));
 
         $response->assertOk()
             ->assertDownload();
@@ -57,7 +57,7 @@ class CsvExportTest extends TestCase
         $user = $this->createUserWithPermissions(['dashboard.read']);
 
         $this->actingAs($user)
-            ->get('/admin/admin-roles/export')
+            ->get(route('admin-roles.export'))
             ->assertForbidden();
     }
 
@@ -74,7 +74,7 @@ class CsvExportTest extends TestCase
         $role->syncPermissions(['dashboard.read', 'admin-user.read']);
 
         $response = $this->actingAs($user)
-            ->get('/admin/admin-roles/export');
+            ->get(route('admin-roles.export'));
 
         $rows = $this->csvRows($response);
 
@@ -137,7 +137,7 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/device-products/export?search__func=export');
+            ->get(route('device-products.export', ['search__func' => 'export']));
 
         $rows = $this->csvRows($response);
 
@@ -201,7 +201,7 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/devices/export?search__func=export&device_status__eq=online');
+            ->get(route('devices.export', ['search__func' => 'export', 'device_status__eq' => 'online']));
 
         $rows = $this->csvRows($response);
 
@@ -217,7 +217,7 @@ class CsvExportTest extends TestCase
         $user = $this->createSuperAdmin();
 
         $response = $this->actingAs($user)
-            ->get('/admin/admin-roles/export');
+            ->get(route('admin-roles.export'));
 
         $rows = $this->csvRows($response);
 
@@ -238,7 +238,7 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/mqtt-accounts/export?search__func=gateway');
+            ->get(route('mqtt-accounts.export', ['search__func' => 'gateway']));
 
         $rows = $this->csvRows($response);
 
@@ -280,7 +280,7 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/settings/application-configs/export?page=2');
+            ->get(route('application-configs.export', ['page' => 2]));
 
         $rows = $this->csvRows($response);
 
@@ -327,7 +327,10 @@ class CsvExportTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get('/admin/audits/export?event__eq=updated&auditable_type__eq='.urlencode(AdminUser::class));
+            ->get(route('audits.export', [
+                'event__eq' => 'updated',
+                'auditable_type__eq' => AdminUser::class,
+            ]));
 
         $rows = $this->csvRows($response);
 

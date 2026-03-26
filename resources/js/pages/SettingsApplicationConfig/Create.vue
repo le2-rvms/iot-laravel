@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     category: {
@@ -14,12 +15,16 @@ defineProps({
 
 const resource = {
     title: '应用配置',
-    index_href: '/admin/settings/application-configs',
+    index_route: 'application-configs.index',
+    store_route: 'application-configs.store',
+    update_route: 'application-configs.update',
+    edit_route: 'application-configs.edit',
+    destroy_route: 'application-configs.destroy',
 };
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: resource.title, href: resource.index_href },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: resource.title, href: route(resource.index_route) },
     { label: '新建配置项' },
 ];
 </script>

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { route } from '@/lib/routes';
 
 defineProps({
     accounts: {
@@ -15,15 +16,19 @@ const page = usePage();
 const confirmDialog = useConfirmDialog();
 const canWrite = computed(() => page.props.auth?.access?.['mqtt-account.write'] ?? false);
 
+function accountRouteParams(account) {
+    return { mqtt_account: account.act_id };
+}
+
 function confirmDelete(account) {
-    confirmDialog.open({
+        confirmDialog.open({
         title: '删除MQTT账号',
         description: `确定删除账号 ${account.user_name} 吗？此操作不可撤销。`,
         confirmLabel: '确认删除',
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/admin/mqtt-accounts/${account.act_id}`, {
+            router.delete(route('mqtt-accounts.destroy', accountRouteParams(account)), {
                 preserveScroll: true,
                 // 删除后只回拉列表、筛选和提示，避免整页重新加载打断当前操作上下文。
                 only: ['accounts', 'filters', 'flash'],
@@ -76,7 +81,7 @@ function confirmDelete(account) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/admin/mqtt-accounts/${account.act_id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="route('mqtt-accounts.edit', accountRouteParams(account))" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

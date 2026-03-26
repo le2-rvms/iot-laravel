@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     mode: {
@@ -41,14 +42,14 @@ function toggleRole(roleName, checked) {
 
 function submit() {
     if (isEdit.value) {
-        form.put(`/admin/admin-users/${props.user.id}`, {
+        form.put(route('admin-users.update', props.user), {
             onFinish: () => form.reset('password'),
         });
 
         return;
     }
 
-    form.post('/admin/admin-users', {
+    form.post(route('admin-users.store'), {
         onFinish: () => form.reset('password'),
     });
 }
@@ -131,7 +132,7 @@ function submit() {
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/admin/admin-users">返回列表</Link>
+                    <Link :href="route('admin-users.index')">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建管理员用户' }}

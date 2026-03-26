@@ -3,6 +3,7 @@ import { watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { Search } from "lucide-vue-next";
 import { useFilterForm } from "@/composables/useFilterForm";
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -28,7 +29,7 @@ const form = useFilterForm(() => props.filters);
 
 function submit() {
     router.get(
-        "/admin/mqtt-accounts",
+        route('mqtt-accounts.index'),
         // form 只维护查询条件，直接透传给 router.get 即可。
         form,
         {

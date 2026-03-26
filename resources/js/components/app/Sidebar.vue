@@ -13,6 +13,7 @@ import {
     Waypoints,
 } from "lucide-vue-next";
 import { Link, usePage } from "@inertiajs/vue3";
+import { route } from '@/lib/routes';
 
 const page = usePage();
 const buildInfo = window.__APP_BUILD_INFO__ ?? null;
@@ -32,23 +33,12 @@ const navigationIcons = {
     Package,
 };
 
-function normalizePath(url) {
-    return String(url).split("?")[0];
-}
-
-function isActive(href) {
-    const currentPath = normalizePath(page.url);
-    const targetPath = normalizePath(href);
-
-    if (href === "/admin/dashboard") {
-        return currentPath === targetPath;
+function isActive(item) {
+    if (item.routeName === 'client-monitor.sessions') {
+        return route().current('client-monitor.*');
     }
 
-    if (targetPath === "/admin/client-monitor/sessions") {
-        return currentPath.startsWith("/admin/client-monitor/");
-    }
-
-    return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+    return route().current(item.routeName);
 }
 
 function resolveNavigationIcon(icon) {
@@ -124,7 +114,7 @@ function formatBuildTime(value) {
                         :class="[
                             item.disabled
                                 ? 'cursor-not-allowed opacity-50'
-                                : isActive(item.href)
+                                : isActive(item)
                                   ? 'border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground'
                                   : 'text-sidebar-foreground hover:border-sidebar-border hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground',
                         ]"
@@ -133,7 +123,7 @@ function formatBuildTime(value) {
                             :is="resolveNavigationIcon(item.icon)"
                             class="mt-0.5 size-5 shrink-0"
                             :class="
-                                isActive(item.href)
+                                isActive(item)
                                     ? 'text-sidebar-primary'
                                     : 'text-sidebar-foreground/55'
                             "
@@ -145,7 +135,7 @@ function formatBuildTime(value) {
                             <p
                                 class="mt-1 text-xs leading-5"
                                 :class="
-                                    isActive(item.href)
+                                    isActive(item)
                                         ? 'text-sidebar-accent-foreground/75'
                                         : 'text-sidebar-foreground/60'
                                 "

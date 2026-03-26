@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     availableRoles: {
@@ -9,8 +10,8 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: '管理员用户', href: '/admin/admin-users' },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: '管理员用户', href: route('admin-users.index') },
     { label: '新建管理员用户' },
 ];
 </script>

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const page = usePage();
 const status = computed(() => page.props.flash?.success);
@@ -10,7 +11,7 @@ const form = useForm({
 });
 
 function submit() {
-    form.post('/forgot-password');
+    form.post(route('password.email'));
 }
 </script>
 
@@ -40,7 +41,7 @@ function submit() {
             {{ form.processing ? '发送中...' : '发送重置邮件' }}
         </UiButton>
 
-        <Link href="/login" class="app-link-muted block text-center text-sm font-medium">
+        <Link :href="route('login')" class="app-link-muted block text-center text-sm font-medium">
             返回登录
         </Link>
     </form>

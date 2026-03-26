@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     channelTypes: {
@@ -13,7 +14,7 @@ defineProps({
 });
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '仪表盘', href: route('dashboard') },
     { label: '复杂表单实验室' },
 ];
 </script>

@@ -76,7 +76,7 @@ class AdminUserController extends Controller
         // 发邮件属于 HTTP 侧副作用，模型只负责用户状态变更。
         $adminUser->sendEmailVerificationNotification();
 
-        return redirect()->action([self::class, 'index'])->with('success', '管理员用户已创建，并已发送验证邮件。');
+        return to_route('admin-users.index')->with('success', '管理员用户已创建，并已发送验证邮件。');
     }
 
     #[PermissionAction('write')]
@@ -112,7 +112,7 @@ class AdminUserController extends Controller
             $adminUser->sendEmailVerificationNotification();
         }
 
-        return redirect()->action([self::class, 'edit'], $adminUser)->with('success', '管理员用户信息已更新。');
+        return to_route('admin-users.edit', $adminUser)->with('success', '管理员用户信息已更新。');
     }
 
     #[PermissionAction('write')]
@@ -120,6 +120,6 @@ class AdminUserController extends Controller
     {
         $adminUser->deleteUser();
 
-        return redirect()->action([self::class, 'index'])->with('success', '管理员用户已删除。');
+        return to_route('admin-users.index')->with('success', '管理员用户已删除。');
     }
 }

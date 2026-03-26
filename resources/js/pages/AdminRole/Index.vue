@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
+import { route } from '@/lib/routes';
 
 defineProps({
     roles: {
@@ -19,7 +20,7 @@ const canWrite = computed(
 );
 
 const breadcrumbs = [
-    { label: "仪表盘", href: "/admin/dashboard" },
+    { label: "仪表盘", href: route('dashboard') },
     { label: "管理员角色" },
 ];
 </script>
@@ -39,10 +40,10 @@ const breadcrumbs = [
             >
                 <template #actions>
                     <UiButton as-child variant="outline" class="rounded-xl">
-                        <a href="/admin/admin-roles/export">导出 CSV</a>
+                        <a :href="route('admin-roles.export')">导出 CSV</a>
                     </UiButton>
                     <UiButton v-if="canWrite" as-child class="rounded-xl">
-                        <Link href="/admin/admin-roles/create"
+                        <Link :href="route('admin-roles.create')"
                             >新建管理员角色</Link
                         >
                     </UiButton>
@@ -64,7 +65,7 @@ const breadcrumbs = [
                 title="还没有管理员角色"
                 description="先创建管理员角色，再分配给需要使用后台的人员。"
                 :action-label="canWrite ? '创建管理员角色' : ''"
-                :action-href="canWrite ? '/admin/admin-roles/create' : ''"
+                :action-href="canWrite ? route('admin-roles.create') : ''"
             />
         </div>
     </AppLayout>

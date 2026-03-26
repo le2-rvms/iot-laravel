@@ -1,5 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     account: {
@@ -10,8 +11,8 @@ defineProps({
 
 // 新建页也传 account 对象，和编辑页保持同一份表单输入结构与默认值来源。
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
-    { label: 'MQTT账号管理', href: '/admin/mqtt-accounts' },
+    { label: '仪表盘', href: route('dashboard') },
+    { label: 'MQTT账号管理', href: route('mqtt-accounts.index') },
     { label: '新建MQTT账号' },
 ];
 </script>

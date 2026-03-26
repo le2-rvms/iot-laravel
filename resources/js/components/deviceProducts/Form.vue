@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     mode: {
@@ -26,12 +27,12 @@ const form = useForm({
 
 function submit() {
     if (isEdit.value) {
-        form.put(`/admin/device-products/${props.product.product_id}`);
+        form.put(route('device-products.update', props.product));
 
         return;
     }
 
-    form.post('/admin/device-products');
+    form.post(route('device-products.store'));
 }
 </script>
 
@@ -116,7 +117,7 @@ function submit() {
 
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
                 <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
-                    <Link href="/admin/device-products">返回列表</Link>
+                    <Link :href="route('device-products.index')">返回列表</Link>
                 </UiButton>
                 <UiButton type="submit" class="w-full rounded-xl sm:min-w-32 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建设备产品' }}

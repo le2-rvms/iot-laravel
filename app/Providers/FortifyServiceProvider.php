@@ -51,7 +51,7 @@ class FortifyServiceProvider extends ServiceProvider
                         'name' => $adminUser->name,
                         'email' => $adminUser->email,
                         'email_verified_at' => $adminUser->email_verified_at?->toDateTimeString(),
-                        'login_url' => url("/login/dev-users/{$adminUser->id}"),
+                        'login_url' => route('dev-users.login', $adminUser),
                     ])
                     ->all();
             }

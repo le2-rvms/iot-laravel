@@ -17,7 +17,7 @@ class PasswordUpdateTest extends TestCase
         $user = $this->createUserWithPermissions(['password.write']);
 
         $this->actingAs($user)
-            ->get('/admin/account/security-password/edit')
+            ->get(route('security-password.edit'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Password/Edit'));
     }
@@ -27,14 +27,14 @@ class PasswordUpdateTest extends TestCase
         $user = $this->createUserWithPermissions(['dashboard.read']);
 
         $this->actingAs($user)
-            ->get('/admin/account/security-password/edit')
+            ->get(route('security-password.edit'))
             ->assertForbidden();
     }
 
     public function test_guests_are_redirected_to_login_when_visiting_the_password_edit_screen(): void
     {
-        $this->get('/admin/account/security-password/edit')
-            ->assertRedirect('/login');
+        $this->get(route('security-password.edit'))
+            ->assertRedirect(route('login'));
     }
 
     public function test_unverified_users_are_redirected_to_the_verification_notice_when_visiting_the_password_edit_screen(): void
@@ -44,8 +44,8 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/account/security-password/edit')
-            ->assertRedirect('/email/verify');
+            ->get(route('security-password.edit'))
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_verified_users_can_update_their_password_and_stay_authenticated(): void
@@ -55,12 +55,12 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->put('/admin/account/security-password', [
+            ->put(route('security-password.update'), [
                 'current_password' => 'old-password',
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
             ])
-            ->assertRedirect('/admin/account/security-password/edit')
+            ->assertRedirect(route('security-password.edit'))
             ->assertSessionHas('success', '密码已更新。');
 
         $user = $user->fresh();
@@ -76,7 +76,7 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->put('/admin/account/security-password', [
+            ->put(route('security-password.update'), [
                 'current_password' => 'old-password',
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
@@ -96,13 +96,13 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from('/admin/account/security-password/edit')
-            ->put('/admin/account/security-password', [
+            ->from(route('security-password.edit'))
+            ->put(route('security-password.update'), [
                 'current_password' => 'wrong-password',
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
             ])
-            ->assertRedirect('/admin/account/security-password/edit')
+            ->assertRedirect(route('security-password.edit'))
             ->assertSessionHasErrors(['current_password']);
 
         $user = $user->fresh();
@@ -118,13 +118,13 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from('/admin/account/security-password/edit')
-            ->put('/admin/account/security-password', [
+            ->from(route('security-password.edit'))
+            ->put(route('security-password.update'), [
                 'current_password' => 'old-password',
                 'password' => 'new-password',
                 'password_confirmation' => 'mismatched-password',
             ])
-            ->assertRedirect('/admin/account/security-password/edit')
+            ->assertRedirect(route('security-password.edit'))
             ->assertSessionHasErrors(['password']);
 
         $user = $user->fresh();
@@ -140,13 +140,13 @@ class PasswordUpdateTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from('/admin/account/security-password/edit')
-            ->put('/admin/account/security-password', [
+            ->from(route('security-password.edit'))
+            ->put(route('security-password.update'), [
                 'current_password' => 'old-password',
                 'password' => 'short',
                 'password_confirmation' => 'short',
             ])
-            ->assertRedirect('/admin/account/security-password/edit')
+            ->assertRedirect(route('security-password.edit'))
             ->assertSessionHasErrors(['password']);
 
         $user = $user->fresh();

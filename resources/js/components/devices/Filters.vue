@@ -2,6 +2,7 @@
 import { router } from '@inertiajs/vue3';
 import { Search } from 'lucide-vue-next';
 import { useFilterForm } from '@/composables/useFilterForm';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -19,7 +20,7 @@ const props = defineProps({
 const form = useFilterForm(() => props.filters);
 
 function submit() {
-    router.get('/admin/devices', form, {
+    router.get(route('devices.index'), form, {
         preserveState: true,
         preserveScroll: true,
         replace: true,

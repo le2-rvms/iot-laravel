@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { buildQueryHref } from '@/lib/utils';
+import { buildRouteQueryHref, route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -17,10 +17,10 @@ const props = defineProps({
 const page = usePage();
 const canWrite = computed(() => page.props.auth?.access?.['device.write'] ?? false);
 const hasFilters = computed(() => Object.values(props.filters ?? {}).some((value) => String(value ?? '').trim() !== ''));
-const exportHref = computed(() => buildQueryHref('/admin/devices/export', props.filters));
+const exportHref = computed(() => buildRouteQueryHref('devices.export', props.filters));
 
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '仪表盘', href: route('dashboard') },
     { label: '设备管理' },
 ];
 </script>
@@ -40,7 +40,7 @@ const breadcrumbs = [
                         <a :href="exportHref">导出 CSV</a>
                     </UiButton>
                     <UiButton v-if="canWrite" as-child class="rounded-xl">
-                        <Link href="/admin/devices/create">新建设备</Link>
+                        <Link :href="route('devices.create')">新建设备</Link>
                     </UiButton>
                 </template>
             </AppPageToolbar>
@@ -55,7 +55,7 @@ const breadcrumbs = [
                         :title="hasFilters ? '未找到匹配的设备' : '还没有设备'"
                         :description="hasFilters ? '调整筛选条件后再试，或清空条件查看全部设备。' : '创建设备后，可在这里统一维护设备基础资料、状态与鉴权字段。'"
                         :action-label="!hasFilters && canWrite ? '创建设备' : ''"
-                        :action-href="!hasFilters && canWrite ? '/admin/devices/create' : ''"
+                        :action-href="!hasFilters && canWrite ? route('devices.create') : ''"
                     />
                 </div>
 

@@ -22,7 +22,7 @@ class UserManagementTest extends TestCase
         AdminUser::factory()->count(3)->create();
 
         $this->actingAs($admin)
-            ->get('/admin/admin-users')
+            ->get(route('admin-users.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminUser/Index')
@@ -37,8 +37,8 @@ class UserManagementTest extends TestCase
         $admin = AdminUser::factory()->unverified()->create();
 
         $this->actingAs($admin)
-            ->get('/admin/admin-users')
-            ->assertRedirect('/email/verify');
+            ->get(route('admin-users.index'))
+            ->assertRedirect(route('verification.notice'));
     }
 
     public function test_verified_users_can_view_the_dashboard(): void
@@ -46,11 +46,12 @@ class UserManagementTest extends TestCase
         $admin = $this->createSuperAdmin();
 
         $this->actingAs($admin)
-            ->get('/admin/dashboard')
+            ->get(route('dashboard'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Dashboard')
-                ->where('stats.usersCount', 1));
+                ->where('hero.userName', $admin->name)
+                ->has('kpis', 6));
     }
 
     public function test_users_can_be_created_and_receive_a_verification_email(): void
@@ -65,13 +66,13 @@ class UserManagementTest extends TestCase
         $role->syncPermissions(['admin-user.read']);
 
         $this->actingAs($admin)
-            ->post('/admin/admin-users', [
+            ->post(route('admin-users.store'), [
                 'name' => 'New User',
                 'email' => 'new-user@example.com',
                 'password' => 'password',
                 'roles' => ['Editor'],
             ])
-            ->assertRedirect('/admin/admin-users');
+            ->assertRedirect(route('admin-users.index'));
 
         $user = AdminUser::where('email', 'new-user@example.com')->firstOrFail();
 
@@ -96,13 +97,13 @@ class UserManagementTest extends TestCase
         $role->syncPermissions(['admin-user.read', 'admin-user.write']);
 
         $this->actingAs($admin)
-            ->put("/admin/admin-users/{$user->id}", [
+            ->put(route('admin-users.update', $user), [
                 'name' => 'Updated User',
                 'email' => 'updated@example.com',
                 'password' => '',
                 'roles' => ['Manager'],
             ])
-            ->assertRedirect("/admin/admin-users/{$user->id}/edit");
+            ->assertRedirect(route('admin-users.edit', $user));
 
         $user->refresh();
 
@@ -119,8 +120,8 @@ class UserManagementTest extends TestCase
         $user = AdminUser::factory()->create();
 
         $this->actingAs($admin)
-            ->delete("/admin/admin-users/{$user->id}")
-            ->assertRedirect('/admin/admin-users');
+            ->delete(route('admin-users.destroy', $user))
+            ->assertRedirect(route('admin-users.index'));
 
         $this->assertDatabaseMissing((new AdminUser)->getTable(), [
             'id' => $user->id,
@@ -142,7 +143,7 @@ class UserManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/admin-users?search__func=alice')
+            ->get(route('admin-users.index', ['search__func' => 'alice']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminUser/Index')
@@ -165,7 +166,7 @@ class UserManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/admin-users?name__eq=Alice Cooper')
+            ->get(route('admin-users.index', ['name__eq' => 'Alice Cooper']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminUser/Index')
@@ -192,7 +193,7 @@ class UserManagementTest extends TestCase
                 'X-Inertia-Partial-Component' => 'AdminUser/Index',
                 'X-Inertia-Partial-Data' => 'users,filters',
             ])
-            ->get('/admin/admin-users?search__func=partial')
+            ->get(route('admin-users.index', ['search__func' => 'partial']))
             ->assertOk()
             ->assertJsonPath('component', 'AdminUser/Index')
             ->assertJsonPath('props.filters.search__func', 'partial')
@@ -204,7 +205,7 @@ class UserManagementTest extends TestCase
         $admin = $this->createSuperAdmin();
 
         $this->actingAs($admin)
-            ->get('/admin/admin-users?search=alice')
+            ->get(route('admin-users.index', ['search' => 'alice']))
             ->assertStatus(422)
             ->assertJsonPath('errors.search.0', '筛选条件格式无效，必须使用 field__operator 形式。');
     }
@@ -215,15 +216,15 @@ class UserManagementTest extends TestCase
         $target = AdminUser::factory()->create();
 
         $this->actingAs($user)
-            ->get('/admin/admin-users')
+            ->get(route('admin-users.index'))
             ->assertOk();
 
         $this->actingAs($user)
-            ->get('/admin/admin-users/create')
+            ->get(route('admin-users.create'))
             ->assertForbidden();
 
         $this->actingAs($user)
-            ->delete("/admin/admin-users/{$target->id}")
+            ->delete(route('admin-users.destroy', $target))
             ->assertForbidden();
     }
 
@@ -234,28 +235,28 @@ class UserManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-user.write']);
 
         $this->actingAs($user)
-            ->post('/admin/admin-users', [
+            ->post(route('admin-users.store'), [
                 'name' => 'Writer Created',
                 'email' => 'writer-created@example.com',
                 'password' => 'password',
                 'roles' => [],
             ])
-            ->assertRedirect('/admin/admin-users');
+            ->assertRedirect(route('admin-users.index'));
 
         $created = AdminUser::where('email', 'writer-created@example.com')->firstOrFail();
 
         $this->actingAs($user)
-            ->put("/admin/admin-users/{$created->id}", [
+            ->put(route('admin-users.update', $created), [
                 'name' => 'Writer Updated',
                 'email' => 'writer-updated@example.com',
                 'password' => '',
                 'roles' => [],
             ])
-            ->assertRedirect("/admin/admin-users/{$created->id}/edit");
+            ->assertRedirect(route('admin-users.edit', $created));
 
         $this->actingAs($user)
-            ->delete("/admin/admin-users/{$created->id}")
-            ->assertRedirect('/admin/admin-users');
+            ->delete(route('admin-users.destroy', $created))
+            ->assertRedirect(route('admin-users.index'));
     }
 
     public function test_user_validation_errors_are_returned_in_chinese(): void
@@ -263,14 +264,14 @@ class UserManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-user.write']);
 
         $this->actingAs($user)
-            ->from('/admin/admin-users/create')
-            ->post('/admin/admin-users', [
+            ->from(route('admin-users.create'))
+            ->post(route('admin-users.store'), [
                 'name' => '',
                 'email' => '',
                 'password' => '',
                 'roles' => ['missing-role'],
             ])
-            ->assertRedirect('/admin/admin-users/create')
+            ->assertRedirect(route('admin-users.create'))
             ->assertSessionHasErrors(['name', 'email', 'password', 'roles.0']);
 
         $errors = session('errors')->getBag('default');

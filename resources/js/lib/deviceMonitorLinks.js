@@ -1,7 +1,7 @@
-import { buildQueryHref } from './utils.js';
+import { buildRouteQueryHref } from './routes.js';
 
 export function buildDeviceMonitorOverviewHref(terminalId) {
-    return buildQueryHref('/admin/client-monitor/device-overview', {
+    return buildRouteQueryHref('client-monitor.device-overview', {
         client_id__eq: terminalId,
     });
 }

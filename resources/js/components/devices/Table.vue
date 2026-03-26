@@ -4,6 +4,7 @@ import { Link, router, usePage } from '@inertiajs/vue3';
 import { PencilLine, ScanSearch, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { buildDeviceMonitorOverviewHref } from '@/lib/deviceMonitorLinks';
+import { route } from '@/lib/routes';
 
 defineProps({
     devices: {
@@ -29,7 +30,7 @@ function confirmDelete(device) {
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/admin/devices/${device.terminal_id}`, {
+            router.delete(route('devices.destroy', device), {
                 preserveScroll: true,
                 only: ['devices', 'filters', 'flash'],
             });
@@ -83,7 +84,7 @@ function confirmDelete(device) {
                             </Link>
                         </UiButton>
                         <UiButton v-if="canWrite" as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/admin/devices/${device.terminal_id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="route('devices.edit', device)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

@@ -89,7 +89,7 @@ class DeviceManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/devices')
+            ->get(route('devices.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Device/Index')
@@ -103,7 +103,7 @@ class DeviceManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['device.write']);
 
         $this->actingAs($user)
-            ->post('/admin/devices', [
+            ->post(route('devices.store'), [
                 'terminal_id' => 'terminal-create',
                 'dev_name' => 'Created Device',
                 'company_id' => 'company-1',
@@ -122,7 +122,7 @@ class DeviceManagementTest extends TestCase
                 'auth_block_until' => '2026-03-26T10:00',
                 'city_relation_id' => 99,
             ])
-            ->assertRedirect('/admin/devices')
+            ->assertRedirect(route('devices.index'))
             ->assertSessionHas('success', '设备已创建。');
 
         $device = IotDevice::query()->findOrFail('terminal-create');
@@ -131,7 +131,7 @@ class DeviceManagementTest extends TestCase
         $this->assertSame('seed-created', $device->auth_code_seed);
 
         $this->actingAs($user)
-            ->put('/admin/devices/terminal-create', [
+            ->put(route('devices.update', 'terminal-create'), [
                 'terminal_id' => 'terminal-changed',
                 'dev_name' => 'Updated Device',
                 'company_id' => 'company-2',
@@ -150,7 +150,7 @@ class DeviceManagementTest extends TestCase
                 'auth_block_until' => '2026-03-27T08:00',
                 'city_relation_id' => 100,
             ])
-            ->assertRedirect('/admin/devices/terminal-create/edit')
+            ->assertRedirect(route('devices.edit', 'terminal-create'))
             ->assertSessionHas('success', '设备已更新。');
 
         $device = IotDevice::query()->findOrFail('terminal-create');
@@ -174,8 +174,8 @@ class DeviceManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->delete('/admin/devices/terminal-create')
-            ->assertRedirect('/admin/devices')
+            ->delete(route('devices.destroy', 'terminal-create'))
+            ->assertRedirect(route('devices.index'))
             ->assertSessionHas('success', '设备已删除。');
 
         $this->assertDatabaseMissing('devices', [
@@ -195,7 +195,7 @@ class DeviceManagementTest extends TestCase
         $withMonitorAccess = $this->createUserWithPermissions(['device.read', 'client-monitor.read']);
 
         $this->actingAs($withMonitorAccess)
-            ->get('/admin/devices')
+            ->get(route('devices.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Device/Index')
@@ -206,7 +206,7 @@ class DeviceManagementTest extends TestCase
         $withoutMonitorAccess = $this->createUserWithPermissions(['device.read']);
 
         $this->actingAs($withoutMonitorAccess)
-            ->get('/admin/devices')
+            ->get(route('devices.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Device/Index')
@@ -242,7 +242,13 @@ class DeviceManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/admin/devices?search__func=alpha&product_key__eq=PK-FILTER&device_status__eq=online&review_status__eq=approved&city_relation_id__eq=1')
+            ->get(route('devices.index', [
+                'search__func' => 'alpha',
+                'product_key__eq' => 'PK-FILTER',
+                'device_status__eq' => 'online',
+                'review_status__eq' => 'approved',
+                'city_relation_id__eq' => 1,
+            ]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Device/Index')
@@ -260,15 +266,15 @@ class DeviceManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['device.write']);
 
         $this->actingAs($user)
-            ->from('/admin/devices/create')
-            ->post('/admin/devices', [
+            ->from(route('devices.create'))
+            ->post(route('devices.store'), [
                 'terminal_id' => '',
                 'dev_name' => '',
                 'company_id' => str_repeat('c', 65),
                 'auth_failures' => -1,
                 'city_relation_id' => 'invalid',
             ])
-            ->assertRedirect('/admin/devices/create')
+            ->assertRedirect(route('devices.create'))
             ->assertSessionHasErrors(['terminal_id', 'dev_name', 'company_id', 'auth_failures', 'city_relation_id']);
 
         $errors = session('errors')->getBag('default');
@@ -301,8 +307,8 @@ class DeviceManagementTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->delete('/admin/devices/terminal-linked')
-            ->assertRedirect('/admin/devices')
+            ->delete(route('devices.destroy', 'terminal-linked'))
+            ->assertRedirect(route('devices.index'))
             ->assertSessionHas('error', '该设备仍有关联指令记录，无法删除。');
 
         $this->assertDatabaseHas('devices', [

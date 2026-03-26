@@ -4,6 +4,8 @@ import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { createApp, h } from 'vue';
+import { ZiggyVue } from 'ziggy-js';
+import { setZiggyConfig } from './lib/routes';
 import { initializeTheme } from './theme';
 
 const appName = window.document.title;
@@ -18,8 +20,11 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => pages[`./pages/${name}.vue`],
     setup({ el, App, props, plugin }) {
+        const ziggy = setZiggyConfig(props.initialPage.props.ziggy);
+
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(ZiggyVue, ziggy)
             .mount(el);
     },
     progress: {

@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { buildQueryHref } from '@/lib/utils';
+import { buildRouteQueryHref, route } from '@/lib/routes';
 
 const props = defineProps({
     category: {
@@ -22,16 +22,20 @@ const page = usePage();
 const resource = {
     title: '应用配置',
     description: '维护应用层的可配置键值、打码策略与备注说明。',
-    index_href: '/admin/settings/application-configs',
-    export_href: '/admin/settings/application-configs/export',
-    create_href: '/admin/settings/application-configs/create',
+    index_route: 'application-configs.index',
+    export_route: 'application-configs.export',
+    create_route: 'application-configs.create',
+    store_route: 'application-configs.store',
+    edit_route: 'application-configs.edit',
+    update_route: 'application-configs.update',
+    destroy_route: 'application-configs.destroy',
     write_permission: 'settings-application-config.write',
 };
 const canWrite = computed(() => page.props.auth?.access?.[resource.write_permission] ?? false);
 const hasSearch = computed(() => (props.filters.search__func ?? '').trim() !== '');
-const exportHref = computed(() => buildQueryHref(resource.export_href, props.filters));
+const exportHref = computed(() => buildRouteQueryHref(resource.export_route, props.filters));
 const breadcrumbs = [
-    { label: '仪表盘', href: '/admin/dashboard' },
+    { label: '仪表盘', href: route('dashboard') },
     { label: resource.title },
 ];
 </script>
@@ -51,13 +55,13 @@ const breadcrumbs = [
                         <a :href="exportHref">导出 CSV</a>
                     </UiButton>
                     <UiButton v-if="canWrite" as-child class="rounded-xl">
-                        <Link :href="resource.create_href">新建配置项</Link>
+                        <Link :href="route(resource.create_route)">新建配置项</Link>
                     </UiButton>
                 </template>
             </AppPageToolbar>
 
             <AppDataTableShell>
-                <SettingsConfigFilters :filters="filters" :index-href="resource.index_href" />
+                <SettingsConfigFilters :filters="filters" :index-route="resource.index_route" />
 
                 <SettingsConfigTable v-if="configs.data.length" :configs="configs" :resource="resource" />
 
@@ -66,7 +70,7 @@ const breadcrumbs = [
                         :title="hasSearch ? '未找到匹配的配置项' : `还没有${resource.title}`"
                         :description="hasSearch ? '调整搜索条件后再试，或清空关键字查看全部配置项。' : '创建第一个配置项后，可在这里集中查看和维护。'"
                         :action-label="!hasSearch && canWrite ? '创建配置项' : ''"
-                        :action-href="!hasSearch && canWrite ? resource.create_href : ''"
+                        :action-href="!hasSearch && canWrite ? route(resource.create_route) : ''"
                     />
                 </div>
 

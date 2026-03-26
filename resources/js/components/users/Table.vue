@@ -4,6 +4,7 @@ import { PencilLine, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { usePage } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 defineProps({
     users: {
@@ -24,7 +25,7 @@ function confirmDelete(user) {
         cancelLabel: '取消',
         variant: 'destructive',
         onConfirm: () => {
-            router.delete(`/admin/admin-users/${user.id}`, {
+            router.delete(route('admin-users.destroy', user), {
                 preserveScroll: true,
                 only: ['users', 'filters', 'flash'],
             });
@@ -78,7 +79,7 @@ function confirmDelete(user) {
                 <UiTableCell class="text-right">
                     <div v-if="canWrite" class="flex justify-end gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">
-                            <Link :href="`/admin/admin-users/${user.id}/edit`" class="inline-flex items-center gap-2">
+                            <Link :href="route('admin-users.edit', user)" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>

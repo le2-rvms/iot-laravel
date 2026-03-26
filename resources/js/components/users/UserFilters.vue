@@ -2,6 +2,7 @@
 import { router } from "@inertiajs/vue3";
 import { Search } from "lucide-vue-next";
 import { useFilterForm } from "@/composables/useFilterForm";
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
@@ -17,7 +18,7 @@ const form = useFilterForm(() => props.filters);
 
 function submit() {
     // form 只包含查询字段，可以直接作为 query 参数提交。
-    router.get("/admin/admin-users", form, {
+    router.get(route('admin-users.index'), form, {
         preserveState: true,
         preserveScroll: true,
         replace: true,

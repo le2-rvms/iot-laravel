@@ -18,7 +18,7 @@ class RoleManagementTest extends TestCase
         $admin = $this->createSuperAdmin();
 
         $this->actingAs($admin)
-            ->get('/admin/admin-roles')
+            ->get(route('admin-roles.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRole/Index')
@@ -34,11 +34,11 @@ class RoleManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-role.read']);
 
         $this->actingAs($user)
-            ->get('/admin/admin-roles')
+            ->get(route('admin-roles.index'))
             ->assertOk();
 
         $this->actingAs($user)
-            ->get('/admin/admin-roles/create')
+            ->get(route('admin-roles.create'))
             ->assertForbidden();
     }
 
@@ -47,11 +47,11 @@ class RoleManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-role.write']);
 
         $this->actingAs($user)
-            ->post('/admin/admin-roles', [
+            ->post(route('admin-roles.store'), [
                 'name' => 'Operations',
                 'permissions' => ['admin-user.read', 'admin-user.write'],
             ])
-            ->assertRedirect('/admin/admin-roles');
+            ->assertRedirect(route('admin-roles.index'));
 
         $role = AdminRole::findByName('Operations', 'web');
 
@@ -59,11 +59,11 @@ class RoleManagementTest extends TestCase
         $this->assertTrue($role->hasPermissionTo('admin-user.write'));
 
         $this->actingAs($user)
-            ->put("/admin/admin-roles/{$role->id}", [
+            ->put(route('admin-roles.update', $role), [
                 'name' => 'Operations Updated',
                 'permissions' => ['settings-system-config.read'],
             ])
-            ->assertRedirect("/admin/admin-roles/{$role->id}/edit");
+            ->assertRedirect(route('admin-roles.edit', $role));
 
         $role = $role->fresh();
 
@@ -77,11 +77,11 @@ class RoleManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-role.write']);
 
         $this->actingAs($user)
-            ->get('/admin/admin-roles/create')
+            ->get(route('admin-roles.create'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminRole/Create')
-                ->has('permissionGroups', 11)
+                ->has('permissionGroups', 13)
                 ->where('permissionGroups', function ($groups): bool {
                     $auditGroup = collect($groups)->firstWhere('module', 'audit');
                     $deviceProductGroup = collect($groups)->firstWhere('module', 'device-product');
@@ -130,12 +130,12 @@ class RoleManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-role.write']);
 
         $this->actingAs($user)
-            ->from('/admin/admin-roles/create')
-            ->post('/admin/admin-roles', [
+            ->from(route('admin-roles.create'))
+            ->post(route('admin-roles.store'), [
                 'name' => '',
                 'permissions' => ['invalid.permission'],
             ])
-            ->assertRedirect('/admin/admin-roles/create')
+            ->assertRedirect(route('admin-roles.create'))
             ->assertSessionHasErrors(['name', 'permissions.0']);
 
         $errors = session('errors')->getBag('default');
@@ -151,8 +151,8 @@ class RoleManagementTest extends TestCase
         $rolesTable = config('permission.table_names.roles');
 
         $this->actingAs($admin)
-            ->delete("/admin/admin-roles/{$superAdminRole->id}")
-            ->assertRedirect('/admin/admin-roles');
+            ->delete(route('admin-roles.destroy', $superAdminRole))
+            ->assertRedirect(route('admin-roles.index'));
 
         $this->assertDatabaseHas($rolesTable, [
             'name' => PermissionRegistry::SUPER_ADMIN_ROLE,
@@ -169,11 +169,11 @@ class RoleManagementTest extends TestCase
         $superAdminRole->syncPermissions(['dashboard.read']);
 
         $this->actingAs($admin)
-            ->put("/admin/admin-roles/{$superAdminRole->id}", [
+            ->put(route('admin-roles.update', $superAdminRole), [
                 'name' => 'Renamed Super Admin',
                 'permissions' => ['dashboard.read', 'admin-user.read'],
             ])
-            ->assertRedirect("/admin/admin-roles/{$superAdminRole->id}/edit");
+            ->assertRedirect(route('admin-roles.edit', $superAdminRole));
 
         $superAdminRole = $superAdminRole->fresh();
 
@@ -193,8 +193,8 @@ class RoleManagementTest extends TestCase
         $user->syncRoles([$role->name]);
 
         $this->actingAs($admin)
-            ->delete("/admin/admin-roles/{$role->id}")
-            ->assertRedirect('/admin/admin-roles');
+            ->delete(route('admin-roles.destroy', $role))
+            ->assertRedirect(route('admin-roles.index'));
 
         $this->assertDatabaseHas($rolesTable, [
             'name' => 'Bound Role',

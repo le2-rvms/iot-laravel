@@ -2,13 +2,14 @@
 import { router } from "@inertiajs/vue3";
 import { Search } from "lucide-vue-next";
 import { useFilterForm } from "@/composables/useFilterForm";
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     filters: {
         type: Object,
         required: true,
     },
-    indexHref: {
+    indexRoute: {
         type: String,
         required: true,
     },
@@ -19,7 +20,7 @@ const form = useFilterForm(() => props.filters);
 
 function submit() {
     router.get(
-        props.indexHref,
+        route(props.indexRoute),
         // 配置列表和其他列表保持同一套查询表单提交方式。
         form,
         {

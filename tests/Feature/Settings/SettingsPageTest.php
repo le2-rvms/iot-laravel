@@ -17,7 +17,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.read']);
 
         $this->actingAs($user)
-            ->get('/admin/settings/vee-validate')
+            ->get(route('vee-validate.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('SettingsVeeValidate/Index')
@@ -42,7 +42,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
-            ->get('/admin/settings/vee-validate')
+            ->get(route('vee-validate.index'))
             ->assertForbidden();
     }
 
@@ -60,8 +60,8 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->from('/admin/settings/vee-validate')
-            ->post('/admin/settings/vee-validate', [
+            ->from(route('vee-validate.index'))
+            ->post(route('vee-validate.store'), [
                 'name' => '',
                 'enabled' => true,
                 'description' => '',
@@ -72,7 +72,7 @@ class SettingsPageTest extends TestCase
                 'quiet_hours_end' => '',
                 'channels' => [],
             ])
-            ->assertRedirect('/admin/settings/vee-validate')
+            ->assertRedirect(route('vee-validate.index'))
             ->assertSessionHasErrors(['name', 'threshold', 'quiet_hours_start', 'channels']);
 
         $errors = session('errors')->getBag('default');
@@ -86,8 +86,8 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->from('/admin/settings/vee-validate')
-            ->post('/admin/settings/vee-validate', [
+            ->from(route('vee-validate.index'))
+            ->post(route('vee-validate.store'), [
                 'name' => '规则A',
                 'enabled' => true,
                 'description' => '',
@@ -105,7 +105,7 @@ class SettingsPageTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect('/admin/settings/vee-validate')
+            ->assertRedirect(route('vee-validate.index'))
             ->assertSessionHasErrors(['channels.0.target']);
 
         $errors = session('errors')->getBag('default');
@@ -118,7 +118,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-vee-validate.write']);
 
         $this->actingAs($user)
-            ->post('/admin/settings/vee-validate', [
+            ->post(route('vee-validate.store'), [
                 'name' => 'Critical Alerts',
                 'enabled' => true,
                 'description' => '复杂表单提交流程验证',
@@ -142,7 +142,7 @@ class SettingsPageTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect('/admin/settings/vee-validate')
+            ->assertRedirect(route('vee-validate.index'))
             ->assertSessionHas('success', '规则内容已提交。');
     }
 
@@ -245,7 +245,7 @@ class SettingsPageTest extends TestCase
 
         $this->actingAs($user)
             ->withPrecognition()
-            ->postJson('/admin/settings/precognition', [
+            ->postJson(route('precognition.store'), [
                 'name' => 'Precognition Demo',
                 'email' => 'ops@example.com',
                 'channel' => 'webhook',
@@ -292,7 +292,7 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['settings-system-config.read']);
 
         $this->actingAs($user)
-            ->get('/horizon')
+            ->get(route('horizon.index'))
             ->assertOk();
     }
 
@@ -301,14 +301,14 @@ class SettingsPageTest extends TestCase
         $user = $this->createUserWithPermissions(['admin-user.read']);
 
         $this->actingAs($user)
-            ->get('/horizon')
+            ->get(route('horizon.index'))
             ->assertForbidden();
     }
 
     public function test_guests_are_redirected_when_visiting_horizon(): void
     {
-        $this->get('/horizon')
-            ->assertRedirect('/login');
+        $this->get(route('horizon.index'))
+            ->assertRedirect(route('login'));
     }
 
     public function test_users_with_application_config_read_permission_can_view_the_application_config_index(): void

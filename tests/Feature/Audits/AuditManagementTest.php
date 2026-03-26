@@ -40,7 +40,7 @@ class AuditManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/audits')
+            ->get(route('audits.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Audit/Index')
@@ -72,7 +72,7 @@ class AuditManagementTest extends TestCase
         $user = $this->createUserWithPermissions(['dashboard.read']);
 
         $this->actingAs($user)
-            ->get('/admin/audits')
+            ->get(route('audits.index'))
             ->assertForbidden();
     }
 
@@ -107,7 +107,7 @@ class AuditManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/audits?search__func=Route%20Owner')
+            ->get(route('audits.index', ['search__func' => 'Route Owner']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.search__func', 'Route Owner')
@@ -115,7 +115,7 @@ class AuditManagementTest extends TestCase
                 ->where('audits.data.0.actor.name', 'Route Owner'));
 
         $this->actingAs($admin)
-            ->get('/admin/audits?search__func=88')
+            ->get(route('audits.index', ['search__func' => '88']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.search__func', '88')
@@ -123,7 +123,7 @@ class AuditManagementTest extends TestCase
                 ->where('audits.data.0.auditable_id', 88));
 
         $this->actingAs($admin)
-            ->get('/admin/audits?search__func=application-configs')
+            ->get(route('audits.index', ['search__func' => 'application-configs']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.search__func', 'application-configs')
@@ -158,7 +158,7 @@ class AuditManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/audits?event__eq=approved')
+            ->get(route('audits.index', ['event__eq' => 'approved']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.event__eq', 'approved')
@@ -169,7 +169,7 @@ class AuditManagementTest extends TestCase
                     ->etc()));
 
         $this->actingAs($admin)
-            ->get('/admin/audits?auditable_type__eq='.urlencode(Config::class))
+            ->get(route('audits.index', ['auditable_type__eq' => Config::class]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.auditable_type__eq', Config::class)
@@ -209,7 +209,7 @@ class AuditManagementTest extends TestCase
         ]);
 
         $this->actingAs($admin)
-            ->get('/admin/audits?event__eq=&auditable_type__eq=')
+            ->get(route('audits.index', ['event__eq' => '', 'auditable_type__eq' => '']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.search__func', '')
@@ -244,7 +244,7 @@ class AuditManagementTest extends TestCase
                 'X-Inertia-Partial-Component' => 'Audit/Index',
                 'X-Inertia-Partial-Data' => 'audits,filters',
             ])
-            ->get('/admin/audits?event__eq=deleted')
+            ->get(route('audits.index', ['event__eq' => 'deleted']))
             ->assertOk()
             ->assertJsonPath('component', 'Audit/Index')
             ->assertJsonPath('props.filters.event__eq', 'deleted')

@@ -1,5 +1,6 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3';
+import { route } from '@/lib/routes';
 
 const props = defineProps({
     email: {
@@ -20,7 +21,7 @@ const form = useForm({
 });
 
 function submit() {
-    form.post('/reset-password', {
+    form.post(route('password.update'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 }
@@ -70,7 +71,7 @@ function submit() {
             {{ form.processing ? '提交中...' : '重置密码' }}
         </UiButton>
 
-        <Link href="/login" class="app-link-muted block text-center text-sm font-medium">
+        <Link :href="route('login')" class="app-link-muted block text-center text-sm font-medium">
             返回登录
         </Link>
     </form>

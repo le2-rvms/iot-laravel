@@ -20,13 +20,23 @@ class NavigationRegistryTest extends TestCase
 
         $this->assertCount(2, $sections);
         $this->assertSame('工作台', $sections[0]['title']);
-        $this->assertSame('/admin/dashboard', $sections[0]['items'][0]['href']);
+        $this->assertSame(route('dashboard', [], false), $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/client-monitor/sessions', '/admin/devices', '/admin/device-products', '/admin/settings/application-configs', '/admin/settings/system-configs'],
+            [
+                route('admin-users.index', [], false),
+                route('admin-roles.index', [], false),
+                route('audits.index', [], false),
+                route('mqtt-accounts.index', [], false),
+                route('client-monitor.sessions', [], false),
+                route('devices.index', [], false),
+                route('device-products.index', [], false),
+                route('application-configs.index', [], false),
+                route('system-configs.index', [], false),
+            ],
             array_column($systemManagement, 'href'),
         );
-        $this->assertSame('/admin/client-monitor/sessions', $clientMonitor['href']);
+        $this->assertSame(route('client-monitor.sessions', [], false), $clientMonitor['href']);
     }
 
     public function test_dashboard_only_users_receive_only_dashboard_sidebar_item(): void
@@ -42,7 +52,8 @@ class NavigationRegistryTest extends TestCase
                     [
                         'title' => '仪表盘',
                         'description' => '查看系统入口与首屏统计。',
-                        'href' => '/admin/dashboard',
+                        'href' => route('dashboard', [], false),
+                        'routeName' => 'dashboard',
                         'icon' => 'LayoutGrid',
                     ],
                 ],
@@ -65,32 +76,44 @@ class NavigationRegistryTest extends TestCase
             [
                 'title' => '管理员用户',
                 'description' => '维护后台管理员用户、邮箱验证状态与基础资料。',
-                'href' => '/admin/admin-users',
+                'href' => route('admin-users.index', [], false),
+                'routeName' => 'admin-users.index',
             ],
             [
                 'title' => 'MQTT账号管理',
                 'description' => '维护 MQTT 连接账号、设备标识与启用状态。',
-                'href' => '/admin/mqtt-accounts',
+                'href' => route('mqtt-accounts.index', [], false),
+                'routeName' => 'mqtt-accounts.index',
+            ],
+            [
+                'title' => '客户端监控',
+                'description' => '查看客户端在线会话、鉴权结果、命令事件和连接事件。',
+                'href' => route('client-monitor.sessions', [], false),
+                'routeName' => 'client-monitor.sessions',
             ],
             [
                 'title' => '设备管理',
                 'description' => '维护设备标识、车辆信息、状态字段与鉴权信息。',
-                'href' => '/admin/devices',
+                'href' => route('devices.index', [], false),
+                'routeName' => 'devices.index',
             ],
             [
                 'title' => '设备产品',
                 'description' => '维护设备产品标识、名称与协议分类信息。',
-                'href' => '/admin/device-products',
+                'href' => route('device-products.index', [], false),
+                'routeName' => 'device-products.index',
             ],
             [
                 'title' => '系统配置',
                 'description' => '维护系统层的公共设定、展示策略与后台说明。',
-                'href' => '/admin/settings/system-configs',
+                'href' => route('system-configs.index', [], false),
+                'routeName' => 'system-configs.index',
             ],
             [
                 'title' => 'VeeValidate 实验室',
                 'description' => '用于演练通知规则的填写流程。',
-                'href' => '/admin/settings/vee-validate',
+                'href' => route('vee-validate.index', [], false),
+                'routeName' => 'vee-validate.index',
             ],
         ], $links);
     }
@@ -104,13 +127,14 @@ class NavigationRegistryTest extends TestCase
         $systemManagement = collect($sections)->firstWhere('title', '系统管理');
 
         $this->assertNotNull($systemManagement);
-        $this->assertSame('/admin/audits', $systemManagement['items'][0]['href']);
+        $this->assertSame(route('audits.index', [], false), $systemManagement['items'][0]['href']);
         $this->assertSame('审计日志', $systemManagement['items'][0]['title']);
         $this->assertSame([
             [
                 'title' => '审计日志',
                 'description' => '查看后台资源的创建、更新、删除与业务事件记录。',
-                'href' => '/admin/audits',
+                'href' => route('audits.index', [], false),
+                'routeName' => 'audits.index',
             ],
         ], $links);
     }
@@ -124,6 +148,6 @@ class NavigationRegistryTest extends TestCase
         $clientMonitor = collect($systemManagement['items'])->firstWhere('title', '客户端监控');
 
         $this->assertNotNull($clientMonitor);
-        $this->assertSame('/admin/client-monitor/sessions', $clientMonitor['href']);
+        $this->assertSame(route('client-monitor.sessions', [], false), $clientMonitor['href']);
     }
 }
