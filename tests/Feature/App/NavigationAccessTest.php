@@ -34,6 +34,7 @@ class NavigationAccessTest extends TestCase
     {
         $user = $this->createUserWithPermissions([
             'dashboard.read',
+            'client-monitor.read',
             'device.read',
             'device-product.read',
             'settings-application-config.read',
@@ -49,7 +50,8 @@ class NavigationAccessTest extends TestCase
                 ->where('quickLinks', function ($links): bool {
                     $links = collect($links);
 
-                    return $links->contains(fn (array $link) => $link['title'] === '设备管理' && $link['href'] === '/admin/devices')
+                    return ! $links->contains(fn (array $link) => $link['title'] === '客户端监控')
+                        && $links->contains(fn (array $link) => $link['title'] === '设备管理' && $link['href'] === '/admin/devices')
                         && $links->contains(fn (array $link) => $link['title'] === '设备产品' && $link['href'] === '/admin/device-products')
                         && $links->contains(fn (array $link) => $link['title'] === '应用配置' && $link['href'] === '/admin/settings/application-configs')
                         && $links->contains(fn (array $link) => $link['title'] === 'VeeValidate 实验室' && $link['href'] === '/admin/settings/vee-validate')

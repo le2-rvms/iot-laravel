@@ -1,8 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { PencilLine, Trash2 } from 'lucide-vue-next';
+import { PencilLine, ScanSearch, Trash2 } from 'lucide-vue-next';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { buildDeviceMonitorOverviewHref } from '@/lib/deviceMonitorLinks';
 
 defineProps({
     devices: {
@@ -14,6 +15,11 @@ defineProps({
 const page = usePage();
 const confirmDialog = useConfirmDialog();
 const canWrite = computed(() => page.props.auth?.access?.['device.write'] ?? false);
+const canMonitor = computed(() => page.props.auth?.access?.['client-monitor.read'] ?? false);
+
+function monitorHref(device) {
+    return buildDeviceMonitorOverviewHref(device.terminal_id);
+}
 
 function confirmDelete(device) {
     confirmDialog.open({
@@ -44,7 +50,7 @@ function confirmDelete(device) {
                 <UiTableHead>审核状态</UiTableHead>
                 <UiTableHead>城市关联ID</UiTableHead>
                 <UiTableHead class="w-[16%]">创建时间</UiTableHead>
-                <UiTableHead class="w-[160px] text-right">操作</UiTableHead>
+                <UiTableHead class="w-[260px] text-right">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
 
@@ -69,14 +75,21 @@ function confirmDelete(device) {
                 <UiTableCell class="app-copy-muted">{{ device.city_relation_id ?? '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ device.created_at?.slice(0, 16).replace('T', ' ') || '-' }}</UiTableCell>
                 <UiTableCell class="text-right">
-                    <div v-if="canWrite" class="flex justify-end gap-2">
-                        <UiButton as-child variant="outline" size="sm" class="rounded-lg">
+                    <div v-if="canMonitor || canWrite" class="flex justify-end gap-2">
+                        <UiButton v-if="canMonitor" as-child variant="outline" size="sm" class="rounded-lg">
+                            <Link :href="monitorHref(device)" class="inline-flex items-center gap-2">
+                                <ScanSearch class="size-4" />
+                                查看事件
+                            </Link>
+                        </UiButton>
+                        <UiButton v-if="canWrite" as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="`/admin/devices/${device.terminal_id}/edit`" class="inline-flex items-center gap-2">
                                 <PencilLine class="size-4" />
                                 编辑
                             </Link>
                         </UiButton>
                         <UiButton
+                            v-if="canWrite"
                             variant="outline"
                             size="sm"
                             class="rounded-lg text-red-600 hover:text-red-600"

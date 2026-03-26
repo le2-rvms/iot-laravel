@@ -343,6 +343,7 @@ class CsvExportTest extends TestCase
     {
         $this->assertContains('admin-user.read', PermissionRegistry::permissionNames());
         $this->assertContains('admin-role.read', PermissionRegistry::permissionNames());
+        $this->assertContains('client-monitor.read', PermissionRegistry::permissionNames());
         $this->assertContains('device-product.read', PermissionRegistry::permissionNames());
         $this->assertContains('mqtt-account.read', PermissionRegistry::permissionNames());
         $this->assertContains('settings-application-config.read', PermissionRegistry::permissionNames());

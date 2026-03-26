@@ -1,7 +1,10 @@
 <script setup>
 import {
+    Cpu,
     FileCheck2,
+    History,
     LayoutGrid,
+    Package,
     ScanSearch,
     ShieldCheck,
     SlidersHorizontal,
@@ -24,6 +27,9 @@ const navigationIcons = {
     SlidersVertical,
     FileCheck2,
     ScanSearch,
+    History,
+    Cpu,
+    Package,
 };
 
 function normalizePath(url) {
@@ -36,6 +42,10 @@ function isActive(href) {
 
     if (href === "/admin/dashboard") {
         return currentPath === targetPath;
+    }
+
+    if (targetPath === "/admin/client-monitor/sessions") {
+        return currentPath.startsWith("/admin/client-monitor/");
     }
 
     return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
@@ -128,7 +138,7 @@ function formatBuildTime(value) {
                                     : 'text-sidebar-foreground/55'
                             "
                         />
-                        <div class="min-w-0">
+                        <div class="min-w-0 flex-1">
                             <div class="font-medium">
                                 {{ item.title }}
                             </div>

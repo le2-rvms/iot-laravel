@@ -161,14 +161,17 @@ class DeviceManagementTest extends TestCase
         $this->assertSame('maker-2', $device->manufacturer_id);
         $this->assertSame('PK-UPDATED', $device->product_key);
         $this->assertSame('SIM-999', $device->sim_number);
-        $this->assertSame('粤B99999', $device->_vehicle_plate);
-        $this->assertSame('VIN-UPDATED', $device->_vehicle_vin);
-        $this->assertSame('unbound', $device->_bind_status);
         $this->assertSame('offline', $device->device_status);
         $this->assertSame('rejected', $device->review_status);
         $this->assertSame('seed-updated', $device->auth_code_seed);
         $this->assertSame(3, $device->auth_failures);
         $this->assertSame(100, $device->city_relation_id);
+        $this->assertDatabaseHas('devices', [
+            'terminal_id' => 'terminal-create',
+            '_vehicle_plate' => '粤B99999',
+            '_vehicle_vin' => 'VIN-UPDATED',
+            '_bind_status' => 'unbound',
+        ]);
 
         $this->actingAs($user)
             ->delete('/admin/devices/terminal-create')
@@ -178,6 +181,37 @@ class DeviceManagementTest extends TestCase
         $this->assertDatabaseMissing('devices', [
             'terminal_id' => 'terminal-create',
         ]);
+    }
+
+    public function test_devices_index_exposes_client_monitor_access_for_event_links(): void
+    {
+        \DB::table('devices')->insert([
+            'terminal_id' => 'terminal-monitor',
+            'dev_id' => 30,
+            'dev_name' => 'Monitor Device',
+            'created_at' => now(),
+        ]);
+
+        $withMonitorAccess = $this->createUserWithPermissions(['device.read', 'client-monitor.read']);
+
+        $this->actingAs($withMonitorAccess)
+            ->get('/admin/devices')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Device/Index')
+                ->where('auth.access', fn ($access) => ($access['client-monitor.read'] ?? false) === true
+                    && ($access['device.write'] ?? false) === false)
+                ->where('devices.data.0.terminal_id', 'terminal-monitor'));
+
+        $withoutMonitorAccess = $this->createUserWithPermissions(['device.read']);
+
+        $this->actingAs($withoutMonitorAccess)
+            ->get('/admin/devices')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Device/Index')
+                ->where('auth.access', fn ($access) => ($access['client-monitor.read'] ?? false) === false)
+                ->where('devices.data.0.terminal_id', 'terminal-monitor'));
     }
 
     public function test_devices_support_search_and_exact_match_filters(): void

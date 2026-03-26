@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\Account\PasswordController as AccountPassword
 use App\Http\Controllers\Web\Admin\Admin\AdminRoleController;
 use App\Http\Controllers\Web\Admin\Admin\AdminUserController;
 use App\Http\Controllers\Web\Admin\Audits\AuditController;
+use App\Http\Controllers\Web\Admin\ClientMonitor\ClientMonitorController;
 use App\Http\Controllers\Web\Admin\Devices\DeviceController;
 use App\Http\Controllers\Web\Admin\DeviceProducts\DeviceProductController;
 use App\Http\Controllers\Web\Admin\DashboardController;
@@ -45,6 +46,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
     Route::get('audits/export', [AuditController::class, 'export']);
     Route::resource('audits', AuditController::class)
         ->only(['index']);
+
+    Route::get('client-monitor/device-overview', [ClientMonitorController::class, 'index']);
+    Route::get('client-monitor/sessions', [ClientMonitorController::class, 'sessions']);
+    Route::get('client-monitor/auth-events', [ClientMonitorController::class, 'authEvents']);
+    Route::get('client-monitor/cmd-events', [ClientMonitorController::class, 'cmdEvents']);
+    Route::get('client-monitor/conn-events', [ClientMonitorController::class, 'connEvents']);
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
     Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export']);

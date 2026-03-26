@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Http\Controllers\Web\Admin\ClientMonitor\ClientMonitorController;
 use App\Models\Admin\AdminUser;
 
 class NavigationRegistry
@@ -63,6 +64,15 @@ class NavigationRegistry
                         'icon' => 'Waypoints',
                         'permission' => 'mqtt-account.read',
                         'show_in_dashboard' => true,
+                    ],
+                    [
+                        'title' => '客户端监控',
+                        'description' => '查看客户端在线会话、鉴权结果、命令事件和连接事件。',
+                        'dashboard_description' => '查看客户端在线会话、鉴权结果、命令事件和连接事件。',
+                        'href' => action([ClientMonitorController::class, 'sessions'], [], false),
+                        'show_in_dashboard' => false,
+                        'icon' => 'ScanSearch',
+                        'permission' => 'client-monitor.read',
                     ],
                     [
                         'title' => '设备管理',
@@ -142,6 +152,7 @@ class NavigationRegistry
                             'href' => $item['href'],
                             'icon' => $item['icon'],
                         ])
+                        ->filter()
                         ->values()
                         ->all(),
                 ];

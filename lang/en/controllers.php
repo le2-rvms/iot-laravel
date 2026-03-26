@@ -4,10 +4,12 @@ return [
     'groups' => [
         'dashboard' => 'Dashboard',
         'mqtt-account' => 'MQTT Accounts',
+        'client-monitor' => 'Client Monitor',
         'config' => 'Config',
         'password' => 'Account Password',
         'admin-role' => 'Admin Roles',
         'audit' => 'Audit Logs',
+        'device' => 'Device Management',
         'device-product' => 'Device Products',
         'settings-application-config' => 'Application Settings',
         'settings-precognition' => 'Precognition Form Lab',

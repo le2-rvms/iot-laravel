@@ -15,15 +15,18 @@ class NavigationRegistryTest extends TestCase
         $user = $this->createSuperAdmin();
 
         $sections = NavigationRegistry::sidebarFor($user);
+        $systemManagement = $sections[1]['items'];
+        $clientMonitor = collect($systemManagement)->firstWhere('title', '客户端监控');
 
         $this->assertCount(2, $sections);
         $this->assertSame('工作台', $sections[0]['title']);
         $this->assertSame('/admin/dashboard', $sections[0]['items'][0]['href']);
         $this->assertSame('系统管理', $sections[1]['title']);
         $this->assertSame(
-            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/devices', '/admin/device-products', '/admin/settings/application-configs', '/admin/settings/system-configs'],
-            array_column($sections[1]['items'], 'href'),
+            ['/admin/admin-users', '/admin/admin-roles', '/admin/audits', '/admin/mqtt-accounts', '/admin/client-monitor/sessions', '/admin/devices', '/admin/device-products', '/admin/settings/application-configs', '/admin/settings/system-configs'],
+            array_column($systemManagement, 'href'),
         );
+        $this->assertSame('/admin/client-monitor/sessions', $clientMonitor['href']);
     }
 
     public function test_dashboard_only_users_receive_only_dashboard_sidebar_item(): void
@@ -54,7 +57,7 @@ class NavigationRegistryTest extends TestCase
 
     public function test_dashboard_quick_links_only_include_allowed_items_marked_for_dashboard(): void
     {
-        $user = $this->createUserWithPermissions(['admin-user.read', 'mqtt-account.read', 'device.read', 'device-product.read', 'settings-system-config.read', 'settings-vee-validate.read']);
+        $user = $this->createUserWithPermissions(['admin-user.read', 'mqtt-account.read', 'client-monitor.read', 'device.read', 'device-product.read', 'settings-system-config.read', 'settings-vee-validate.read']);
 
         $links = NavigationRegistry::dashboardQuickLinksFor($user);
 
@@ -110,5 +113,17 @@ class NavigationRegistryTest extends TestCase
                 'href' => '/admin/audits',
             ],
         ], $links);
+    }
+
+    public function test_client_monitor_sidebar_item_is_a_single_link_without_second_level_children(): void
+    {
+        $user = $this->createUserWithPermissions(['client-monitor.read']);
+
+        $sections = NavigationRegistry::sidebarFor($user);
+        $systemManagement = collect($sections)->firstWhere('title', '系统管理');
+        $clientMonitor = collect($systemManagement['items'])->firstWhere('title', '客户端监控');
+
+        $this->assertNotNull($clientMonitor);
+        $this->assertSame('/admin/client-monitor/sessions', $clientMonitor['href']);
     }
 }

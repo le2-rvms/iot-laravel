@@ -6,10 +6,12 @@ return [
     'groups' => [
         'dashboard' => '仪表盘',
         'mqtt-account' => 'MQTT账号管理',
+        'client-monitor' => '客户端监控',
         'config' => '配置',
         'password' => '账户密码',
         'admin-role' => '管理员角色',
         'audit' => '审计日志',
+        'device' => '设备管理',
         'device-product' => '设备产品',
         'settings-application-config' => '应用配置',
         'settings-precognition' => 'Precognition 表单实验室',
