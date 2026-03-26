@@ -75,6 +75,8 @@ class CopiedIotModelsTest extends TestCase
         $this->assertInstanceOf(IotMqttAccount::class, (new IotDeviceGroupMapping)->mqttAccount()->getRelated());
         $this->assertInstanceOf(IotDevice::class, (new IotDeviceProduct)->devices()->getRelated());
         $this->assertInstanceOf(IotDevice::class, (new IotGpsCommand)->device()->getRelated());
+        $this->assertInstanceOf(IotDevice::class, (new IotGpsPositionHistory)->device()->getRelated());
+        $this->assertInstanceOf(IotDevice::class, (new IotGpsPositionLast)->device()->getRelated());
     }
 
     public function test_model_support_can_save_copied_iot_models_without_updated_by_columns(): void

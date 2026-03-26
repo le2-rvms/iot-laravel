@@ -52,6 +52,8 @@ Route::prefix('admin')->middleware(['auth', 'verified', AuthorizeControllerPermi
     Route::get('client-monitor/auth-events', [ClientMonitorController::class, 'authEvents']);
     Route::get('client-monitor/cmd-events', [ClientMonitorController::class, 'cmdEvents']);
     Route::get('client-monitor/conn-events', [ClientMonitorController::class, 'connEvents']);
+    Route::get('client-monitor/gps-position-last', [ClientMonitorController::class, 'gpsPositionLast']);
+    Route::get('client-monitor/gps-position-histories', [ClientMonitorController::class, 'gpsPositionHistories']);
 
     // MQTT 账号走标准资源路由，保持和用户/角色/配置页相同的后台维护结构。
     Route::get('mqtt-accounts/export', [MqttAccountController::class, 'export']);

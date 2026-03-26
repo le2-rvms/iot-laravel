@@ -64,6 +64,44 @@ class ClientMonitorPageTest extends TestCase
             $table->integer('reason_code')->nullable();
             $table->text('extra')->nullable();
         });
+
+        Schema::create('devices', function ($table): void {
+            $table->string('terminal_id', 64)->primary();
+            $table->string('dev_name', 255)->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('gps_position_last', function ($table): void {
+            $table->string('terminal_id', 64)->primary();
+            $table->dateTime('gps_time')->nullable();
+            $table->decimal('latitude', 10, 6)->nullable();
+            $table->decimal('longitude', 10, 6)->nullable();
+            $table->decimal('latitude_gcj', 10, 6)->nullable();
+            $table->decimal('longitude_gcj', 10, 6)->nullable();
+            $table->integer('altitude')->nullable();
+            $table->decimal('speed', 10, 2)->nullable();
+            $table->integer('direction')->nullable();
+            $table->integer('status')->nullable();
+            $table->integer('alarm')->nullable();
+            $table->text('extra')->nullable();
+            $table->dateTime('updated_at')->nullable();
+        });
+
+        Schema::create('gps_position_histories', function ($table): void {
+            $table->string('terminal_id', 64)->nullable();
+            $table->dateTime('gps_time')->nullable();
+            $table->decimal('latitude', 10, 6)->nullable();
+            $table->decimal('longitude', 10, 6)->nullable();
+            $table->decimal('latitude_gcj', 10, 6)->nullable();
+            $table->decimal('longitude_gcj', 10, 6)->nullable();
+            $table->integer('altitude')->nullable();
+            $table->decimal('speed', 10, 2)->nullable();
+            $table->integer('direction')->nullable();
+            $table->integer('status')->nullable();
+            $table->integer('alarm')->nullable();
+            $table->text('extra')->nullable();
+            $table->dateTime('created_at')->nullable();
+        });
     }
 
     public function test_removed_generic_client_monitor_entry_is_not_accessible(): void
@@ -89,6 +127,14 @@ class ClientMonitorPageTest extends TestCase
 
         $this->actingAs($user)
             ->get('/admin/client-monitor/sessions')
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->get('/admin/client-monitor/gps-position-last')
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->get('/admin/client-monitor/gps-position-histories')
             ->assertForbidden();
     }
 
@@ -250,6 +296,78 @@ class ClientMonitorPageTest extends TestCase
             ],
         ]);
 
+        \DB::table('devices')->insert([
+            'terminal_id' => 'terminal-001',
+            'dev_name' => 'Tracker 001',
+            'created_at' => now(),
+        ]);
+
+        \DB::table('gps_position_last')->insert([
+            [
+                'terminal_id' => 'terminal-001',
+                'gps_time' => now()->subSeconds(30),
+                'latitude' => 30.123456,
+                'longitude' => 120.123456,
+                'latitude_gcj' => 30.223456,
+                'longitude_gcj' => 120.223456,
+                'altitude' => 20,
+                'speed' => 45.50,
+                'direction' => 180,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['source' => 'gps']),
+                'updated_at' => now(),
+            ],
+            [
+                'terminal_id' => 'terminal-other',
+                'gps_time' => now(),
+                'latitude' => 31.123456,
+                'longitude' => 121.123456,
+                'latitude_gcj' => 31.223456,
+                'longitude_gcj' => 121.223456,
+                'altitude' => 10,
+                'speed' => 25.00,
+                'direction' => 90,
+                'status' => 2,
+                'alarm' => 3,
+                'extra' => json_encode(['source' => 'other']),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        \DB::table('gps_position_histories')->insert([
+            [
+                'terminal_id' => 'terminal-001',
+                'gps_time' => now()->subMinutes(1),
+                'latitude' => 30.123456,
+                'longitude' => 120.123456,
+                'latitude_gcj' => 30.223456,
+                'longitude_gcj' => 120.223456,
+                'altitude' => 21,
+                'speed' => 40.10,
+                'direction' => 175,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['index' => 1]),
+                'created_at' => now()->subMinutes(1),
+            ],
+            [
+                'terminal_id' => 'terminal-other',
+                'gps_time' => now(),
+                'latitude' => 31.123456,
+                'longitude' => 121.123456,
+                'latitude_gcj' => 31.223456,
+                'longitude_gcj' => 121.223456,
+                'altitude' => 11,
+                'speed' => 21.10,
+                'direction' => 95,
+                'status' => 2,
+                'alarm' => 3,
+                'extra' => json_encode(['index' => 2]),
+                'created_at' => now(),
+            ],
+        ]);
+
         $this->actingAs($user)
             ->get('/admin/client-monitor/device-overview?client_id__eq=terminal-001')
             ->assertOk()
@@ -258,11 +376,15 @@ class ClientMonitorPageTest extends TestCase
                 ->where('filters.client_id__eq', 'terminal-001')
                 ->where('deviceContext.rootHref', '/admin/client-monitor/device-overview?client_id__eq=terminal-001')
                 ->where('sections.0.href', '/admin/client-monitor/sessions?client_id__eq=terminal-001')
+                ->where('sections.4.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-001')
+                ->where('sections.5.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-001')
                 ->has('previews.sessions', 1)
                 ->where('previews.sessions.0.client_id', 'terminal-001')
                 ->where('previews.authEvents.0.client_id', 'terminal-001')
                 ->where('previews.cmdEvents.0.client_id', 'terminal-001')
-                ->where('previews.connEvents.0.client_id', 'terminal-001'));
+                ->where('previews.connEvents.0.client_id', 'terminal-001')
+                ->where('previews.gpsPositionLast.terminal_id', 'terminal-001')
+                ->where('previews.gpsPositionHistories.0.terminal_id', 'terminal-001'));
     }
 
     public function test_auth_events_page_supports_search_and_exact_match_filters(): void
@@ -417,5 +539,179 @@ class ClientMonitorPageTest extends TestCase
                 ->has('connEvents.data', 1)
                 ->where('connEvents.data.0.client_id', 'conn-beta')
                 ->where('connEvents.data.0.event_type_label', '断开'));
+    }
+
+    public function test_gps_position_last_page_supports_global_search_and_range_filters(): void
+    {
+        $user = $this->createUserWithPermissions(['client-monitor.read']);
+
+        \DB::table('devices')->insert([
+            [
+                'terminal_id' => 'terminal-alpha',
+                'dev_name' => 'Alpha Tracker',
+                'created_at' => now(),
+            ],
+            [
+                'terminal_id' => 'terminal-beta',
+                'dev_name' => 'Beta Sensor',
+                'created_at' => now(),
+            ],
+        ]);
+
+        \DB::table('gps_position_last')->insert([
+            [
+                'terminal_id' => 'terminal-alpha',
+                'gps_time' => '2026-03-26 09:30:00',
+                'latitude' => 30.100000,
+                'longitude' => 120.100000,
+                'latitude_gcj' => 30.200000,
+                'longitude_gcj' => 120.200000,
+                'altitude' => 15,
+                'speed' => 18.00,
+                'direction' => 45,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['tag' => 'alpha']),
+                'updated_at' => '2026-03-26 09:31:00',
+            ],
+            [
+                'terminal_id' => 'terminal-beta',
+                'gps_time' => '2026-03-26 10:15:00',
+                'latitude' => 31.100000,
+                'longitude' => 121.100000,
+                'latitude_gcj' => 31.200000,
+                'longitude_gcj' => 121.200000,
+                'altitude' => 22,
+                'speed' => 30.00,
+                'direction' => 90,
+                'status' => 2,
+                'alarm' => 9,
+                'extra' => json_encode(['tag' => 'beta']),
+                'updated_at' => '2026-03-26 10:16:00',
+            ],
+        ]);
+
+        $this->actingAs($user)
+            ->get('/admin/client-monitor/gps-position-last?search__func=beta&status__eq=2&alarm__eq=9&gps_time__gte=2026-03-26T10:00&gps_time__lte=2026-03-26T10:15')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('ClientMonitor/GpsPositionLast')
+                ->where('pageMeta.href', '/admin/client-monitor/gps-position-last')
+                ->where('filters.search__func', 'beta')
+                ->where('filters.status__eq', '2')
+                ->where('filters.alarm__eq', '9')
+                ->where('filters.gps_time__gte', '2026-03-26T10:00')
+                ->where('filters.gps_time__lte', '2026-03-26T10:15')
+                ->has('gpsPositionLast.data', 1)
+                ->where('gpsPositionLast.data.0.terminal_id', 'terminal-beta')
+                ->where('gpsPositionLast.data.0.device.dev_name', 'Beta Sensor'));
+    }
+
+    public function test_gps_position_pages_keep_device_context_and_apply_exact_match_filtering(): void
+    {
+        $user = $this->createUserWithPermissions(['client-monitor.read']);
+
+        \DB::table('devices')->insert([
+            [
+                'terminal_id' => 'terminal-xyz',
+                'dev_name' => 'XYZ Tracker',
+                'created_at' => now(),
+            ],
+            [
+                'terminal_id' => 'terminal-other',
+                'dev_name' => 'Other Tracker',
+                'created_at' => now(),
+            ],
+        ]);
+
+        \DB::table('gps_position_last')->insert([
+            [
+                'terminal_id' => 'terminal-xyz',
+                'gps_time' => '2026-03-26 08:30:00',
+                'latitude' => 30.300000,
+                'longitude' => 120.300000,
+                'latitude_gcj' => 30.400000,
+                'longitude_gcj' => 120.400000,
+                'altitude' => 12,
+                'speed' => 26.00,
+                'direction' => 100,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['tag' => 'xyz']),
+                'updated_at' => '2026-03-26 08:31:00',
+            ],
+            [
+                'terminal_id' => 'terminal-other',
+                'gps_time' => '2026-03-26 09:30:00',
+                'latitude' => 31.300000,
+                'longitude' => 121.300000,
+                'latitude_gcj' => 31.400000,
+                'longitude_gcj' => 121.400000,
+                'altitude' => 18,
+                'speed' => 35.00,
+                'direction' => 120,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['tag' => 'other']),
+                'updated_at' => '2026-03-26 09:31:00',
+            ],
+        ]);
+
+        \DB::table('gps_position_histories')->insert([
+            [
+                'terminal_id' => 'terminal-xyz',
+                'gps_time' => '2026-03-26 08:00:00',
+                'latitude' => 30.300000,
+                'longitude' => 120.300000,
+                'latitude_gcj' => 30.400000,
+                'longitude_gcj' => 120.400000,
+                'altitude' => 11,
+                'speed' => 25.00,
+                'direction' => 95,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['tag' => 'xyz-history']),
+                'created_at' => '2026-03-26 08:00:05',
+            ],
+            [
+                'terminal_id' => 'terminal-other',
+                'gps_time' => '2026-03-26 09:00:00',
+                'latitude' => 31.300000,
+                'longitude' => 121.300000,
+                'latitude_gcj' => 31.400000,
+                'longitude_gcj' => 121.400000,
+                'altitude' => 20,
+                'speed' => 38.00,
+                'direction' => 130,
+                'status' => 1,
+                'alarm' => 0,
+                'extra' => json_encode(['tag' => 'other-history']),
+                'created_at' => '2026-03-26 09:00:05',
+            ],
+        ]);
+
+        $this->actingAs($user)
+            ->get('/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('ClientMonitor/GpsPositionLast')
+                ->where('pageMeta.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+                ->where('filters.client_id__eq', 'terminal-xyz')
+                ->where('deviceContext.rootHref', '/admin/client-monitor/device-overview?client_id__eq=terminal-xyz')
+                ->where('sections.5.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz')
+                ->has('gpsPositionLast.data', 1)
+                ->where('gpsPositionLast.data.0.terminal_id', 'terminal-xyz'));
+
+        $this->actingAs($user)
+            ->get('/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz&status__eq=1')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('ClientMonitor/GpsPositionHistories')
+                ->where('pageMeta.href', '/admin/client-monitor/gps-position-histories?client_id__eq=terminal-xyz')
+                ->where('filters.client_id__eq', 'terminal-xyz')
+                ->where('filters.status__eq', '1')
+                ->where('sections.4.href', '/admin/client-monitor/gps-position-last?client_id__eq=terminal-xyz')
+                ->has('gpsPositionHistories.data', 1)
+                ->where('gpsPositionHistories.data.0.terminal_id', 'terminal-xyz'));
     }
 }

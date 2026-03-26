@@ -24,7 +24,7 @@ defineProps({
                 当前 Client ID：{{ clientId }}
             </div>
             <p class="text-sm leading-6 text-app-subtle-foreground">
-                当前页面仅展示 client_id 精确匹配该 Client ID 的客户端记录。
+                当前页面仅展示 client_id 精确匹配该 Client ID 的监控记录。
             </p>
         </div>
     </div>

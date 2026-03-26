@@ -79,7 +79,7 @@ function confirmDelete(device) {
                         <UiButton v-if="canMonitor" as-child variant="outline" size="sm" class="rounded-lg">
                             <Link :href="monitorHref(device)" class="inline-flex items-center gap-2">
                                 <ScanSearch class="size-4" />
-                                查看事件
+                                查看监控
                             </Link>
                         </UiButton>
                         <UiButton v-if="canWrite" as-child variant="outline" size="sm" class="rounded-lg">

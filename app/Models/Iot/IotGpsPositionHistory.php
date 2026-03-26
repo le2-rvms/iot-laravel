@@ -6,6 +6,7 @@ use App\Models\Concerns\ModelSupport;
 use App\Support\ListQueryFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string $terminal_id
@@ -41,25 +42,39 @@ class IotGpsPositionHistory extends Model
     public static function indexQuery(array $queryParameters): Builder
     {
         $query = self::query()
+            ->with('device')
             ->latest('gps_time');
 
         (new ListQueryFilters(
             query: $queryParameters,
             fieldDefinitions: [
                 'terminal_id',
+                'gps_time',
                 'status' => ['integer'],
                 'alarm' => ['integer'],
             ],
             callbacks: [
                 'search' => function (Builder $query, mixed $value): void {
                     $search = trim((string) $value);
+                    $likeSearch = "%{$search}%";
 
-                    $query->whereRaw('LOWER(terminal_id) LIKE LOWER(?)', ["%{$search}%"]);
+                    $query->where(function (Builder $builder) use ($likeSearch): void {
+                        $builder
+                            ->whereRaw('LOWER(terminal_id) LIKE LOWER(?)', [$likeSearch])
+                            ->orWhereHas('device', function (Builder $deviceQuery) use ($likeSearch): void {
+                                $deviceQuery->whereRaw('LOWER(dev_name) LIKE LOWER(?)', [$likeSearch]);
+                            });
+                    });
                 },
             ],
         ))->apply($query);
 
         return $query;
+    }
+
+    public function device(): BelongsTo
+    {
+        return $this->belongsTo(IotDevice::class, 'terminal_id', 'terminal_id');
     }
 
     public function auditExcept(): array

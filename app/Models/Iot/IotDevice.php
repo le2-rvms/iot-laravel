@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $dev_id
@@ -46,7 +47,25 @@ class IotDevice extends Model
 
     protected $primaryKey = 'terminal_id';
 
-    protected $guarded = ['dev_id'];
+    protected $fillable = [
+        'terminal_id',
+        'dev_name',
+        'company_id',
+        'manufacturer_id',
+        'product_key',
+        'sim_number',
+        '_vehicle_plate',
+        '_vehicle_vin',
+        '_bind_status',
+        'device_status',
+        'review_status',
+        'auth_code_seed',
+        'auth_code_issued_at',
+        'auth_code_expires_at',
+        'auth_failures',
+        'auth_block_until',
+        'city_relation_id',
+    ];
 
     public static function indexQuery(array $queryParameters): Builder
     {
@@ -94,6 +113,16 @@ class IotDevice extends Model
     public function gpsCommands(): HasMany
     {
         return $this->hasMany(IotGpsCommand::class, 'device_id', 'dev_id');
+    }
+
+    public function gpsPositionHistories(): HasMany
+    {
+        return $this->hasMany(IotGpsPositionHistory::class, 'terminal_id', 'terminal_id');
+    }
+
+    public function gpsPositionLast(): HasOne
+    {
+        return $this->hasOne(IotGpsPositionLast::class, 'terminal_id', 'terminal_id');
     }
 
     /**

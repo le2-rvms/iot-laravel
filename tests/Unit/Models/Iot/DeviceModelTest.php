@@ -5,6 +5,8 @@ namespace Tests\Unit\Models\Iot;
 use App\Models\Iot\IotGpsCommand;
 use App\Models\Iot\IotDevice;
 use App\Models\Iot\IotDeviceProduct;
+use App\Models\Iot\IotGpsPositionHistory;
+use App\Models\Iot\IotGpsPositionLast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -51,6 +53,12 @@ class DeviceModelTest extends TestCase
     public function test_gps_commands_relation_points_to_the_gps_command_model(): void
     {
         $this->assertInstanceOf(IotGpsCommand::class, (new IotDevice)->gpsCommands()->getRelated());
+    }
+
+    public function test_gps_position_relations_point_to_the_gps_models(): void
+    {
+        $this->assertInstanceOf(IotGpsPositionHistory::class, (new IotDevice)->gpsPositionHistories()->getRelated());
+        $this->assertInstanceOf(IotGpsPositionLast::class, (new IotDevice)->gpsPositionLast()->getRelated());
     }
 
     public function test_device_product_relation_points_to_the_device_product_model(): void

@@ -9,6 +9,8 @@ use App\Models\Iot\IotClientAuthEvent;
 use App\Models\Iot\IotClientCmdEvent;
 use App\Models\Iot\IotClientConnEvent;
 use App\Models\Iot\IotClientSession;
+use App\Models\Iot\IotGpsPositionHistory;
+use App\Models\Iot\IotGpsPositionLast;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
@@ -48,6 +50,12 @@ class ClientMonitorController extends Controller
                     ->get()
                     ->all(),
                 'connEvents' => IotClientConnEvent::indexQuery($contextQuery)
+                    ->limit(5)
+                    ->get()
+                    ->all(),
+                'gpsPositionLast' => IotGpsPositionLast::indexQuery(self::gpsQuery($contextQuery))
+                    ->first(),
+                'gpsPositionHistories' => IotGpsPositionHistory::indexQuery(self::gpsQuery($contextQuery))
                     ->limit(5)
                     ->get()
                     ->all(),
@@ -199,6 +207,86 @@ class ClientMonitorController extends Controller
         ]);
     }
 
+    #[PermissionAction('read')]
+    public function gpsPositionLast(Request $request): Response
+    {
+        $filters = array_replace([
+            'search__func' => '',
+            'status__eq' => '',
+            'alarm__eq' => '',
+            'gps_time__gte' => '',
+            'gps_time__lte' => '',
+            'client_id__eq' => '',
+        ], $request->only([
+            'search__func',
+            'status__eq',
+            'alarm__eq',
+            'gps_time__gte',
+            'gps_time__lte',
+            'client_id__eq',
+        ]));
+        $contextQuery = $filters['client_id__eq'] === ''
+            ? []
+            : ['client_id__eq' => $filters['client_id__eq']];
+
+        return $this->renderPage([
+            'gpsPositionLast' => IotGpsPositionLast::indexQuery(self::gpsQuery($filters))
+                ->paginate(15)
+                ->withQueryString(),
+            'filters' => $filters,
+            'sections' => self::sections($contextQuery),
+            'deviceContext' => $contextQuery === [] ? null : [
+                'rootHref' => action([self::class, 'index'], $contextQuery, false),
+            ],
+            'pageMeta' => [
+                'title' => '当前定位',
+                'description' => '查看终端当前最新定位、速度、方向和状态信息。',
+                'href' => action([self::class, 'gpsPositionLast'], $contextQuery, false),
+                'monitorHref' => action([self::class, 'sessions'], [], false),
+            ],
+        ]);
+    }
+
+    #[PermissionAction('read')]
+    public function gpsPositionHistories(Request $request): Response
+    {
+        $filters = array_replace([
+            'search__func' => '',
+            'status__eq' => '',
+            'alarm__eq' => '',
+            'gps_time__gte' => '',
+            'gps_time__lte' => '',
+            'client_id__eq' => '',
+        ], $request->only([
+            'search__func',
+            'status__eq',
+            'alarm__eq',
+            'gps_time__gte',
+            'gps_time__lte',
+            'client_id__eq',
+        ]));
+        $contextQuery = $filters['client_id__eq'] === ''
+            ? []
+            : ['client_id__eq' => $filters['client_id__eq']];
+
+        return $this->renderPage([
+            'gpsPositionHistories' => IotGpsPositionHistory::indexQuery(self::gpsQuery($filters))
+                ->paginate(15)
+                ->withQueryString(),
+            'filters' => $filters,
+            'sections' => self::sections($contextQuery),
+            'deviceContext' => $contextQuery === [] ? null : [
+                'rootHref' => action([self::class, 'index'], $contextQuery, false),
+            ],
+            'pageMeta' => [
+                'title' => '定位历史',
+                'description' => '查看终端历史定位记录、速度、方向和状态变化。',
+                'href' => action([self::class, 'gpsPositionHistories'], $contextQuery, false),
+                'monitorHref' => action([self::class, 'sessions'], [], false),
+            ],
+        ]);
+    }
+
     /**
      * @return array<int, array{title: string, description: string, href: string}>
      */
@@ -225,7 +313,43 @@ class ClientMonitorController extends Controller
                 'description' => '查看连接、断开和原因码记录。',
                 'href' => action([self::class, 'connEvents'], $query, false),
             ],
+            [
+                'title' => '当前定位',
+                'description' => '查看终端当前最新定位、速度和状态。',
+                'href' => action([self::class, 'gpsPositionLast'], $query, false),
+            ],
+            [
+                'title' => '定位历史',
+                'description' => '查看终端历史定位轨迹与状态变化。',
+                'href' => action([self::class, 'gpsPositionHistories'], $query, false),
+            ],
         ];
+    }
+
+    private static function gpsQuery(array $filters): array
+    {
+        $query = $filters;
+
+        if (array_key_exists('client_id__eq', $query)) {
+            $query['terminal_id__eq'] = $query['client_id__eq'];
+            unset($query['client_id__eq']);
+        }
+
+        foreach (['gps_time__gte', 'gps_time__lte'] as $key) {
+            if (($query[$key] ?? '') === '') {
+                continue;
+            }
+
+            $value = str_replace('T', ' ', trim((string) $query[$key]));
+
+            if (strlen($value) === 16) {
+                $value .= $key === 'gps_time__lte' ? ':59' : ':00';
+            }
+
+            $query[$key] = $value;
+        }
+
+        return $query;
     }
 
 }
