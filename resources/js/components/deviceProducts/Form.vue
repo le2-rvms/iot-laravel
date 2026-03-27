@@ -105,11 +105,11 @@ function submit() {
 
                 <div class="space-y-2">
                     <UiLabel for="device-product-description">描述</UiLabel>
-                    <textarea
+                    <UiTextarea
                         id="device-product-description"
                         v-model="form.description"
                         :aria-invalid="Boolean(form.errors.description)"
-                        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-h-28 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:border-destructive aria-invalid:ring-destructive/20"
+                        class="min-h-28 rounded-md"
                     />
                     <p v-if="form.errors.description" class="text-sm text-red-600">{{ form.errors.description }}</p>
                 </div>

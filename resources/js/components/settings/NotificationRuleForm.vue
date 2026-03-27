@@ -152,10 +152,10 @@ const submit = handleSubmit((formValues) => {
             </SharedFormsFormFieldShell>
 
             <SharedFormsFormFieldShell label="规则说明" for-id="rule-description" :error="errors.description">
-                <textarea
+                <UiTextarea
                     id="rule-description"
                     v-model="description"
-                    class="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-28 w-full rounded-xl border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                    class="min-h-28 rounded-xl"
                 />
             </SharedFormsFormFieldShell>
 
@@ -170,15 +170,16 @@ const submit = handleSubmit((formValues) => {
 
         <SharedFormsFormSection title="触发规则" description="设置规则在什么情况下生效。">
             <SharedFormsFormFieldShell label="触发方式" for-id="trigger-mode" :error="errors.trigger_mode">
-                <select
-                    id="trigger-mode"
-                    v-model="triggerMode"
-                    class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-xl border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
-                >
-                    <option v-for="mode in triggerModes" :key="mode.value" :value="mode.value">
-                        {{ mode.label }}
-                    </option>
-                </select>
+                <UiSelect v-model="triggerMode">
+                    <UiSelectTrigger id="trigger-mode" class="h-11 w-full rounded-xl">
+                        <UiSelectValue placeholder="请选择触发方式" />
+                    </UiSelectTrigger>
+                    <UiSelectContent>
+                        <UiSelectItem v-for="mode in triggerModes" :key="mode.value" :value="mode.value">
+                            {{ mode.label }}
+                        </UiSelectItem>
+                    </UiSelectContent>
+                </UiSelect>
             </SharedFormsFormFieldShell>
 
             <SharedFormsFormFieldShell
@@ -242,14 +243,16 @@ const submit = handleSubmit((formValues) => {
                 </UiCardHeader>
                 <UiCardContent class="grid gap-4 md:grid-cols-2">
                     <SharedFormsFormFieldShell label="渠道类型" :error="errors[`channels[${index}].type`]">
-                        <select
-                            v-model="values.channels[index].type"
-                            class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-xl border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
-                        >
-                            <option v-for="type in channelTypes" :key="type.value" :value="type.value">
-                                {{ type.label }}
-                            </option>
-                        </select>
+                        <UiSelect v-model="values.channels[index].type">
+                            <UiSelectTrigger class="h-11 w-full rounded-xl">
+                                <UiSelectValue placeholder="请选择渠道类型" />
+                            </UiSelectTrigger>
+                            <UiSelectContent>
+                                <UiSelectItem v-for="type in channelTypes" :key="type.value" :value="type.value">
+                                    {{ type.label }}
+                                </UiSelectItem>
+                            </UiSelectContent>
+                        </UiSelect>
                     </SharedFormsFormFieldShell>
 
                     <SharedFormsFormFieldShell label="目标" :error="errors[`channels[${index}].target`]">

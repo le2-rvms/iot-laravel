@@ -115,11 +115,12 @@ function loginAs(loginUrl) {
             </UiAlert>
 
             <div v-else class="space-y-3">
-                <button
+                <UiButton
                     v-for="adminUser in devQuickLogin.users"
                     :key="adminUser.id"
                     type="button"
-                    class="app-option-card flex w-full items-start justify-between gap-4 rounded-2xl border px-4 py-4 text-left"
+                    variant="outline"
+                    class="app-option-card h-auto w-full items-start justify-between gap-4 rounded-2xl px-4 py-4 text-left whitespace-normal"
                     @click="loginAs(adminUser.login_url)"
                 >
                     <div class="space-y-1">
@@ -133,7 +134,7 @@ function loginAs(loginUrl) {
                     <span class="text-xs text-app-subtle-foreground">
                         {{ adminUser.email_verified_at ? "已验证" : "未验证" }}
                     </span>
-                </button>
+                </UiButton>
             </div>
         </section>
     </div>

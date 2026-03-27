@@ -67,17 +67,20 @@ function submit() {
         <SharedFormsFormSection title="通知目标" description="切换渠道后，按对应要求填写接收地址。">
             <div class="grid gap-4 md:grid-cols-2">
                 <SharedFormsFormFieldShell label="通知渠道" for-id="precognition-channel" :error="form.errors.channel">
-                    <select
-                        id="precognition-channel"
+                    <UiSelect
                         v-model="form.channel"
                         name="channel"
-                        class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-xl border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
-                        @change="handleChannelChange"
+                        @update:model-value="handleChannelChange"
                     >
-                        <option v-for="type in channelTypes" :key="type.value" :value="type.value">
-                            {{ type.label }}
-                        </option>
-                    </select>
+                        <UiSelectTrigger id="precognition-channel" class="h-11 w-full rounded-xl">
+                            <UiSelectValue placeholder="请选择通知渠道" />
+                        </UiSelectTrigger>
+                        <UiSelectContent>
+                            <UiSelectItem v-for="type in channelTypes" :key="type.value" :value="type.value">
+                                {{ type.label }}
+                            </UiSelectItem>
+                        </UiSelectContent>
+                    </UiSelect>
                 </SharedFormsFormFieldShell>
 
                 <SharedFormsFormFieldShell
@@ -123,11 +126,11 @@ function submit() {
                     description="可选，最多 500 个字符。"
                     :error="form.errors.notes"
                 >
-                    <textarea
+                    <UiTextarea
                         id="precognition-notes"
                         v-model="form.notes"
                         name="notes"
-                        class="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-28 w-full rounded-xl border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px]"
+                        class="min-h-28 rounded-xl"
                         @blur="validateField('notes')"
                     />
                 </SharedFormsFormFieldShell>

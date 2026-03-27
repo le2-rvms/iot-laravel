@@ -1,0 +1,60 @@
+<script setup>
+import { reactiveOmit } from "@vueuse/core";
+import { MenubarContent, MenubarPortal, useForwardProps } from "reka-ui";
+import { cn } from "@/lib/utils";
+
+defineOptions({
+  inheritAttrs: false,
+});
+
+const props = defineProps({
+  forceMount: { type: Boolean, required: false },
+  loop: { type: Boolean, required: false },
+  side: { type: null, required: false },
+  sideOffset: { type: Number, required: false, default: 8 },
+  sideFlip: { type: Boolean, required: false },
+  align: { type: null, required: false, default: "start" },
+  alignOffset: { type: Number, required: false, default: -4 },
+  alignFlip: { type: Boolean, required: false },
+  avoidCollisions: { type: Boolean, required: false },
+  collisionBoundary: { type: null, required: false },
+  collisionPadding: { type: [Number, Object], required: false },
+  arrowPadding: { type: Number, required: false },
+  hideShiftedArrow: { type: Boolean, required: false },
+  sticky: { type: String, required: false },
+  hideWhenDetached: { type: Boolean, required: false },
+  positionStrategy: { type: String, required: false },
+  updatePositionStrategy: { type: String, required: false },
+  disableUpdateOnLayoutShift: { type: Boolean, required: false },
+  prioritizePosition: { type: Boolean, required: false },
+  reference: { type: null, required: false },
+  asChild: { type: Boolean, required: false },
+  as: { type: null, required: false },
+  class: {
+    type: [Boolean, null, String, Object, Array],
+    required: false,
+    skipCheck: true,
+  },
+});
+
+const delegatedProps = reactiveOmit(props, "class");
+
+const forwardedProps = useForwardProps(delegatedProps);
+</script>
+
+<template>
+  <MenubarPortal>
+    <MenubarContent
+      data-slot="menubar-content"
+      v-bind="{ ...$attrs, ...forwardedProps }"
+      :class="
+        cn(
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[12rem] origin-(--reka-menubar-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-md',
+          props.class,
+        )
+      "
+    >
+      <slot />
+    </MenubarContent>
+  </MenubarPortal>
+</template>

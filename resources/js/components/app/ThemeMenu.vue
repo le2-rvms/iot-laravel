@@ -64,12 +64,13 @@ function setThemeMode(mode) {
                     </p>
 
                     <div class="mt-3 grid grid-cols-3 gap-2">
-                        <button
+                        <UiButton
                             v-for="theme in themeOptions"
                             :key="theme.value"
                             type="button"
+                            variant="outline"
                             :data-active="theme.value === currentThemeName"
-                            class="rounded-lg border bg-background px-3 py-2 text-left text-xs font-medium transition hover:border-primary/40 hover:bg-accent data-[active=true]:border-primary data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+                            class="h-auto justify-start rounded-lg bg-background px-3 py-2 text-left text-xs font-medium whitespace-normal transition hover:border-primary/40 hover:bg-accent data-[active=true]:border-primary data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                             @click.stop="setThemeName(theme.value)"
                         >
                             <span
@@ -77,7 +78,7 @@ function setThemeMode(mode) {
                                 :class="themeSwatchClasses[theme.value]"
                             />
                             {{ theme.label }}
-                        </button>
+                        </UiButton>
                     </div>
                 </div>
 
@@ -87,19 +88,20 @@ function setThemeMode(mode) {
                         <span>明暗模式</span>
                     </div>
                     <div class="mt-3 grid grid-cols-2 gap-2">
-                        <button
+                        <UiButton
                             v-for="mode in modeOptions"
                             :key="mode.value"
                             type="button"
+                            variant="outline"
                             :data-active="mode.value === currentThemeMode"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:bg-accent data-[active=true]:border-primary data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+                            class="h-auto rounded-lg bg-background px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:bg-accent data-[active=true]:border-primary data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                             @click.stop="setThemeMode(mode.value)"
                         >
                             <SunMedium v-if="mode.value === 'light'" class="size-4" />
                             <MoonStar v-else class="size-4" />
                             <span>{{ mode.label }}</span>
                             <Check v-if="mode.value === currentThemeMode" class="size-4" />
-                        </button>
+                        </UiButton>
                     </div>
                 </div>
             </div>

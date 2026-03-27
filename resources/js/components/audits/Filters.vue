@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { router } from "@inertiajs/vue3";
 import { Search } from "lucide-vue-next";
 import { useFilterForm } from "@/composables/useFilterForm";
@@ -20,6 +21,23 @@ const props = defineProps({
 });
 
 const form = useFilterForm(() => props.filters);
+
+const ALL_EVENTS_VALUE = "__all_events__";
+const ALL_RESOURCES_VALUE = "__all_resources__";
+
+const selectedEvent = computed({
+    get: () => form.event__eq || ALL_EVENTS_VALUE,
+    set: (value) => {
+        form.event__eq = value === ALL_EVENTS_VALUE ? "" : value;
+    },
+});
+
+const selectedAuditableType = computed({
+    get: () => form.auditable_type__eq || ALL_RESOURCES_VALUE,
+    set: (value) => {
+        form.auditable_type__eq = value === ALL_RESOURCES_VALUE ? "" : value;
+    },
+});
 
 function submit() {
     router.get(route('audits.index'), form, {
@@ -46,25 +64,29 @@ function submit() {
             </div>
 
             <div class="grid gap-2 md:grid-cols-2 xl:w-[420px]">
-                <select
-                    v-model="form.event__eq"
-                    class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-lg border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
-                >
-                    <option value="">全部事件</option>
-                    <option v-for="option in eventOptions" :key="option.value" :value="option.value">
-                        {{ option.label }}
-                    </option>
-                </select>
+                <UiSelect v-model="selectedEvent">
+                    <UiSelectTrigger class="h-10 w-full rounded-lg">
+                        <UiSelectValue placeholder="全部事件" />
+                    </UiSelectTrigger>
+                    <UiSelectContent>
+                        <UiSelectItem :value="ALL_EVENTS_VALUE">全部事件</UiSelectItem>
+                        <UiSelectItem v-for="option in eventOptions" :key="option.value" :value="option.value">
+                            {{ option.label }}
+                        </UiSelectItem>
+                    </UiSelectContent>
+                </UiSelect>
 
-                <select
-                    v-model="form.auditable_type__eq"
-                    class="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-lg border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
-                >
-                    <option value="">全部资源</option>
-                    <option v-for="option in resourceTypeOptions" :key="option.value" :value="option.value">
-                        {{ option.label }}
-                    </option>
-                </select>
+                <UiSelect v-model="selectedAuditableType">
+                    <UiSelectTrigger class="h-10 w-full rounded-lg">
+                        <UiSelectValue placeholder="全部资源" />
+                    </UiSelectTrigger>
+                    <UiSelectContent>
+                        <UiSelectItem :value="ALL_RESOURCES_VALUE">全部资源</UiSelectItem>
+                        <UiSelectItem v-for="option in resourceTypeOptions" :key="option.value" :value="option.value">
+                            {{ option.label }}
+                        </UiSelectItem>
+                    </UiSelectContent>
+                </UiSelect>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">

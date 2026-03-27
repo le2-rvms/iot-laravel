@@ -72,11 +72,11 @@ function submit() {
 
                 <div class="space-y-2">
                     <UiLabel for="config-value">配置值</UiLabel>
-                    <textarea
+                    <UiTextarea
                         id="config-value"
                         v-model="form.value"
                         :aria-invalid="Boolean(form.errors.value)"
-                        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-h-28 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:border-destructive aria-invalid:ring-destructive/20"
+                        class="min-h-28 rounded-md"
                         @input="form.clearErrors('value')"
                         @blur="validateField('value')"
                     />
@@ -103,11 +103,11 @@ function submit() {
 
                 <div class="space-y-2">
                     <UiLabel for="config-remark">备注</UiLabel>
-                    <textarea
+                    <UiTextarea
                         id="config-remark"
                         v-model="form.remark"
                         :aria-invalid="Boolean(form.errors.remark)"
-                        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input min-h-24 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:border-destructive aria-invalid:ring-destructive/20"
+                        class="min-h-24 rounded-md"
                         @input="form.clearErrors('remark')"
                         @blur="validateField('remark')"
                     />
