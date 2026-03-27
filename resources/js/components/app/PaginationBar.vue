@@ -25,10 +25,8 @@ function decodeLabel(label) {
 <template>
     <div
         v-if="normalizedLinks.length > 3"
-        class="flex flex-wrap items-center justify-between gap-3"
+        class="flex flex-wrap items-center justify-end gap-2"
     >
-        <p class="text-sm text-app-subtle-foreground"></p>
-
         <div class="flex flex-wrap items-center gap-2">
             <template
                 v-for="link in normalizedLinks"
