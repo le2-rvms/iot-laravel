@@ -1,12 +1,20 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { Check, MoonStar, Palette, SunMedium } from 'lucide-vue-next';
+import { Check, ChevronDown, MoonStar, Palette, SunMedium } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
 import {
     MODE_LABELS,
     THEME_LABELS,
     getCurrentTheme,
     setThemePreference,
 } from '@/theme';
+
+const props = defineProps({
+    triggerClass: {
+        type: [String, Array, Object],
+        default: '',
+    },
+});
 
 const themeState = ref(getCurrentTheme());
 
@@ -43,9 +51,13 @@ function setThemeMode(mode) {
 <template>
     <UiDropdownMenu>
         <UiDropdownMenuTrigger as-child>
-            <UiButton variant="outline" class="h-10 rounded-lg border-app-panel-border bg-app-panel px-3 shadow-sm">
+            <UiButton
+                variant="outline"
+                :class="cn('h-10 rounded-lg border-app-panel-border bg-app-panel px-3 shadow-sm', props.triggerClass)"
+            >
                 <Palette class="size-4 text-primary" />
                 <span class="hidden text-sm font-medium sm:inline">外观</span>
+                <ChevronDown class="app-copy-muted ml-2 size-4" />
             </UiButton>
         </UiDropdownMenuTrigger>
 

@@ -2,7 +2,15 @@
 import { computed } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { ChevronDown, KeyRound, LogOut } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
 import { route } from '@/lib/routes';
+
+const props = defineProps({
+    triggerClass: {
+        type: [String, Array, Object],
+        default: '',
+    },
+});
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -24,7 +32,10 @@ function goToPasswordPage() {
 <template>
     <UiDropdownMenu>
         <UiDropdownMenuTrigger as-child>
-            <UiButton variant="outline" class="h-10 rounded-lg border-app-panel-border bg-app-panel px-3 shadow-sm">
+            <UiButton
+                variant="outline"
+                :class="cn('h-10 rounded-lg border-app-panel-border bg-app-panel px-3 shadow-sm', props.triggerClass)"
+            >
                 <div class="hidden text-left sm:block">
                     <div class="text-sm font-medium leading-none">{{ user?.name }}</div>
                 </div>

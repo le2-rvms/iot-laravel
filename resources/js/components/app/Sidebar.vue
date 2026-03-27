@@ -165,9 +165,9 @@ function formatBuildTime(value) {
 
         <div class="border-t border-sidebar-border/45 px-5 py-4">
             <div class="space-y-2.5">
-                <div class="hidden lg:flex items-center gap-2">
-                    <AppThemeMenu />
-                    <AppUserMenu />
+                <div class="hidden lg:flex flex-col gap-2">
+                    <AppThemeMenu trigger-class="w-full justify-between" />
+                    <AppUserMenu trigger-class="w-full justify-between" />
                 </div>
 
                 <div
