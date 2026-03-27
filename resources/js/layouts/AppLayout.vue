@@ -6,7 +6,7 @@ defineProps({
     },
     description: {
         type: String,
-        default: '',
+        default: "",
     },
     breadcrumbs: {
         type: Array,
@@ -21,18 +21,24 @@ defineProps({
         <AppConfirmDialog />
 
         <div class="grid min-h-screen lg:grid-cols-[232px_1fr]">
-            <aside class="hidden border-r border-sidebar-border/45 bg-sidebar text-sidebar-foreground lg:block">
+            <aside
+                class="hidden border-r border-sidebar-border/45 bg-sidebar text-sidebar-foreground lg:block"
+            >
                 <AppSidebar />
             </aside>
 
             <div class="flex min-h-screen min-w-0 flex-col">
-                <AppHeader :title="title" :description="description" :breadcrumbs="breadcrumbs">
+                <AppHeader
+                    :title="title"
+                    :description="description"
+                    :breadcrumbs="breadcrumbs"
+                >
                     <template #actions>
                         <slot name="header-actions" />
                     </template>
                 </AppHeader>
 
-                <main class="min-w-0 flex-1 px-5 py-5 lg:px-8 lg:py-6 xl:px-10">
+                <main class="min-w-0 flex-1 px-5 py-5 lg:px-8 lg:py-2 xl:px-10">
                     <div class="mx-auto w-full max-w-[1600px] min-w-0">
                         <slot />
                     </div>

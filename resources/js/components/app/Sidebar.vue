@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 import {
     Cpu,
     FileCheck2,
@@ -14,7 +14,7 @@ import {
     Waypoints,
 } from "lucide-vue-next";
 import { Link, usePage } from "@inertiajs/vue3";
-import { route } from '@/lib/routes';
+import { route } from "@/lib/routes";
 
 const page = usePage();
 const buildInfo = window.__APP_BUILD_INFO__ ?? null;
@@ -38,30 +38,32 @@ function isActive(item) {
     const currentPath = normalizePath(page.url);
     const itemPath = normalizePath(item.href);
 
-    if (item.routeName === 'client-monitor.sessions') {
+    if (item.routeName === "client-monitor.sessions") {
         return currentPath.startsWith(clientMonitorBasePath.value);
     }
 
-    if (item.routeName?.endsWith('.index')) {
-        return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+    if (item.routeName?.endsWith(".index")) {
+        return (
+            currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)
+        );
     }
 
     return currentPath === itemPath;
 }
 
 function normalizePath(url) {
-    const value = String(url ?? '');
-    const relative = value.startsWith('http')
+    const value = String(url ?? "");
+    const relative = value.startsWith("http")
         ? new URL(value).pathname
-        : value.split('?')[0];
+        : value.split("?")[0];
 
-    return relative.replace(/\/+$/, '') || '/';
+    return relative.replace(/\/+$/, "") || "/";
 }
 
 const clientMonitorBasePath = computed(() => {
-    const sessionsPath = normalizePath(route('client-monitor.sessions'));
+    const sessionsPath = normalizePath(route("client-monitor.sessions"));
 
-    return sessionsPath.replace(/\/sessions$/, '');
+    return sessionsPath.replace(/\/sessions$/, "");
 });
 
 function resolveNavigationIcon(icon) {
@@ -97,7 +99,9 @@ function formatBuildTime(value) {
         <div class="border-b border-sidebar-border/45 px-5 py-4">
             <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                    <p class="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground">
+                    <p
+                        class="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground"
+                    >
                         {{ $page.props.app.name }}
                     </p>
                     <span
@@ -147,7 +151,9 @@ function formatBuildTime(value) {
                                     : 'text-sidebar-foreground/55'
                             "
                         />
-                        <div class="min-w-0 flex-1 text-sm font-medium leading-5">
+                        <div
+                            class="min-w-0 flex-1 text-sm font-medium leading-5"
+                        >
                             {{ item.title }}
                         </div>
                     </Link>
@@ -164,12 +170,15 @@ function formatBuildTime(value) {
                     <p
                         class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/55"
                     >
-                        前端产物
+                        Build Info
                     </p>
                     <p
                         class="mt-1.5 text-sm font-medium text-sidebar-accent-foreground"
                     >
-                        {{ formatBuildTime(buildInfo.builtAt) || buildInfo.builtAt }}
+                        {{
+                            formatBuildTime(buildInfo.builtAt) ||
+                            buildInfo.builtAt
+                        }}
                     </p>
                     <p class="mt-0.5 text-xs text-sidebar-foreground/60">
                         {{ buildInfo.command }} / {{ buildInfo.mode }}
