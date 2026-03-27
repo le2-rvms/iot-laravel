@@ -47,7 +47,7 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-10 rounded-xl pl-10"
+                    class="h-10 rounded-lg pl-10"
                     placeholder="按配置键或备注搜索"
                 />
             </div>

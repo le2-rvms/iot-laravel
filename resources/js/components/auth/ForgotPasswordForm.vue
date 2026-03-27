@@ -37,7 +37,7 @@ function submit() {
             <p v-if="form.errors.email" class="text-sm text-red-600">{{ form.errors.email }}</p>
         </div>
 
-        <UiButton type="submit" class="h-11 w-full rounded-2xl" :disabled="form.processing">
+        <UiButton type="submit" class="h-11 w-full rounded-lg" :disabled="form.processing">
             {{ form.processing ? '发送中...' : '发送重置邮件' }}
         </UiButton>
 

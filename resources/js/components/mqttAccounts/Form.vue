@@ -51,7 +51,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
+        <UiCard class="app-panel-card">
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? '编辑MQTT账号' : '创建MQTT账号' }}</UiCardTitle>
                 <UiCardDescription>
@@ -103,7 +103,7 @@ function submit() {
                         id="mqtt-certificate"
                         v-model="form.certificate"
                         :aria-invalid="Boolean(form.errors.certificate)"
-                        class="min-h-28 rounded-md"
+                        class="min-h-28"
                     />
                     <p class="app-copy-muted text-sm">如未启用证书校验，可留空。</p>
                     <p v-if="form.errors.certificate" class="text-sm text-red-600">{{ form.errors.certificate }}</p>
@@ -134,10 +134,10 @@ function submit() {
                 </div>
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
-                <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
+                <UiButton as-child variant="outline" class="w-full rounded-lg sm:w-auto">
                     <Link :href="route('mqtt-accounts.index')">返回列表</Link>
                 </UiButton>
-                <UiButton type="submit" class="w-full rounded-xl sm:min-w-32 sm:w-auto sm:justify-center" :disabled="form.processing">
+                <UiButton type="submit" class="w-full rounded-lg sm:min-w-32 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建账号' }}
                 </UiButton>
             </UiCardFooter>

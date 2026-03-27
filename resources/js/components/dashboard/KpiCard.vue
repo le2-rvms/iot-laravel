@@ -17,7 +17,7 @@ const props = defineProps({
         :href="props.item.routeName ? hrefForRouteTarget(props.item) : undefined"
         class="group block min-w-0"
     >
-        <UiCard class="h-full min-w-0 rounded-[1.35rem] border border-app-panel-border/80 bg-app-panel/85 shadow-sm transition group-hover:border-app-panel-border group-hover:shadow-md">
+        <UiCard class="h-full min-w-0 border border-app-panel-border/80 bg-app-panel/85 transition group-hover:border-app-panel-border group-hover:shadow-md">
             <UiCardContent class="flex h-full flex-col gap-4 p-5">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0 space-y-1">

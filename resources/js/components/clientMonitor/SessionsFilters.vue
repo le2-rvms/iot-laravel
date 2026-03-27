@@ -34,7 +34,7 @@ function submit() {
                 <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-app-subtle-foreground" />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-10 rounded-xl pl-10"
+                    class="h-10 rounded-lg pl-10"
                     placeholder="按客户端ID、用户名、事件类型或对端地址搜索"
                 />
             </div>

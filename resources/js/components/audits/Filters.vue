@@ -58,7 +58,7 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-10 rounded-xl pl-10"
+                    class="h-10 rounded-lg pl-10"
                     placeholder="按操作者、资源 ID 或路由搜索"
                 />
             </div>

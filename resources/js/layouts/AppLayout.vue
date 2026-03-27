@@ -38,7 +38,7 @@ defineProps({
                     </template>
                 </AppHeader>
 
-                <main class="min-w-0 flex-1 px-5 py-5 lg:px-8 lg:py-2 xl:px-10">
+                <main class="min-w-0 flex-1 px-5 py-5 lg:px-8 lg:py-5 xl:px-4">
                     <div class="mx-auto w-full max-w-[1600px] min-w-0">
                         <slot />
                     </div>

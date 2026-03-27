@@ -27,7 +27,7 @@ function normalizePath(url) {
 </script>
 
 <template>
-    <div class="flex flex-wrap gap-2 rounded-[1.5rem] border border-app-panel-border/80 bg-app-panel/60 p-2">
+    <div class="flex flex-wrap gap-2 rounded-xl border border-app-panel-border/80 bg-app-panel/60 p-2">
         <Link
             v-for="section in sections"
             :key="`${section.routeName}:${section.title}`"

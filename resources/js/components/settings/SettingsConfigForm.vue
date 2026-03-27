@@ -50,7 +50,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
+        <UiCard class="app-panel-card">
             <UiCardHeader>
                 <UiCardTitle>{{ isEdit ? `编辑${resource.title}` : `创建${resource.title}` }}</UiCardTitle>
                 <UiCardDescription>
@@ -76,7 +76,7 @@ function submit() {
                         id="config-value"
                         v-model="form.value"
                         :aria-invalid="Boolean(form.errors.value)"
-                        class="min-h-28 rounded-md"
+                        class="min-h-28"
                         @input="form.clearErrors('value')"
                         @blur="validateField('value')"
                     />
@@ -107,7 +107,7 @@ function submit() {
                         id="config-remark"
                         v-model="form.remark"
                         :aria-invalid="Boolean(form.errors.remark)"
-                        class="min-h-24 rounded-md"
+                        class="min-h-24"
                         @input="form.clearErrors('remark')"
                         @blur="validateField('remark')"
                     />
@@ -115,10 +115,10 @@ function submit() {
                 </div>
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
-                <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
+                <UiButton as-child variant="outline" class="w-full rounded-lg sm:w-auto">
                     <Link :href="route(resource.index_route)">返回列表</Link>
                 </UiButton>
-                <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
+                <UiButton type="submit" class="w-full rounded-lg sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : isEdit ? '保存修改' : '创建配置项' }}
                 </UiButton>
             </UiCardFooter>

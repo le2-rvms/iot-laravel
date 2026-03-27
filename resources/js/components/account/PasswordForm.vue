@@ -18,7 +18,7 @@ function submit() {
 
 <template>
     <form class="space-y-6" @submit.prevent="submit">
-        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
+        <UiCard class="app-panel-card">
             <UiCardHeader>
                 <UiCardTitle>修改密码</UiCardTitle>
                 <UiCardDescription>
@@ -70,10 +70,10 @@ function submit() {
                 </div>
             </UiCardContent>
             <UiCardFooter class="flex flex-col-reverse gap-3 border-t border-app-panel-border sm:flex-row sm:justify-end">
-                <UiButton as-child variant="outline" class="w-full rounded-xl sm:w-auto">
+                <UiButton as-child variant="outline" class="w-full rounded-lg sm:w-auto">
                     <Link :href="route('dashboard')">返回仪表盘</Link>
                 </UiButton>
-                <UiButton type="submit" class="w-full rounded-xl sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
+                <UiButton type="submit" class="w-full rounded-lg sm:min-w-28 sm:w-auto sm:justify-center" :disabled="form.processing">
                     {{ form.processing ? '保存中' : '保存新密码' }}
                 </UiButton>
             </UiCardFooter>

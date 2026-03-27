@@ -21,7 +21,7 @@ defineProps({
 
         <div class="relative mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-12">
             <div class="grid w-full gap-10 lg:grid-cols-[1.1fr_460px]">
-                <div class="hidden flex-col justify-between rounded-[1.5rem] border border-app-panel-border bg-app-panel px-10 py-12 text-app-panel-foreground shadow-sm lg:flex">
+                <div class="hidden flex-col justify-between rounded-xl border border-app-panel-border bg-app-panel px-10 py-12 text-app-panel-foreground shadow-sm lg:flex">
                     <div class="space-y-6">
                         <div class="inline-flex w-fit items-center rounded-full border border-app-subtle-border bg-app-subtle px-4 py-1 text-sm text-app-subtle-foreground">
                             {{ $page.props.app.name }}
@@ -41,7 +41,7 @@ defineProps({
                 </div>
 
                 <div class="flex items-center justify-center">
-                    <div class="w-full max-w-md space-y-6 rounded-[1.5rem] border border-app-panel-border bg-app-panel p-8 text-app-panel-foreground shadow-sm backdrop-blur">
+                    <div class="w-full max-w-md space-y-6 rounded-xl border border-app-panel-border bg-app-panel p-8 text-app-panel-foreground shadow-sm backdrop-blur">
                         <div class="space-y-2">
                             <p class="text-sm font-medium uppercase tracking-[0.24em] text-app-subtle-foreground">
                                 {{ $page.props.app.name }}

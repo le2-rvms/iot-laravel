@@ -34,7 +34,7 @@ defineProps({
 </script>
 
 <template>
-    <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80 bg-app-panel shadow-sm">
+    <UiCard class="min-w-0 overflow-hidden border border-app-panel-border/80 bg-app-panel">
         <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
             <div class="space-y-2">
                 <UiCardTitle class="text-lg">{{ title }}</UiCardTitle>

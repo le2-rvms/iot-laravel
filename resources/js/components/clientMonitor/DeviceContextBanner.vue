@@ -14,7 +14,7 @@ defineProps({
 <template>
     <div
         v-if="deviceContext && clientId"
-        class="flex flex-col gap-4 rounded-[1.5rem] border border-app-panel-border/80 bg-app-panel/60 px-5 py-4 lg:flex-row lg:items-center lg:justify-between"
+        class="flex flex-col gap-4 rounded-xl border border-app-panel-border/80 bg-app-panel/60 px-5 py-4 lg:flex-row lg:items-center lg:justify-between"
     >
         <div class="space-y-1">
             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-app-subtle-foreground">

@@ -34,7 +34,7 @@ function submit() {
                 />
                 <UiInput
                     v-model="form.search__func"
-                    class="h-10 rounded-xl pl-10"
+                    class="h-10 rounded-lg pl-10"
                     placeholder="按产品标识、名称、描述、厂商、协议或分类搜索"
                 />
             </div>

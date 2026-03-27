@@ -54,7 +54,7 @@ const breadcrumbs = [
             <ClientMonitorDeviceContextBanner :device-context="deviceContext" :client-id="filters.client_id__eq" />
 
             <div class="grid gap-6">
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">在线会话</UiCardTitle>
@@ -77,7 +77,7 @@ const breadcrumbs = [
                     </UiCardContent>
                 </UiCard>
 
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">鉴权事件</UiCardTitle>
@@ -100,7 +100,7 @@ const breadcrumbs = [
                     </UiCardContent>
                 </UiCard>
 
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">命令事件</UiCardTitle>
@@ -123,7 +123,7 @@ const breadcrumbs = [
                     </UiCardContent>
                 </UiCard>
 
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">连接事件</UiCardTitle>
@@ -146,7 +146,7 @@ const breadcrumbs = [
                     </UiCardContent>
                 </UiCard>
 
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">当前定位</UiCardTitle>
@@ -159,7 +159,7 @@ const breadcrumbs = [
                     <UiCardContent class="pt-0">
                         <div
                             v-if="previews?.gpsPositionLast"
-                            class="grid gap-4 rounded-[1.25rem] border border-app-panel-border/70 bg-app-panel/50 p-5 md:grid-cols-2 xl:grid-cols-4"
+                            class="grid gap-4 rounded-lg border border-app-panel-border/70 bg-app-panel/50 p-5 md:grid-cols-2 xl:grid-cols-4"
                         >
                             <div class="space-y-1">
                                 <div class="app-copy-muted text-xs">终端ID</div>
@@ -221,7 +221,7 @@ const breadcrumbs = [
                     </UiCardContent>
                 </UiCard>
 
-                <UiCard class="min-w-0 overflow-hidden rounded-[1.5rem] border border-app-panel-border/80">
+                <UiCard class="min-w-0 overflow-hidden rounded-xl border border-app-panel-border/80">
                     <UiCardHeader class="flex flex-row items-start justify-between gap-4 space-y-0">
                         <div class="space-y-2">
                             <UiCardTitle class="text-lg">定位历史</UiCardTitle>

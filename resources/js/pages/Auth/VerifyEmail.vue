@@ -36,10 +36,10 @@ function logout() {
             </UiAlert>
 
             <div class="grid gap-3">
-                <UiButton class="h-11 rounded-2xl" :disabled="resendForm.processing" @click="resend">
+                <UiButton class="h-11 rounded-xl" :disabled="resendForm.processing" @click="resend">
                     {{ resendForm.processing ? '发送中...' : '重新发送验证邮件' }}
                 </UiButton>
-                <UiButton variant="outline" class="h-11 rounded-2xl" @click="logout">
+                <UiButton variant="outline" class="h-11 rounded-xl" @click="logout">
                     退出登录
                 </UiButton>
             </div>

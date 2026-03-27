@@ -67,7 +67,7 @@ function submit() {
             </p>
         </div>
 
-        <UiButton type="submit" class="h-11 w-full rounded-2xl" :disabled="form.processing">
+        <UiButton type="submit" class="h-11 w-full rounded-lg" :disabled="form.processing">
             {{ form.processing ? '提交中...' : '重置密码' }}
         </UiButton>
 

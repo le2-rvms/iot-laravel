@@ -31,7 +31,7 @@ const breadcrumbs = [
         description="更新设备基础资料、状态字段与鉴权信息，终端 ID 创建后不可修改。"
         :breadcrumbs="breadcrumbs"
     >
-        <UiCard v-if="canMonitor" class="mb-6 rounded-[1.5rem] border border-app-panel-border/80">
+        <UiCard v-if="canMonitor" class="mb-6 rounded-xl border border-app-panel-border/80">
             <UiCardContent class="flex flex-col gap-4 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                 <div class="space-y-1">
                     <div class="text-sm font-semibold">客户端监控</div>

@@ -23,7 +23,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-app-subtle-border bg-app-panel px-6 py-16 text-center">
+    <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-app-subtle-border bg-app-panel px-6 py-16 text-center">
         <div class="flex size-14 items-center justify-center rounded-xl bg-app-subtle text-app-subtle-foreground">
             <Inbox class="size-6" />
         </div>

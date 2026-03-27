@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="space-y-3 rounded-[1.5rem] border border-app-panel-border bg-app-panel p-6 shadow-sm">
+    <div class="space-y-3 rounded-xl border border-app-panel-border bg-app-panel p-6 shadow-sm">
         <UiSkeleton class="h-6 w-48 rounded-xl" />
         <UiSkeleton class="h-4 w-full rounded-xl" />
         <UiSkeleton

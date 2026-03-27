@@ -96,21 +96,23 @@ function formatBuildTime(value) {
 
 <template>
     <div class="flex h-full flex-col">
-        <div class="border-b border-sidebar-border/45 px-5 py-4">
-            <div class="min-w-0">
+        <div
+            class="flex h-[58px] items-center border-b border-sidebar-border/45 px-5 py-1.5"
+        >
+            <div class="min-w-0 w-full">
                 <div class="flex items-center gap-2">
                     <p
-                        class="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground"
+                        class="min-w-0 flex-1 truncate text-sm font-semibold tracking-tight text-sidebar-foreground"
                     >
                         {{ $page.props.app.name }}
                     </p>
                     <span
-                        class="shrink-0 rounded-full border border-sidebar-border/45 bg-sidebar-accent/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-sidebar-foreground/65"
+                        class="shrink-0 rounded-full border border-sidebar-border/45 bg-sidebar-accent/70 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-sidebar-foreground/65"
                     >
                         IoT
                     </span>
                 </div>
-                <p class="mt-1 text-xs leading-5 text-sidebar-foreground/55">
+                <p class="mt-px text-[11px] leading-4 text-sidebar-foreground/55">
                     运营后台
                 </p>
             </div>
@@ -163,6 +165,11 @@ function formatBuildTime(value) {
 
         <div class="border-t border-sidebar-border/45 px-5 py-4">
             <div class="space-y-2.5">
+                <div class="hidden lg:flex items-center gap-2">
+                    <AppThemeMenu />
+                    <AppUserMenu />
+                </div>
+
                 <div
                     v-if="buildInfo"
                     class="rounded-xl border border-sidebar-border/45 bg-sidebar-accent/65 px-3.5 py-3.5"

@@ -137,9 +137,9 @@ function submit() {
             </div>
         </SharedFormsFormSection>
 
-        <UiCard class="app-panel-card rounded-[1.5rem] shadow-sm">
+        <UiCard class="app-panel-card">
             <UiCardContent class="flex flex-col gap-3 p-6 sm:flex-row sm:justify-end">
-                <UiButton type="submit" class="min-w-40 justify-center rounded-xl" :disabled="form.processing">
+                <UiButton type="submit" class="min-w-40 justify-center rounded-lg" :disabled="form.processing">
                     {{ form.processing ? '提交中' : '提交规则' }}
                 </UiButton>
             </UiCardContent>

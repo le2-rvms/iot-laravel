@@ -47,7 +47,7 @@ function formatDateTime(value) {
         :breadcrumbs="breadcrumbs"
     >
         <div class="space-y-6">
-            <UiCard class="overflow-hidden rounded-[1.75rem] border border-app-panel-border/80 bg-app-panel shadow-sm">
+            <UiCard class="overflow-hidden rounded-xl border border-app-panel-border/80 bg-app-panel shadow-sm">
                 <UiCardContent class="p-0">
                     <section class="grid gap-6 px-6 py-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
                         <div class="space-y-5">
@@ -80,7 +80,7 @@ function formatDateTime(value) {
                             <div
                                 v-for="item in hero.summary"
                                 :key="item.label"
-                                class="rounded-2xl border border-app-panel-border/70 bg-background/88 px-4 py-4 backdrop-blur"
+                                class="rounded-xl border border-app-panel-border/70 bg-background/88 px-4 py-4 backdrop-blur"
                             >
                                 <div class="text-xs font-semibold uppercase tracking-[0.18em] text-app-subtle-foreground">
                                     {{ item.label }}

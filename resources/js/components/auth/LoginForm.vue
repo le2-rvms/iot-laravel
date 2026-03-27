@@ -81,7 +81,7 @@ function loginAs(loginUrl) {
             </div>
 
             <label
-                class="app-option-card flex items-center gap-3 rounded-2xl border px-4 py-3"
+                class="app-option-card flex items-center gap-3 rounded-xl border px-4 py-3"
             >
                 <UiCheckbox v-model="form.remember" />
                 <span class="app-copy-strong text-sm">记住我</span>
@@ -89,7 +89,7 @@ function loginAs(loginUrl) {
 
             <UiButton
                 type="submit"
-                class="h-11 w-full rounded-2xl"
+                class="h-11 w-full rounded-lg"
                 :disabled="form.processing"
             >
                 {{ form.processing ? "登录中..." : "登录" }}
@@ -98,7 +98,7 @@ function loginAs(loginUrl) {
 
         <section
             v-if="showDevQuickLogin"
-            class="space-y-4 rounded-[1.5rem] border border-dashed border-app-panel-border bg-app-panel/40 p-5"
+            class="space-y-4 rounded-xl border border-dashed border-app-panel-border bg-app-panel/40 p-5"
         >
             <div class="space-y-1">
                 <h2 class="app-copy-strong text-base">开发环境快捷登录</h2>
@@ -120,7 +120,7 @@ function loginAs(loginUrl) {
                     :key="adminUser.id"
                     type="button"
                     variant="outline"
-                    class="app-option-card h-auto w-full items-start justify-between gap-4 rounded-2xl px-4 py-4 text-left whitespace-normal"
+                    class="app-option-card h-auto w-full items-start justify-between gap-4 rounded-xl px-4 py-4 text-left whitespace-normal"
                     @click="loginAs(adminUser.login_url)"
                 >
                     <div class="space-y-1">
