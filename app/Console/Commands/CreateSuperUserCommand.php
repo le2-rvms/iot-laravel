@@ -26,7 +26,7 @@ class CreateSuperUserCommand extends Command
         $validator = Validator::make($this->option(), [
             'name' => ['string'],
             'email' => ['email'],
-            'password' => ['string'],
+            'password' => ['nullable', 'string'],
         ], [
             'email.email' => 'The --email option must be a valid email address.',
         ]);
