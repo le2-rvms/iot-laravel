@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Admin\AdminUser;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -12,23 +13,17 @@ use Symfony\Component\Console\Attribute\AsCommand;
     description: 'Create or upgrade a super admin user',
     help: 'Create or update an admin user, mark the email as verified, and assign the Super Admin role.',
     usages: [
-        '--name="Admin" --email="admin@example.com" --password="password"',
+        '--name="Admin" --email="admin@example.com" --password="your-password"',
+        '--name="Admin" --email="admin@example.com"',
     ],
 )]
 class CreateSuperUserCommand extends Command
 {
-    protected $signature = 'admin:create-super-user {--name=Admin} {--email=admin@example.com} {--password=password}';
+    protected $signature = 'admin:create-super-user {--name=Admin} {--email=admin@example.com} {--password=}';
 
     public function handle(): int
     {
-        // 命令输入保持扁平结构，便于运维直接从 shell 历史里重复执行。
-        $input = [
-            'name' => $this->option('name'),
-            'email' => $this->option('email'),
-            'password' => $this->option('password'),
-        ];
-
-        $validator = Validator::make($input, [
+        $validator = Validator::make($this->option(), [
             'name' => ['string'],
             'email' => ['email'],
             'password' => ['string'],
@@ -45,21 +40,32 @@ class CreateSuperUserCommand extends Command
             return self::FAILURE;
         }
 
+        $validated = $validator->validated();
+
+        $passwordWasGenerated = blank($validated['password']);
+
+        if ($passwordWasGenerated) {
+            // 先走命令参数校验，校验通过后再为缺省密码补一个随机值。
+            $validated['password'] = Str::password(length: 16);
+        }
+
         $adminUser = AdminUser::query()->firstOrNew([
             // 邮箱是这条命令的稳定标识，重复执行时会更新同一个运维账号。
-            'email' => $input['email'],
+            'email' => $validated['email'],
         ]);
 
         // 成功提示区分首次创建和重复执行后的刷新，便于操作人确认本次行为。
         $created = ! $adminUser->exists;
 
         // 这是运维快捷命令，因此创建后账号应立即可用。
-        $adminUser = $adminUser->saveAsSuperAdmin($input);
+        $adminUser = $adminUser->saveAsSuperAdmin($validated);
 
         $this->info($created ? '超级用户已创建。' : '超级用户已更新。');
         $this->line("邮箱: {$adminUser->email}");
         $this->line('角色: Super Admin');
         $this->line('邮箱验证: 已完成');
+        $this->line('密码来源: '.($passwordWasGenerated ? '系统随机生成' : '命令参数传入'));
+        $this->line("密码: {$validated['password']}");
 
         return self::SUCCESS;
     }
