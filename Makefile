@@ -10,7 +10,7 @@ PRINT_ENV = echo '===== current env ====='; env | sort; echo '==================
 APP_ENV_OVERRIDES = DB_HOST=localhost DB_PORT=$${TIMESCALEDB_PORT}
 
 dev: print-env
-	@$(MAKE) --no-print-directory -j4 serve horizon logs vite
+	@$(MAKE) --no-print-directory -j4 serve vite
 
 print-env:
 	@$(LOAD_ENV) $(PRINT_ENV)
