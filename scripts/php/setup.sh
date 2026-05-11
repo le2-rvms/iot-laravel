@@ -7,7 +7,9 @@ composer clearcache
 pwd
 # chown -R www-data:www-data ./
 # find . -path ./.git -prune -o -exec chown -h www-data:www-data {} +
-composer config -g repo.packagist composer https://mirrors.tencent.com/composer/
+if [ -n "${COMPOSER_REGISTRY:-}" ]; then
+    composer config -g repo.packagist composer "${COMPOSER_REGISTRY}"
+fi
 composer config -g --list | grep repositories
 
 php -v
@@ -28,7 +30,7 @@ if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then
 else
     echo "执行开发环境脚本..."
     # composer config github-protocols https
-     composer update -vvv
+     composer update
 #    composer install
     php artisan --version
     php artisan about
