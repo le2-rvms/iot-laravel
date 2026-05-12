@@ -63,8 +63,8 @@ return [
         'device_name' => 'Device Name',
         'enabled' => 'Enabled',
         'enabled_label' => 'Enabled',
-        'act_created_at' => 'Created At',
-        'act_updated_at' => 'Updated At',
+        'created_at' => 'Created At',
+        'updated_at' => 'Updated At',
         'act_updated_by' => 'Updated By',
     ],
     'config' => [

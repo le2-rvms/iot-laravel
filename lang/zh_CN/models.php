@@ -65,8 +65,8 @@ return [
         'device_name' => '设备名称',
         'enabled' => '启用状态',
         'enabled_label' => '启用状态',
-        'act_created_at' => '创建时间',
-        'act_updated_at' => '更新时间',
+        'created_at' => '创建时间',
+        'updated_at' => '更新时间',
         'act_updated_by' => '最近更新人',
     ],
     'config' => [

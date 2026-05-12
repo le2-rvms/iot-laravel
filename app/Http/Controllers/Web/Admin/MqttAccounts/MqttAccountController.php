@@ -48,7 +48,7 @@ class MqttAccountController extends Controller
                 'models.iot_mqtt_account.device_name' => static fn (IotMqttAccount $account): string => (string) ($account->device_name ?? ''),
                 'models.iot_mqtt_account.is_superuser_label' => static fn (IotMqttAccount $account): string => $account->is_superuser_label ?? '',
                 'models.iot_mqtt_account.enabled_label' => static fn (IotMqttAccount $account): string => $account->enabled_label ?? '',
-                'models.iot_mqtt_account.act_updated_at' => static fn (IotMqttAccount $account): string => $account->act_updated_at?->format('Y-m-d H:i:s') ?? '',
+                'models.iot_mqtt_account.updated_at' => static fn (IotMqttAccount $account): string => $account->updated_at?->format('Y-m-d H:i:s') ?? '',
                 'models.iot_mqtt_account.act_updated_by' => static fn (IotMqttAccount $account): string => (string) ($account->act_updated_by ?? ''),
             ],
             fileName: 'mqtt-accounts-'.now()->format('Ymd-His').'.csv',

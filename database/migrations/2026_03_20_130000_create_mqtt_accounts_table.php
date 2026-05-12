@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('product_key', 64)->nullable();
             $table->string('device_name', 255)->nullable();
             $table->boolean('enabled')->default(true);
-            $table->timestamp('act_created_at')->nullable();
-            $table->timestamp('act_updated_at')->nullable();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
             $table->string('act_updated_by')->nullable();
 
             // 先补业务字段上的基础索引，后续若 PostgreSQL 搜索量上来，再按 lower()/trgm 追加专项索引。

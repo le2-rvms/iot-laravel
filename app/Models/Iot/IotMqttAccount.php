@@ -26,8 +26,8 @@ use Illuminate\Support\Str;
  * @property string|null $product_key 产品标识
  * @property string|null $device_name 设备名称
  * @property Enabled $enabled 启用状态
- * @property Carbon|null $act_created_at 创建时间
- * @property Carbon|null $act_updated_at 更新时间
+ * @property Carbon|null $created_at 创建时间
+ * @property Carbon|null $updated_at 更新时间
  * @property string|null $act_updated_by 最近更新人
  */
 class IotMqttAccount extends Model
@@ -41,9 +41,9 @@ class IotMqttAccount extends Model
         'salt',
     ];
 
-    public const CREATED_AT = 'act_created_at';
+    public const CREATED_AT = 'created_at';
 
-    public const UPDATED_AT = 'act_updated_at';
+    public const UPDATED_AT = 'updated_at';
 
     public const UPDATED_BY = 'act_updated_by';
 
@@ -133,8 +133,8 @@ class IotMqttAccount extends Model
         return [
             'is_superuser' => IsSuperuser::class,
             'enabled' => Enabled::class,
-            'act_created_at' => 'datetime',
-            'act_updated_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 

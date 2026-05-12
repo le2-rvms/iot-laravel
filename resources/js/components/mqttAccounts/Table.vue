@@ -75,7 +75,7 @@ function confirmDelete(account) {
                     </UiBadge>
                 </UiTableCell>
                 <UiTableCell class="app-copy-muted">
-                    <div>{{ account.act_updated_at?.slice(0, 16).replace('T', ' ') || '-' }}</div>
+                    <div>{{ account.updated_at?.slice(0, 16).replace('T', ' ') || '-' }}</div>
                     <div class="text-xs">{{ account.act_updated_by || '系统' }}</div>
                 </UiTableCell>
                 <UiTableCell class="text-center">
