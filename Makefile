@@ -1,8 +1,8 @@
 .PHONY: dev print-env serve horizon logs vite cli-bash
 
 ENV_FILES = \
-	../docker-compose/env/L_/0local.env \
-	../docker-compose/env/L2/0local.env \
+	../docker-compose/env/L_/0loc.env \
+	../docker-compose/env/L2/0loc.env \
 	../docker-compose/env/.pass.env
 
 LOAD_ENV = set -a; $(foreach file,$(ENV_FILES),. $(file);) set +a;

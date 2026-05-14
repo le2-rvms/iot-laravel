@@ -24,7 +24,7 @@ Route::get('/', function () {
         : redirect()->route('login');
 });
 
-if (app()->environment(['local','dev'])) {
+if (app()->environment(['local','development'])) {
     Route::middleware('guest')
         ->post('login/dev-users/{adminUser}', DevQuickLoginController::class)
         ->name('dev-users.login');

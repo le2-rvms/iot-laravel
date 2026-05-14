@@ -36,7 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(function () {
             // 登录页始终拿到同一份对象结构，只有 enabled 会随环境变化。
             $devQuickLogin = [
-                'enabled' => app()->environment('dev'),
+                'enabled' => app()->environment('development'),
                 'users' => [],
             ];
 

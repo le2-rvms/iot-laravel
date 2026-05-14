@@ -12,7 +12,7 @@ class DevQuickLoginController extends Controller
 {
     public function __invoke(Request $request, AdminUser $adminUser): RedirectResponse
     {
-        abort_unless(app()->environment('dev'), 404);
+        abort_unless(app()->environment('development'), 404);
 
         Auth::login($adminUser);
         $request->session()->regenerate();
