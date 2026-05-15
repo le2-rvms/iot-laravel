@@ -17,4 +17,4 @@ fi
 pnpm install --frozen-lockfile
 
 pnpm ls
-pnpm run build --mode ${COMPOSE_ENV}
+pnpm run build --mode ${DOCKER_ENV}
