@@ -15,7 +15,7 @@ composer config -g --list | grep repositories
 php -v
 composer --version
 
-if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then
+if [ "$COMPOSE_ENV" = "production" ] || [ "$COMPOSE_ENV" = "staging" ]; then
     echo "执行生产环境部署..."
     composer install --prefer-dist --no-interaction --no-progress --no-dev --optimize-autoloader --classmap-authoritative
     php artisan about
