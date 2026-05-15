@@ -42,12 +42,11 @@
             "@php -r \"file_exists('.env.development') || copy('.env.example', '.env.development');\"",
             "APP_ENV=development php artisan key:generate",
             "APP_ENV=development php artisan migrate --force",
-            "npm install",
-            "npm run build"
+            "APP_ENV=development sh scripts/node/setup.sh"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "APP_ENV=development npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan horizon\" \"php artisan pail --timeout=0\" \"npm run dev -- --mode development\" --names=server,horizon,logs,vite --kill-others"
+            "APP_ENV=development pnpm exec concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan horizon\" \"php artisan pail --timeout=0\" \"pnpm run dev -- --mode development\" --names=server,horizon,logs,vite --kill-others"
         ],
         "test": [
             "@php artisan config:clear --ansi",

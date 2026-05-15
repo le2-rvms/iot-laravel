@@ -6,14 +6,15 @@ rm -rf public/build
 
 echo "Production/Staging: dry run setup."
 
-# 把源切到部分镜像后，npm audit 会去调用安全审计接口（/-/npm/v1/security/*），而镜像可能没实现这些接口
-if [ -n "${NPM_REGISTRY:-}" ]; then
-    npm config set registry "${NPM_REGISTRY}"
+if ! command -v pnpm >/dev/null 2>&1; then
+    npm install -g pnpm
 fi
-npm set audit=false
 
-npm install -g pnpm
+if [ -n "${NPM_REGISTRY:-}" ]; then
+    pnpm config set registry "${NPM_REGISTRY}"
+fi
 
-pnpm install
+pnpm install --frozen-lockfile
+
 pnpm ls
 pnpm run build --mode ${APP_ENV}
