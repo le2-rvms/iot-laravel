@@ -4,7 +4,7 @@ set -eux
 rm -f public/hot
 rm -rf public/build
 
-echo "Production/Staging: dry run setup."
+echo "Production/Staging: run setup."
 
 if ! command -v pnpm >/dev/null 2>&1; then
     npm install -g pnpm
