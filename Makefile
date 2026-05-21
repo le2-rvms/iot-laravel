@@ -30,6 +30,7 @@ logs:
 	@$(LOAD_ENV) php artisan pail --timeout=0
 
 vite:
+	pnpm install
 	@$(LOAD_ENV) pnpm run dev
 
 cli-bash:
