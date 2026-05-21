@@ -1,11 +1,14 @@
 .PHONY: dev print-env serve horizon logs vite cli-bash
 
-ENV_CONTEXT_FILES = \
-	../docker-compose/env/L_/0loc.env \
-	../docker-compose/env/L2/0loc.env \
-	../docker-compose/env/.pass.env
+L1_PRIVATE_DIR := ${HOME}/rvms/1prod/compose-L1-private/
+L2_HOST_DIR := $(HOME)/rvms/2host/compose-L2-host/
 
-SERVICE_ENV_FILE = ../docker-compose/compose-L2/gps/iot-laravel/.env.php
+ENV_CONTEXT_FILES := \
+	$(L1_PRIVATE_DIR)_env/L_/0loc.env \
+	$(L2_HOST_DIR)_env/L2/0loc.env \
+	$(L2_HOST_DIR)_env/.pass.env
+
+SERVICE_ENV_FILE := $(L2_HOST_DIR)gps/iot-laravel/.env.php
 
 APP_ENV_OVERRIDES = DB_HOST=localhost DB_PORT=$${TIMESCALEDB_PORT}
 

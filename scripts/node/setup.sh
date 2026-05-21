@@ -4,7 +4,7 @@ set -eux
 rm -f public/hot
 rm -rf public/build
 
-echo "Production/Staging: run setup."
+echo "Production: run setup."
 
 if ! command -v pnpm >/dev/null 2>&1; then
     npm install -g pnpm
@@ -17,4 +17,4 @@ fi
 pnpm install --frozen-lockfile
 
 pnpm ls
-pnpm run build --mode ${DOCKER_ENV}
+pnpm run build --mode ${APP_ENV}
