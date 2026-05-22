@@ -4,7 +4,6 @@ import vue from "@vitejs/plugin-vue";
 import laravel from "laravel-vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import Components from "unplugin-vue-components/vite";
-import { bunny } from 'laravel-vite-plugin/fonts';
 
 export default defineConfig(({ command, mode }) => ({
     define: {
@@ -18,11 +17,6 @@ export default defineConfig(({ command, mode }) => ({
         laravel({
             input: ["resources/js/app.js"],
             refresh: true,
-            fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
-            ],
         }),
         vue(),
         Components({
