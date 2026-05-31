@@ -28,9 +28,10 @@ if [ "$APP_ENV" = "production" ]; then
 else
     echo "执行开发环境脚本..."
     # composer config github-protocols https
-     composer update
+     composer update -vvv
 #    composer install
-    php artisan --version
-    php artisan about
 #    php artisan optimize:clear  # 这个时候数据表还没有准备好
 fi
+
+php artisan about
+php artisan --version
