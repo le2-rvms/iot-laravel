@@ -91,8 +91,8 @@ class IotGpsCommand extends Model
             'flow_id' => 'integer',
             'retries' => 'integer',
             'max_retries' => 'integer',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'created_at' => 'datetime:Y-m-d H:i:s',
+            'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 }

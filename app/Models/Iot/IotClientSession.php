@@ -85,9 +85,9 @@ class IotClientSession extends Model
     protected function casts(): array
     {
         return [
-            'last_event_ts' => 'datetime',
-            'last_connect_ts' => 'datetime',
-            'last_disconnect_ts' => 'datetime',
+            'last_event_ts' => 'datetime:Y-m-d H:i:s',
+            'last_connect_ts' => 'datetime:Y-m-d H:i:s',
+            'last_disconnect_ts' => 'datetime:Y-m-d H:i:s',
             'extra' => 'array',
         ];
     }

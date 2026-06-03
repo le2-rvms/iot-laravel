@@ -138,10 +138,10 @@ class IotDevice extends Model
     protected function casts(): array
     {
         return [
-            'auth_code_issued_at' => 'datetime',
+            'auth_code_issued_at' => 'datetime:Y-m-d H:i:s',
             'auth_code_expires_at' => 'datetime:Y-m-d H:i:s',
             'auth_block_until' => 'datetime:Y-m-d H:i:s',
-            'created_at' => 'datetime',
+            'created_at' => 'datetime:Y-m-d H:i:s',
             'auth_failures' => 'integer',
             'city_relation_id' => 'integer',
         ];

@@ -238,7 +238,7 @@ function submit() {
                         </div>
                         <div class="mt-3 flex items-center justify-between gap-3">
                             <span class="app-copy-muted">创建时间</span>
-                            <span class="font-medium">{{ device.created_at?.slice(0, 19).replace('T', ' ') || '-' }}</span>
+                            <span class="font-medium">{{ device.created_at || '-' }}</span>
                         </div>
                     </div>
                 </div>

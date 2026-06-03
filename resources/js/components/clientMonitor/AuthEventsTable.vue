@@ -24,7 +24,7 @@ defineProps({
         <UiTableBody>
             <UiTableRow v-for="event in authEvents.data" :key="event.id">
                 <UiTableCell class="app-copy-muted">
-                    <div>{{ event.ts?.slice(0, 19).replace('T', ' ') || '-' }}</div>
+                    <div>{{ event.ts || '-' }}</div>
                     <div class="text-xs">#{{ event.id }}</div>
                 </UiTableCell>
                 <UiTableCell class="app-copy-strong font-medium">{{ event.result }}</UiTableCell>

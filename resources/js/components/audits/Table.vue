@@ -25,7 +25,7 @@ defineProps({
             <UiTableRow v-for="audit in audits.data" :key="audit.id">
                 <UiTableCell class="app-copy-muted">
                     <div class="space-y-1">
-                        <div>{{ audit.created_at?.slice(0, 19).replace("T", " ") }}</div>
+                        <div>{{ audit.created_at }}</div>
                         <div class="text-xs">#{{ audit.id }}</div>
                     </div>
                 </UiTableCell>

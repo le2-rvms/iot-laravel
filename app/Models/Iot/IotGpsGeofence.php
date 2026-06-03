@@ -61,7 +61,7 @@ class IotGpsGeofence extends Model
             'center_lon' => 'float',
             'radius_meters' => 'float',
             'active' => 'boolean',
-            'created_at' => 'datetime',
+            'created_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 }

@@ -65,7 +65,7 @@ class Audit extends Model
             'old_values' => 'array',
             'new_values' => 'array',
             'meta' => 'array',
-            'created_at' => 'datetime',
+            'created_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 

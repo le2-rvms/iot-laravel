@@ -90,8 +90,8 @@ class IotGpsPositionHistory extends Model
     protected function casts(): array
     {
         return [
-            'gps_time' => 'datetime',
-            'created_at' => 'datetime',
+            'gps_time' => 'datetime:Y-m-d H:i:s',
+            'created_at' => 'datetime:Y-m-d H:i:s',
             'latitude' => 'float',
             'longitude' => 'float',
             'latitude_gcj' => 'float',

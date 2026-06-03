@@ -42,7 +42,7 @@ defineProps({
                         <div class="app-copy-muted-soft text-xs">{{ position.device?.dev_name || '未关联设备名称' }}</div>
                     </div>
                 </UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ position.gps_time?.slice(0, 19).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ position.gps_time || '-' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">
                     {{ position.latitude ?? '-' }}, {{ position.longitude ?? '-' }}
                 </UiTableCell>
@@ -53,7 +53,7 @@ defineProps({
                 <UiTableCell class="app-copy-muted">{{ position.direction ?? '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ position.status ?? '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ position.alarm ?? '未填写' }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ position.updated_at?.slice(0, 19).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ position.updated_at || '-' }}</UiTableCell>
                 <UiTableCell>
                     <div v-if="previewExtra(position.extra)" class="app-copy-muted whitespace-pre-wrap break-words rounded-lg bg-app-panel/70 px-3 py-2 font-mono text-xs leading-6">
                         {{ previewExtra(position.extra) }}

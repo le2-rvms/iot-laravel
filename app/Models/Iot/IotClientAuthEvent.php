@@ -72,7 +72,7 @@ class IotClientAuthEvent extends Model
     protected function casts(): array
     {
         return [
-            'ts' => 'datetime',
+            'ts' => 'datetime:Y-m-d H:i:s',
         ];
     }
 }

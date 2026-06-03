@@ -87,7 +87,7 @@ class IotClientCmdEvent extends Model
     protected function casts(): array
     {
         return [
-            'ts' => 'datetime',
+            'ts' => 'datetime:Y-m-d H:i:s',
             'reason_code' => 'integer',
             'event_type' => EventType_CMD::class,
             'extra' => 'array',

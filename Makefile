@@ -18,6 +18,7 @@ print-env:
 	env -i sh -c '$(LOAD_ENV) env'
 
 serve:
+	composer update
 	@$(LOAD_ENV) php artisan serve
 
 horizon:

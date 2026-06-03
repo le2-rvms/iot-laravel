@@ -168,7 +168,7 @@ const breadcrumbs = [
                             </div>
                             <div class="space-y-1">
                                 <div class="app-copy-muted text-xs">定位时间</div>
-                                <div class="font-medium">{{ previews.gpsPositionLast.gps_time?.slice(0, 19).replace('T', ' ') || '-' }}</div>
+                                <div class="font-medium">{{ previews.gpsPositionLast.gps_time || '-' }}</div>
                             </div>
                             <div class="space-y-1">
                                 <div class="app-copy-muted text-xs">状态 / 告警</div>
@@ -176,7 +176,7 @@ const breadcrumbs = [
                             </div>
                             <div class="space-y-1">
                                 <div class="app-copy-muted text-xs">更新时间</div>
-                                <div class="font-medium">{{ previews.gpsPositionLast.updated_at?.slice(0, 19).replace('T', ' ') || '-' }}</div>
+                                <div class="font-medium">{{ previews.gpsPositionLast.updated_at || '-' }}</div>
                             </div>
                             <div class="space-y-1 md:col-span-2">
                                 <div class="app-copy-muted text-xs">WGS84坐标</div>

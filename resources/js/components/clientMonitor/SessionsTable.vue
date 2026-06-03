@@ -27,10 +27,10 @@ defineProps({
             <UiTableRow v-for="session in sessions.data" :key="session.client_id">
                 <UiTableCell class="app-copy-strong font-medium">{{ session.client_id }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ session.username || '未填写' }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ session.last_event_ts?.slice(0, 19).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ session.last_event_ts || '-' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ session.last_event_type || '未填写' }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ session.last_connect_ts?.slice(0, 19).replace('T', ' ') || '-' }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ session.last_disconnect_ts?.slice(0, 19).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ session.last_connect_ts || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ session.last_disconnect_ts || '-' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted break-all">{{ session.last_peer || '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ session.last_protocol || '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ session.last_reason_code ?? '未填写' }}</UiTableCell>

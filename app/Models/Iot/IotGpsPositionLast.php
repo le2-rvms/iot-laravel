@@ -92,8 +92,8 @@ class IotGpsPositionLast extends Model
     protected function casts(): array
     {
         return [
-            'gps_time' => 'datetime',
-            'updated_at' => 'datetime',
+            'gps_time' => 'datetime:Y-m-d H:i:s',
+            'updated_at' => 'datetime:Y-m-d H:i:s',
             'latitude' => 'float',
             'longitude' => 'float',
             'latitude_gcj' => 'float',
