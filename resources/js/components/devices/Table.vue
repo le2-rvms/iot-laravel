@@ -74,7 +74,7 @@ function confirmDelete(device) {
                 <UiTableCell class="app-copy-muted">{{ device.device_status || '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ device.review_status || '未填写' }}</UiTableCell>
                 <UiTableCell class="app-copy-muted">{{ device.city_relation_id ?? '未填写' }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ device.created_at?.slice(0, 16).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ device.created_at }}</UiTableCell>
                 <UiTableCell class="text-center">
                     <div v-if="canMonitor || canWrite" class="flex justify-center gap-2">
                         <UiButton v-if="canMonitor" as-child variant="outline" size="sm" class="rounded-lg">

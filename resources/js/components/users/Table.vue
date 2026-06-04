@@ -42,7 +42,6 @@ function confirmDelete(user) {
                 <UiTableHead>邮箱</UiTableHead>
                 <UiTableHead>管理员角色</UiTableHead>
                 <UiTableHead class="w-[18%]">验证状态</UiTableHead>
-                <UiTableHead class="w-[20%]">创建时间</UiTableHead>
                 <UiTableHead class="w-[160px] text-center">操作</UiTableHead>
             </UiTableRow>
         </UiTableHeader>
@@ -73,9 +72,7 @@ function confirmDelete(user) {
                         {{ user.email_verified_at ? '已验证' : '待验证' }}
                     </UiBadge>
                 </UiTableCell>
-                <UiTableCell class="app-copy-muted">
-                    {{ user.created_at?.slice(0, 10) }}
-                </UiTableCell>
+
                 <UiTableCell class="text-center">
                     <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">

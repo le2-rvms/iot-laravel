@@ -64,7 +64,7 @@ function confirmDelete(product) {
                 <UiTableCell class="app-copy-muted">{{ product.category || '未填写' }}</UiTableCell>
                 <UiTableCell>{{ product.devices_count }}</UiTableCell>
                 <UiTableCell>{{ product.groups_count }}</UiTableCell>
-                <UiTableCell class="app-copy-muted">{{ product.created_at?.slice(0, 16).replace('T', ' ') || '-' }}</UiTableCell>
+                <UiTableCell class="app-copy-muted">{{ product.created_at }}</UiTableCell>
                 <UiTableCell class="text-center">
                     <div v-if="canWrite" class="flex justify-center gap-2">
                         <UiButton as-child variant="outline" size="sm" class="rounded-lg">

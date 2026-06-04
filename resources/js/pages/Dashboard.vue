@@ -28,14 +28,6 @@ const props = defineProps({
 const breadcrumbs = [
     { label: '仪表盘' },
 ];
-
-function formatDateTime(value) {
-    if (!value) {
-        return '-';
-    }
-
-    return String(value).replace('T', ' ').slice(0, 16);
-}
 </script>
 
 <template>
@@ -127,8 +119,8 @@ function formatDateTime(value) {
                                 </p>
                             </div>
                             <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
-                                <div>{{ formatDateTime(item.gps_time) }}</div>
-                                <div class="mt-1">记录于 {{ formatDateTime(item.created_at) }}</div>
+                                <div>{{ item.gps_time }}</div>
+                                <div class="mt-1">记录于 {{ item.created_at }}</div>
                             </div>
                         </div>
                     </template>
@@ -155,7 +147,7 @@ function formatDateTime(value) {
                             </div>
                             <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
                                 <div>#{{ item.id }}</div>
-                                <div class="mt-1">{{ formatDateTime(item.updated_at || item.created_at) }}</div>
+                                <div class="mt-1">{{ item.updated_at || item.created_at }}</div>
                             </div>
                         </div>
                     </template>
@@ -182,7 +174,7 @@ function formatDateTime(value) {
                                 </p>
                             </div>
                             <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
-                                {{ formatDateTime(item.last_event_ts) }}
+                                {{ item.last_event_ts }}
                             </div>
                         </div>
                     </template>
@@ -205,11 +197,11 @@ function formatDateTime(value) {
                                 </div>
                                 <p class="text-sm leading-6 text-app-subtle-foreground">
                                     <span v-if="item.device_name">{{ item.device_name }} · </span>
-                                    速度 {{ item.speed ?? '未填写' }} · 定位 {{ formatDateTime(item.gps_time) }}
+                                    速度 {{ item.speed ?? '未填写' }} · 定位 {{ item.gps_time }}
                                 </p>
                             </div>
                             <div class="shrink-0 text-right text-xs text-app-subtle-foreground">
-                                {{ formatDateTime(item.updated_at) }}
+                                {{ item.updated_at }}
                             </div>
                         </div>
                     </template>

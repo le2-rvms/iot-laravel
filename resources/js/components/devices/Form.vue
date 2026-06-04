@@ -16,16 +16,6 @@ const props = defineProps({
 
 const isEdit = computed(() => props.mode === 'edit');
 
-function normalizeDateTime(value) {
-    if (!value) {
-        return '';
-    }
-
-    const normalized = String(value).replace(' ', 'T');
-
-    return normalized.length >= 16 ? normalized.slice(0, 16) : normalized;
-}
-
 function normalizeNullableNumber(value) {
     return value === null || value === undefined ? '' : String(value);
 }
@@ -40,10 +30,10 @@ const form = useForm({
     device_status: props.device.device_status ?? '',
     review_status: props.device.review_status ?? '',
     auth_code_seed: props.device.auth_code_seed ?? '',
-    auth_code_issued_at: normalizeDateTime(props.device.auth_code_issued_at),
-    auth_code_expires_at: normalizeDateTime(props.device.auth_code_expires_at),
+    auth_code_issued_at: (props.device.auth_code_issued_at),
+    auth_code_expires_at: (props.device.auth_code_expires_at),
     auth_failures: normalizeNullableNumber(props.device.auth_failures),
-    auth_block_until: normalizeDateTime(props.device.auth_block_until),
+    auth_block_until: (props.device.auth_block_until),
     city_relation_id: normalizeNullableNumber(props.device.city_relation_id),
 });
 
