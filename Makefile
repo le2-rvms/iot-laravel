@@ -28,6 +28,7 @@ logs:
 	@$(LOAD_ENV) php artisan pail --timeout=0
 
 vite:
+	npm install -g pnpm
 	pnpm install
 	@$(LOAD_ENV) pnpm run dev
 
